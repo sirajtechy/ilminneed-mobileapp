@@ -1,5 +1,7 @@
-import 'src/screen/home_screen.dart';
 import 'package:flutter/material.dart';
+
+import 'src/screen/home_screen.dart';
+import 'src/screen/splash.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -7,6 +9,8 @@ class RouteGenerator {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(builder: (_) => HomeScreen());
+      case '/splash':
+        return MaterialPageRoute(builder: (_) => SplashScreen());
       default:
         return _errorRoute();
     }
