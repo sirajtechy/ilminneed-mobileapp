@@ -33,7 +33,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           Text(
             title,
-            style: buttonTextStyle(konTextInputBorderTextColor),
+            style:
+                buttonTextStyle().copyWith(color: konTextInputBorderTextColor),
           )
         ],
       ),
@@ -66,27 +67,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Text(
                     SIGN_UP_HINT,
                     textAlign: TextAlign.center,
-                    style: mediumTextStyle(konLightColor),
+                    style: mediumTextStyle().copyWith(color: konLightColor),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                   child: TextFormField(
-                    style: mediumTextStyle(konTextInputBorderTextColor),
+                    style: mediumTextStyle()
+                        .copyWith(color: konTextInputBorderTextColor),
                     decoration: textFormFieldInputDecoration('name'),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   child: TextFormField(
-                    style: mediumTextStyle(konTextInputBorderTextColor),
+                    style: mediumTextStyle()
+                        .copyWith(color: konTextInputBorderTextColor),
                     decoration: textFormFieldInputDecoration('email'),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   child: TextFormField(
-                    style: mediumTextStyle(konTextInputBorderTextColor),
+                    style: mediumTextStyle()
+                        .copyWith(color: konTextInputBorderTextColor),
                     decoration: textFormFieldInputDecoration('password')
                         .copyWith(suffixIcon: Icon(Icons.visibility)),
                   ),
@@ -101,8 +105,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   child: Center(
                       child: Text(
-                    SIGN_UP,
-                    style: buttonTextStyle(konButtonTextColor),
+                        SIGN_UP,
+                    style:
+                        buttonTextStyle().copyWith(color: konButtonTextColor),
                   )),
                 ),
                 Container(
@@ -120,7 +125,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         margin: EdgeInsets.symmetric(horizontal: 8),
                         child: Text(
                           SIGN_UP_OPTION,
-                          style: smallTextStyle(konTextInputBorderFillColor),
+                          style: smallTextStyle()
+                              .copyWith(color: konTextInputBorderFillColor),
                         ),
                       ),
                       Container(
@@ -148,14 +154,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     children: [
                       Text(
                         ALREADY_MEMBER,
-                        style: smallTextStyle(konTextInputBorderTextColor),
+                        style: smallTextStyle()
+                            .copyWith(color: konTextInputBorderTextColor),
                       ),
                       Text(
                         SIGN_IN,
-                        style: buttonTextStyle(konPinkColor).copyWith(
-                          decoration: TextDecoration.underline,
-                          decorationColor: konPinkColor,
-                        ),
+                        style: buttonTextStyle().copyWith(
+                            decoration: TextDecoration.underline,
+                            decorationColor: konPinkColor,
+                            color: konPinkColor),
                       ),
                     ],
                   ),

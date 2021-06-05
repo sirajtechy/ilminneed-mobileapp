@@ -11,5 +11,8 @@ const Color konTextInputBorderErrorColor = Color(0xffF65C26);
 const Color konTextInputBorderTextColor = Color(0xff161719);
 const Color konButtonTextColor = Color(0xffFCFCFF);
 const Color konPinkColor = Color(0xffe6005c);
+const Color konBlackTextColor = Color(0xff212325);
+const Color konImageBGColor = Color(0xffBCD1FF);
+const Color konRatingTextColor = Color(0xff6B707A);
 
-//e6005c
+//#6B707A, 100%

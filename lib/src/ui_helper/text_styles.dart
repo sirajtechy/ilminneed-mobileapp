@@ -8,26 +8,23 @@ TextStyle largeTextStyle() {
       fontSize: 24, fontWeight: FontWeight.w700, color: konBlackColor);
 }
 
-TextStyle mediumTextStyle(Color color) {
+TextStyle mediumTextStyle() {
   return GoogleFonts.dmSans(
     fontWeight: FontWeight.w400,
     fontSize: 12,
-    color: color,
   );
 }
 
-TextStyle buttonTextStyle(Color color) {
+TextStyle buttonTextStyle() {
   return GoogleFonts.dmSans(
     fontWeight: FontWeight.w700,
     fontSize: 14,
-    color: color,
   );
 }
 
-TextStyle smallTextStyle(Color color) {
+TextStyle smallTextStyle() {
   return GoogleFonts.dmSans(
     fontWeight: FontWeight.w400,
     fontSize: 14,
-    color: color,
   );
 }

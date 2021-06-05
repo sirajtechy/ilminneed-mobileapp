@@ -1,4 +1,4 @@
-const CONTINUE_LEARNING = "Continue Learning!";
+const CONTINUE_LEARNING = "Continue Learning";
 const SIGN_IN_HINT = "Enter Email and password to continue";
 const SIGN_IN = "Sign In";
 const FORGOT_PASSWORD = "Forgot Password?";
@@ -13,3 +13,7 @@ const SIGN_UP_HEADING = "Sign up to evently";
 const SIGN_UP_HINT =
     "Choose from 100,00 online video courses with new additions published every month!";
 const SIGN_UP_OPTION = "Or Sign up using";
+const SEARCH_COURSES = "Search Courses";
+const POPULAR = "Popular on Ilminneed";
+const VIEW_ALL = "View All";
+const MY_COURSES = "My Courses";

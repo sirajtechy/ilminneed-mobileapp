@@ -9,7 +9,7 @@ InputDecoration textFormFieldInputDecoration(String hintText) {
       horizontal: 25,
     ),
     hintText: hintText,
-    hintStyle: mediumTextStyle(konLightColor),
+    hintStyle: mediumTextStyle().copyWith(color: konLightColor),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.all(
         Radius.circular(65.0),
@@ -27,6 +27,29 @@ InputDecoration textFormFieldInputDecoration(String hintText) {
       borderRadius: BorderRadius.circular(65.0),
       borderSide: BorderSide(
         color: konTextInputBorderErrorColor,
+        width: 1.0,
+      ),
+    ),
+  );
+}
+
+InputDecoration searchTextFormFieldInputDecoration(String hintText) {
+  return InputDecoration(
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: 25,
+    ),
+    hintText: hintText,
+    hintStyle: mediumTextStyle().copyWith(color: konLightColor),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.all(
+        Radius.circular(10.0),
+      ),
+      borderSide: BorderSide(color: konTextInputBorderActiveColor, width: 1.0),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      borderSide: BorderSide(
+        color: konTextInputBorderFillColor,
         width: 1.0,
       ),
     ),
