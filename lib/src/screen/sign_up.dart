@@ -6,6 +6,9 @@ import 'package:ilminneed/helper/resources/strings.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
+import 'package:ilminneed/src/widgets/button.dart';
+import 'package:ilminneed/src/widgets/header_text.dart';
+import 'package:ilminneed/src/widgets/hint_text.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key key}) : super(key: key);
@@ -56,27 +59,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SvgPicture.asset(
                   signIn,
                 ),
-                Container(
-                  child: Text(
-                    SIGN_UP_HEADING,
-                    style: largeTextStyle(),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 8, left: 15, right: 15),
-                  child: Text(
-                    SIGN_UP_HINT,
-                    textAlign: TextAlign.center,
-                    style: mediumTextStyle().copyWith(color: konLightColor),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  child: TextFormField(
-                    style: mediumTextStyle()
-                        .copyWith(color: konTextInputBorderTextColor),
-                    decoration: textFormFieldInputDecoration('name'),
-                  ),
+                HeaderTextWidget(label: SIGN_UP),
+                HintWidget(
+                  label: SIGN_UP_HINT,
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -95,20 +80,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         .copyWith(suffixIcon: Icon(Icons.visibility)),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(65),
-                    color: konTextInputBorderActiveColor,
-                  ),
-                  child: Center(
-                      child: Text(
-                        SIGN_UP,
-                    style:
-                        buttonTextStyle().copyWith(color: konButtonTextColor),
-                  )),
+                ButtonWidget(
+                  value: SIGN_UP,
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 20),

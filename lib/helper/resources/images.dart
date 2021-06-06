@@ -6,3 +6,5 @@ const String mini_logo = 'assets/images/mini_logo.svg';
 const String cart = 'assets/images/shopping_cart.svg';
 const String laptop = 'assets/images/laptop.svg';
 const String star = 'assets/images/star.svg';
+const String forgot_password = 'assets/images/forgot_password.svg';
+const String reset_link = 'assets/images/reset_link.svg';

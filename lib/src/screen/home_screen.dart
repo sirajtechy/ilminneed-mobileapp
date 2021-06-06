@@ -194,9 +194,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Container(
                       margin: EdgeInsets.only(
-                          left: 15, right: 15, top: 8, bottom: 2),
+                          left: 15, right: 15, top: 4, bottom: 2),
                       child: SizedBox(
-                        height: 250,
+                        height: 215,
                         child: ListView.builder(
                           itemCount: 5,
                           scrollDirection: Axis.horizontal,

@@ -6,6 +6,9 @@ import 'package:ilminneed/helper/resources/strings.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
+import 'package:ilminneed/src/widgets/button.dart';
+import 'package:ilminneed/src/widgets/header_text.dart';
+import 'package:ilminneed/src/widgets/hint_text.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key key}) : super(key: key);
@@ -54,20 +57,8 @@ class _SignInScreenState extends State<SignInScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(signIn),
-                Container(
-                  margin: EdgeInsets.only(top: 8),
-                  child: Text(
-                    CONTINUE_LEARNING,
-                    style: largeTextStyle(),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 8),
-                  child: Text(
-                    SIGN_IN_HINT,
-                    style: mediumTextStyle().copyWith(color: konLightColor),
-                  ),
-                ),
+                HeaderTextWidget(label: CONTINUE_LEARNING),
+                HintWidget(label: SIGN_IN_HINT),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                   child: TextFormField(
@@ -85,20 +76,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         .copyWith(suffixIcon: Icon(Icons.visibility)),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(65),
-                    color: konTextInputBorderActiveColor,
-                  ),
-                  child: Center(
-                      child: Text(
-                        SIGN_IN,
-                    style:
-                        buttonTextStyle().copyWith(color: konButtonTextColor),
-                  )),
+                ButtonWidget(
+                  value: SIGN_IN,
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 30),
