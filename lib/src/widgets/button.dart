@@ -19,7 +19,7 @@ class ButtonWidget extends StatelessWidget {
       child: Center(
           child: Text(
         value,
-        style: buttonTextStyle().copyWith(color: konButtonTextColor),
+        style: buttonTextStyle().copyWith(color: konLightColor1),
       )),
     );
   }

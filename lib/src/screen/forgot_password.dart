@@ -17,9 +17,9 @@ class ForgotPassword extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: konScaffoldBGColor,
+        backgroundColor: konLightColor2,
       ),
-      backgroundColor: konScaffoldBGColor,
+      backgroundColor: konLightColor2,
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 15),
@@ -34,8 +34,7 @@ class ForgotPassword extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                   child: TextFormField(
-                    style: mediumTextStyle()
-                        .copyWith(color: konTextInputBorderTextColor),
+                    style: mediumTextStyle().copyWith(color: konDarkColorB1),
                     decoration: textFormFieldInputDecoration('email'),
                   ),
                 ),
@@ -49,15 +48,14 @@ class ForgotPassword extends StatelessWidget {
                     children: [
                       Text(
                         'Back to ',
-                        style: smallTextStyle()
-                            .copyWith(color: konTextInputBorderTextColor),
+                        style: smallTextStyle().copyWith(color: konDarkColorB1),
                       ),
                       Text(
                         SIGN_IN,
                         style: buttonTextStyle().copyWith(
                             decoration: TextDecoration.underline,
-                            decorationColor: konPinkColor,
-                            color: konPinkColor),
+                            decorationColor: konPrimaryColor1,
+                            color: konPrimaryColor1),
                       ),
                     ],
                   ),

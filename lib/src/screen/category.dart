@@ -12,7 +12,7 @@ class Category extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: konButtonTextColor,
+        backgroundColor: konLightColor1,
         title: Text('Category'),
         titleSpacing: 0,
         actions: [
@@ -25,7 +25,7 @@ class Category extends StatelessWidget {
           )
         ],
       ),
-      backgroundColor: konButtonTextColor,
+      backgroundColor: konLightColor1,
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -35,7 +35,7 @@ class Category extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                  color: konScaffoldBGColor,
+                  color: konLightColor2,
                   borderRadius: BorderRadius.circular(8)),
               margin: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
               child: TextFormField(
@@ -67,8 +67,8 @@ class Category extends StatelessWidget {
                         child: Center(
                           child: Text(
                             '${index + 1}',
-                            style: buttonTextStyle().copyWith(
-                                fontSize: 18, color: konButtonTextColor),
+                            style: buttonTextStyle()
+                                .copyWith(fontSize: 18, color: konLightColor1),
                           ),
                         ),
                       ),

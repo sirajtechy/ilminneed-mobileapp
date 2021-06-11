@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/helper/resources/strings.dart';
+import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
@@ -20,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25), color: konScaffoldBGColor),
+          borderRadius: BorderRadius.circular(25), color: konLightColor2),
       child: Text(
         label,
         style: smallTextStyle().copyWith(color: konBlackColor),
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: konScaffoldBGColor,
+      backgroundColor: konLightColor2,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -59,14 +60,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           Text(
                             'Explore',
-                            style: buttonTextStyle().copyWith(
-                                fontSize: 18,
-                                color: konTextInputBorderTextColor),
+                            style: buttonTextStyle()
+                                .copyWith(fontSize: 18, color: konDarkColorB1),
                           ),
-                          Container(
-                            child: SvgPicture.asset(
-                              cart,
-                              height: 35,
+                          GestureDetector(
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => SearchScreen())),
+                            child: Container(
+                              child: SvgPicture.asset(
+                                cart,
+                                height: 35,
+                              ),
                             ),
                           ),
                         ],
@@ -79,8 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       margin:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: TextFormField(
-                        style: mediumTextStyle()
-                            .copyWith(color: konTextInputBorderTextColor),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration:
                             searchTextFormFieldInputDecoration(SEARCH_COURSES)
                                 .copyWith(suffixIcon: Icon(Icons.search)),
@@ -103,12 +109,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(25),
-                                border: Border.all(
-                                    color: konTextInputBorderFillColor)),
+                                border: Border.all(color: konLightColor3)),
                             child: Text(
                               'View All +',
                               style: smallTextStyle()
-                                  .copyWith(color: konTextInputBorderFillColor),
+                                  .copyWith(color: konLightColor3),
                             ),
                           )
                         ],
@@ -133,8 +138,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             POPULAR,
-                            style: buttonTextStyle().copyWith(
-                                fontSize: 16, color: konBlackTextColor),
+                            style: buttonTextStyle()
+                                .copyWith(fontSize: 16, color: konDarkColorB2),
                           ),
                           Text(
                             VIEW_ALL,
@@ -180,8 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             CONTINUE_LEARNING,
-                            style: buttonTextStyle().copyWith(
-                                fontSize: 16, color: konBlackTextColor),
+                            style: buttonTextStyle()
+                                .copyWith(fontSize: 16, color: konDarkColorB2),
                           ),
                           Text(
                             MY_COURSES,

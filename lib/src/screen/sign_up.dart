@@ -36,8 +36,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           Text(
             title,
-            style:
-                buttonTextStyle().copyWith(color: konTextInputBorderTextColor),
+            style: buttonTextStyle().copyWith(color: konDarkColorB1),
           )
         ],
       ),
@@ -47,7 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: konScaffoldBGColor,
+      backgroundColor: konLightColor2,
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.only(top: 20, bottom: 8, left: 8, right: 8),
@@ -66,16 +65,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   child: TextFormField(
-                    style: mediumTextStyle()
-                        .copyWith(color: konTextInputBorderTextColor),
+                    style: mediumTextStyle().copyWith(color: konDarkColorB1),
                     decoration: textFormFieldInputDecoration('email'),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   child: TextFormField(
-                    style: mediumTextStyle()
-                        .copyWith(color: konTextInputBorderTextColor),
+                    style: mediumTextStyle().copyWith(color: konDarkColorB1),
                     decoration: textFormFieldInputDecoration('password')
                         .copyWith(suffixIcon: Icon(Icons.visibility)),
                   ),
@@ -92,20 +89,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Container(
                         height: 1.5,
                         width: MediaQuery.of(context).size.width / 4,
-                        color: konTextInputBorderFillColor,
+                        color: konLightColor3,
                       ),
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 8),
                         child: Text(
                           SIGN_UP_OPTION,
-                          style: smallTextStyle()
-                              .copyWith(color: konTextInputBorderFillColor),
+                          style:
+                              smallTextStyle().copyWith(color: konLightColor3),
                         ),
                       ),
                       Container(
                         height: 1.5,
                         width: MediaQuery.of(context).size.width / 4,
-                        color: konTextInputBorderFillColor,
+                        color: konLightColor3,
                       ),
                     ],
                   ),
@@ -127,15 +124,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     children: [
                       Text(
                         ALREADY_MEMBER,
-                        style: smallTextStyle()
-                            .copyWith(color: konTextInputBorderTextColor),
+                        style: smallTextStyle().copyWith(color: konDarkColorB1),
                       ),
                       Text(
                         SIGN_IN,
                         style: buttonTextStyle().copyWith(
                             decoration: TextDecoration.underline,
-                            decorationColor: konPinkColor,
-                            color: konPinkColor),
+                            decorationColor: konPrimaryColor1,
+                            color: konPrimaryColor1),
                       ),
                     ],
                   ),
