@@ -73,171 +73,254 @@ class SearchScreen extends StatelessWidget {
                                     top: Radius.circular(25.0)),
                               ),
                               backgroundColor: konLightColor2,
+                              isScrollControlled: true,
                               builder: (context) {
-                                return Container(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: konLightColor1,
-                                          borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(25.0)),
-                                        ),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 20),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Filter',
-                                              style: buttonTextStyle().copyWith(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold),
+                                return Wrap(
+                                  children: [
+                                    Container(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: konLightColor1,
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                      top: Radius.circular(
+                                                          25.0)),
                                             ),
-                                            Spacer(),
-                                            Icon(Icons.close),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        color: konLightColor1,
-                                        margin: EdgeInsets.only(top: 2),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 20),
-                                        height: 100,
-                                        width: double.infinity,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Level',
-                                              style: buttonTextStyle().copyWith(
-                                                  color: konDarkColorB1),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 15, horizontal: 20),
+                                            child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                FilterButton(label: 'Beginner'),
-                                                FilterButton(
-                                                    label: 'Intermediate'),
-                                                FilterButton(label: 'Advanced'),
+                                                Text(
+                                                  'Filter',
+                                                  style: buttonTextStyle()
+                                                      .copyWith(
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                ),
+                                                Spacer(),
+                                                Icon(Icons.close),
                                               ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        color: konLightColor1,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 20),
-                                        width: double.infinity,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Price',
-                                              style: buttonTextStyle().copyWith(
-                                                  color: konDarkColorB1),
                                             ),
-                                            SizedBox(
-                                              height: 5,
+                                          ),
+                                          Container(
+                                            color: konLightColor1,
+                                            margin: EdgeInsets.only(top: 2),
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 15, horizontal: 20),
+                                            height: 100,
+                                            width: double.infinity,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Level',
+                                                  style: buttonTextStyle()
+                                                      .copyWith(
+                                                          color:
+                                                              konDarkColorB1),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    FilterButton(
+                                                        label: 'Beginner'),
+                                                    FilterButton(
+                                                        label: 'Intermediate'),
+                                                    FilterButton(
+                                                        label: 'Advanced'),
+                                                  ],
+                                                )
+                                              ],
                                             ),
-                                            RangeSlider(
-                                              inactiveColor: rangeInActiveColor,
-                                              activeColor: konPrimaryColor1,
-                                              values: _currentRangeValues,
-                                              min: 0,
-                                              max: 100,
-                                              divisions: 5,
-                                              labels: RangeLabels(
-                                                _currentRangeValues.start
-                                                    .round()
-                                                    .toString(),
-                                                _currentRangeValues.end
-                                                    .round()
-                                                    .toString(),
-                                              ),
-                                              onChanged:
-                                                  (RangeValues values) {},
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Container(
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  FilterButton(label: '0'),
-                                                  SizedBox(
-                                                    width: 15,
+                                          ),
+                                          Container(
+                                            color: konLightColor1,
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 15, horizontal: 20),
+                                            width: double.infinity,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Price',
+                                                  style: buttonTextStyle()
+                                                      .copyWith(
+                                                          color:
+                                                              konDarkColorB1),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                RangeSlider(
+                                                  inactiveColor:
+                                                      rangeInActiveColor,
+                                                  activeColor: konPrimaryColor1,
+                                                  values: _currentRangeValues,
+                                                  min: 0,
+                                                  max: 100,
+                                                  divisions: 5,
+                                                  labels: RangeLabels(
+                                                    _currentRangeValues.start
+                                                        .round()
+                                                        .toString(),
+                                                    _currentRangeValues.end
+                                                        .round()
+                                                        .toString(),
                                                   ),
-                                                  FilterButton(label: '2500'),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        color: konLightColor1,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 20),
-                                        height: 100,
-                                        width: double.infinity,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Language',
-                                              style: buttonTextStyle().copyWith(
-                                                  color: konDarkColorB1),
+                                                  onChanged:
+                                                      (RangeValues values) {},
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      FilterButton(label: '0'),
+                                                      SizedBox(
+                                                        width: 15,
+                                                      ),
+                                                      FilterButton(
+                                                          label: '2500'),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
                                             ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
+                                          ),
+                                          Container(
+                                            color: konLightColor1,
+                                            padding: EdgeInsets.only(
+                                                top: 10,
+                                                bottom: 10,
+                                                left: 20,
+                                                right: 20),
+                                            height: 100,
+                                            width: double.infinity,
+                                            child: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                FilterButton(label: 'English'),
-                                                FilterButton(label: 'Arabic'),
-                                                FilterButton(label: 'Tamil'),
-                                                FilterButton(label: 'Hindi'),
+                                                Text(
+                                                  'Language',
+                                                  style: buttonTextStyle()
+                                                      .copyWith(
+                                                          color:
+                                                              konDarkColorB1),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    FilterButton(
+                                                        label: 'English'),
+                                                    FilterButton(
+                                                        label: 'Arabic'),
+                                                    FilterButton(
+                                                        label: 'Tamil'),
+                                                    FilterButton(
+                                                        label: 'Hindi'),
+                                                  ],
+                                                )
                                               ],
-                                            )
-                                          ],
-                                        ),
+                                            ),
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                color: konLightColor1,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey[300],
+                                                    blurRadius: 2.0,
+                                                  ),
+                                                ]),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      border: Border(
+                                                          right: BorderSide(
+                                                              color:
+                                                                  konLightColor2,
+                                                              width: 1.5))),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2,
+                                                  padding: EdgeInsets.all(10),
+                                                  child: Center(
+                                                      child: Text(
+                                                    'Reset',
+                                                    style: largeTextStyle()
+                                                        .copyWith(
+                                                            color: Color(
+                                                                0xff000000)),
+                                                  )),
+                                                ),
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2,
+                                                  padding: EdgeInsets.all(10),
+                                                  child: Center(
+                                                      child: Text(
+                                                    'Reset',
+                                                    style: largeTextStyle()
+                                                        .copyWith(
+                                                            color: Color(
+                                                                0xff000000)),
+                                                  )),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    )
+                                  ],
                                 );
                               });
                         },
