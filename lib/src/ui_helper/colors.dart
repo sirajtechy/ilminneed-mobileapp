@@ -20,6 +20,7 @@ const Color konTextInputBorderErrorColor = Color(0xffF65C26);
 const Color konImageBGColor = Color(0xffBCD1FF);
 const Color rangeInActiveColor = Color(0xffE6E6E6);
 const Color ratingColor = Color(0xff009E6A);
+const Color konDarkBlackColor = Color(0xff000000);
 
 const List<Color> orangeGradient = [Color(0xffFF6188), Color(0xffFFB199)];
 const List<Color> blueGradient = [Color(0xff4481EB), Color(0xff04BEFE)];
