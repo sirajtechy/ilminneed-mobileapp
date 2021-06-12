@@ -30,10 +30,10 @@ class ThumbNailWidget extends StatelessWidget {
                       )
                     : BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        gradient: LinearGradient(colors: [
-                          Color(0xffFF6188),
-                          Color(0xffFFB199),
-                        ])),
+                        gradient: LinearGradient(
+                          colors: orangeGradient,
+                        ),
+                      ),
                 child: SvgPicture.asset(
                   laptop,
                   height: 100,
@@ -46,11 +46,10 @@ class ThumbNailWidget extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: konBlackTextColor),
+                      color: konDarkColorB2),
                   child: Text(
                     '12.15',
-                    style:
-                        mediumTextStyle().copyWith(color: konButtonTextColor),
+                    style: mediumTextStyle().copyWith(color: konLightColor1),
                   ),
                 ),
               )
@@ -61,7 +60,7 @@ class ThumbNailWidget extends StatelessWidget {
             child: Text(
               'IT & Technology',
               style: smallTextStyle()
-                  .copyWith(fontSize: 10, color: konTextInputBorderFillColor),
+                  .copyWith(fontSize: 10, color: konLightColor3),
             ),
           ),
           Container(
@@ -69,7 +68,7 @@ class ThumbNailWidget extends StatelessWidget {
             child: Text(
               'Declarative interfaces for any Apple Devices..',
               style: smallTextStyle()
-                  .copyWith(fontSize: 14, color: konTextInputBorderTextColor),
+                  .copyWith(fontSize: 14, color: konDarkColorB1),
             ),
           ),
           !continueLearing
@@ -77,8 +76,8 @@ class ThumbNailWidget extends StatelessWidget {
                   margin: EdgeInsets.only(top: 2),
                   child: Text(
                     'By Shamsudeen',
-                    style: smallTextStyle().copyWith(
-                        fontSize: 12, color: konTextInputBorderFillColor),
+                    style: smallTextStyle()
+                        .copyWith(fontSize: 12, color: konLightColor3),
                   ),
                 )
               : Container(),
@@ -94,12 +93,12 @@ class ThumbNailWidget extends StatelessWidget {
                       Text(
                         ' 4.5 ',
                         style: buttonTextStyle()
-                            .copyWith(fontSize: 12, color: konRatingTextColor),
+                            .copyWith(fontSize: 12, color: konDarkColorD3),
                       ),
                       Text(
                         ' (1.2k) ',
-                        style: mediumTextStyle()
-                            .copyWith(color: konTextInputBorderFillColor),
+                        style:
+                            mediumTextStyle().copyWith(color: konLightColor3),
                       ),
                     ],
                   ),

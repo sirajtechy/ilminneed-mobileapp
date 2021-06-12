@@ -19,7 +19,7 @@ InputDecoration textFormFieldInputDecoration(String hintText) {
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(65.0),
       borderSide: BorderSide(
-        color: konTextInputBorderFillColor,
+        color: konLightColor3,
         width: 1.0,
       ),
     ),
@@ -49,7 +49,7 @@ InputDecoration searchTextFormFieldInputDecoration(String hintText) {
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10.0),
       borderSide: BorderSide(
-        color: konTextInputBorderFillColor,
+        color: konLightColor3,
         width: 1.0,
       ),
     ),
@@ -59,10 +59,10 @@ InputDecoration searchTextFormFieldInputDecoration(String hintText) {
 BoxDecoration socialButtonDecoration() {
   return BoxDecoration(
       borderRadius: BorderRadius.circular(50),
-      color: konButtonTextColor,
+      color: konLightColor1,
       boxShadow: [
         BoxShadow(
-          color: konScaffoldBGColor,
+          color: konLightColor2,
           offset: const Offset(
             5.0,
             5.0,

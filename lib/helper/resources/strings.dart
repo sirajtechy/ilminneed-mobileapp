@@ -17,3 +17,11 @@ const SEARCH_COURSES = "Search Courses";
 const POPULAR = "Popular on Ilminneed";
 const VIEW_ALL = "View All";
 const MY_COURSES = "My Courses";
+const FORGOT_PASSWORD_HINT =
+    "Don’t worry, Enter your registered email id will send you a link to create new";
+const SEND_LINK = "Send link";
+const RESET_LINK = "A link has been sent to your Email Id !";
+const RESET_LINK_HINT = "Please check your inbox or spam folder for the link";
+const RESEND = "Resend";
+const ABOUT_ME =
+    "Phasellus vestibulum lorem sed risus ultricies tristique nulla aliquet. Vel quam elementum pulvinar etiamnim lobortis scelerisque. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur....";
