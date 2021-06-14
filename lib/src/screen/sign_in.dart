@@ -9,6 +9,7 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
 import 'package:ilminneed/src/widgets/header_text.dart';
 import 'package:ilminneed/src/widgets/hint_text.dart';
+import 'package:get/get.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key key}) : super(key: key);
@@ -76,13 +77,18 @@ class _SignInScreenState extends State<SignInScreen> {
                 ButtonWidget(
                   value: SIGN_IN,
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Center(
-                    child: Text(
-                      FORGOT_PASSWORD,
-                      style: buttonTextStyle()
-                          .copyWith(color: konTextInputBorderActiveColor),
+                InkWell(
+                  onTap: () {
+                    Get.toNamed('/forgotPassword');
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(top: 30),
+                    child: Center(
+                      child: Text(
+                        FORGOT_PASSWORD,
+                        style: buttonTextStyle()
+                            .copyWith(color: konTextInputBorderActiveColor),
+                      ),
                     ),
                   ),
                 ),
@@ -123,23 +129,28 @@ class _SignInScreenState extends State<SignInScreen> {
                     ],
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        NEW_MEMBER,
-                        style: smallTextStyle().copyWith(color: konDarkColorB1),
-                      ),
-                      Text(
-                        CREATE_ACCOUNT,
-                        style: buttonTextStyle().copyWith(
-                            decoration: TextDecoration.underline,
-                            decorationColor: konPrimaryColor1,
-                            color: konPrimaryColor1),
-                      ),
-                    ],
+                InkWell(
+                  onTap: () {
+                    Get.offAllNamed('/signUp');
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          NEW_MEMBER,
+                          style: smallTextStyle().copyWith(color: konDarkColorB1),
+                        ),
+                        Text(
+                          CREATE_ACCOUNT,
+                          style: buttonTextStyle().copyWith(
+                              decoration: TextDecoration.underline,
+                              decorationColor: konPrimaryColor1,
+                              color: konPrimaryColor1),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],

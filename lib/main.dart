@@ -1,6 +1,7 @@
 import 'package:ilminneed/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       initialRoute: '/splash',
       onGenerateRoute: RouteGenerator.generateRoute,
       debugShowCheckedModeBanner: false,

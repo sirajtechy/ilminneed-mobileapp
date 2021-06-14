@@ -1,4 +1,4 @@
 {
-  "base_url": "http://domain.com/",
-  "api_base_url": "http://domain.com/api/v1/"
+  "base_url": "http://itea.localhost/",
+  "api_base_url": "http://itea.localhost/api/"
 }

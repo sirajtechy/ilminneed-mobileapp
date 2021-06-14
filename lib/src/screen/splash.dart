@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../helper/resources/images.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
+import 'package:get/get.dart';
 
 void main() {
   runApp(new MaterialApp(
@@ -30,9 +31,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigationPage() async {
     if(await ctrl.LoggedIn() == true){
-      Navigator.of(context).pushReplacementNamed('/');
+      Get.offAllNamed('/');
     }else{
-      Navigator.of(context).pushReplacementNamed('/signIn');
+      Get.offAllNamed('/welcome');
     }
   }
 
