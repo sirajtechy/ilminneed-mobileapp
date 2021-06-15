@@ -21,9 +21,10 @@ const Color konImageBGColor = Color(0xffBCD1FF);
 const Color rangeInActiveColor = Color(0xffE6E6E6);
 const Color ratingColor = Color(0xff009E6A);
 const Color konDarkBlackColor = Color(0xff000000);
+const Color konGreenColor = Color(0xff05B333);
 
 const List<Color> orangeGradient = [Color(0xffFF6188), Color(0xffFFB199)];
 const List<Color> blueGradient = [Color(0xff4481EB), Color(0xff04BEFE)];
 const List<Color> greenGradient = [Color(0xff63F7A1), Color(0xff27AE60)];
 
-//#009E6A, 100%
+//#E6005C, 100%

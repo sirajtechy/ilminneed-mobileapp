@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/screen/courses/course_detail.dart';
 import 'package:ilminneed/src/screen/explore.dart';
 import 'package:ilminneed/src/screen/myaccount.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
+import 'package:ilminneed/src/widgets/add_bookmark.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -33,6 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
       switch (tabItem) {
         case 0:
           currentPage = ExploreScreen();
+          break;
+        case 1:
+          currentPage = CourseDetail();
+          break;
+        case 2:
+          currentPage = AddBookmark();
           break;
         case 3:
           currentPage = MyAccountScreen();

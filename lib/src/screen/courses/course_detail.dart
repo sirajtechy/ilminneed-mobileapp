@@ -4,6 +4,7 @@ import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/helper/resources/strings.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
+import 'package:ilminneed/src/widgets/bookmark_detail.dart';
 import 'package:ilminneed/src/widgets/comments.dart';
 
 class CourseDetail extends StatefulWidget {
@@ -369,12 +370,68 @@ class _CourseDetailState extends State<CourseDetail> {
                     ),
                   ),
                   Container(
-                    height: 500,
-                    width: double.infinity,
+                    child: ListView.builder(
+                        itemCount: 8,
+                        itemBuilder: (BuildContext context, int index) {
+                          final isActive = index == 0;
+                          return Container(
+                            color: isActive
+                                ? konTextInputBorderActiveColor.withOpacity(0.3)
+                                : Colors.white,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${index + 1}',
+                                  style: largeTextStyle().copyWith(
+                                    fontSize: 14,
+                                    color: konDarkColorB1,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Introduction',
+                                      style: largeTextStyle().copyWith(
+                                        fontSize: 16,
+                                        color: konDarkColorB1,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      '3.00',
+                                      style: mediumTextStyle().copyWith(
+                                          fontSize: 14, color: konDarkColorB2),
+                                    )
+                                  ],
+                                ),
+                                Spacer(),
+                                Icon(
+                                  isActive ? Icons.done : Icons.lock,
+                                  color:
+                                      isActive ? konGreenColor : konDarkColorB1,
+                                )
+                              ],
+                            ),
+                          );
+                        }),
                   ),
                   Container(
-                    height: 500,
-                    width: double.infinity,
+                    color: konLightColor2,
+                    child: ListView.builder(
+                        itemCount: 5,
+                        itemBuilder: (BuildContext context, int index) {
+                          return BookMarkDetail();
+                        }),
                   ),
                 ],
               ),
@@ -398,7 +455,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Container(
       child: _tabBar,
     );
@@ -500,16 +558,16 @@ class _HomePageState extends State<HomePage> {
                     Container(
                       height: 600,
                       color: Colors.blue[200],
-                      child: Center(
-                        child: Text(
-                          'Settings Tab',
-                          style: TextStyle(fontSize: 40),
-                        ),
-                      ),
+                  child: Center(
+                    child: Text(
+                      'Settings Tab',
+                      style: TextStyle(fontSize: 40),
                     ),
-                    Container(
-                      height: 1200,
-                      color: Colors.pink,
+                  ),
+                ),
+                Container(
+                  height: 1200,
+                  color: Colors.pink,
                 ),
               ]),
             ),
