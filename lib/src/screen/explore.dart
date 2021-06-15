@@ -7,6 +7,7 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import '../widgets/thumbnail.dart';
+import 'package:get/get.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key key}) : super(key: key);
@@ -99,13 +100,18 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           chipContainer('Business'),
                           chipContainer('Design'),
                           chipContainer('Lifestyle'),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25), border: Border.all(color: konLightColor3)),
-                            child: Text(
-                              'View All +',
-                              style: smallTextStyle().copyWith(color: konLightColor3),
+                          InkWell(
+                            onTap:() {
+                              Get.toNamed('/category');
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25), border: Border.all(color: konLightColor3)),
+                              child: Text(
+                                'View All +',
+                                style: smallTextStyle().copyWith(color: konLightColor3),
+                              ),
                             ),
                           )
                         ],

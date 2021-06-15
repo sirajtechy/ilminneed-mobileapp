@@ -2,13 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ilminneed/helper/resources/images.dart';
-import 'package:ilminneed/helper/resources/strings.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
-import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
-import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
-import 'package:ilminneed/src/widgets/header_text.dart';
-import 'package:ilminneed/src/widgets/hint_text.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:get/get.dart';
 
 class MyAccountScreen extends StatefulWidget {
@@ -19,9 +15,25 @@ class MyAccountScreen extends StatefulWidget {
 }
 
 class _MyAccountScreenState extends State<MyAccountScreen> {
+  bool loggedIn = false;
+  bool checked = false;
+  _checklogin() async {
+    if(await ctrl.LoggedIn() == true){
+    setState(() {
+      loggedIn = true;
+      checked = true;
+    });
+    }else{
+      setState(() {
+        loggedIn = false;
+        checked = true;
+      });
+    }
+  }
 
   @override
   void initState() {
+    _checklogin();
     super.initState();
   }
 
@@ -39,12 +51,13 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
               children: [
                 SvgPicture.asset(signIn),
                 InkWell(
-                  onTap: () {
-                    print('yesss');
+                  onTap: () async {
+                    await ctrl.logout();
+                    Get.offAllNamed('/signIn');
                   },
-                  child: ButtonWidget(
-                    value: 'Log Out',
-                  ),
+                  child: checked?ButtonWidget(
+                    value: loggedIn == true?'Log Out':'Log In',
+                  ):Text(''),
                 ),
               ],
             ),

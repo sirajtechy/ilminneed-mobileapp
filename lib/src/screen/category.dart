@@ -3,9 +3,49 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:get/get.dart';
+import 'package:ilminneed/src/model/category.dart';
 
-class Category extends StatelessWidget {
+class Category extends StatefulWidget {
   const Category({Key key}) : super(key: key);
+
+  @override
+  _CategoryState createState() => _CategoryState();
+}
+
+class _CategoryState extends State<Category> {
+
+  bool _loading = true;
+  List<CategoryModel> _category = new List<CategoryModel>();
+
+  _fetchcategory() async {
+    setState(() { _loading = true;});
+    var res = await ctrl.getrequest({}, 'categories');
+    setState(() { _loading = false; });
+    if (res != null) {
+      List<dynamic> data = res;
+      for (int i = 0; i < data.length; i++) {
+        _category.add(CategoryModel.fromJson(data[i]));
+      }
+    } else {
+      setState(() { _loading = false; });
+      await ctrl.toastmsg('Enter valid credentials', 'long');
+    }
+  }
+
+
+  @override
+  void initState() {
+    _fetchcategory();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,59 +66,67 @@ class Category extends StatelessWidget {
         ],
       ),
       backgroundColor: konLightColor1,
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                  color: konLightColor2,
-                  borderRadius: BorderRadius.circular(8)),
-              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-              child: TextFormField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  suffixIcon: Icon(Icons.search),
-                  hintText: 'Search course',
-                  hintStyle: mediumTextStyle().copyWith(color: konLightColor),
+      body: LoadingOverlay(
+        isLoading: _loading,
+        child: !_loading && _category.length != 0?Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                    color: konLightColor2,
+                    borderRadius: BorderRadius.circular(8)),
+                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    suffixIcon: Icon(Icons.search),
+                    hintText: 'Search course',
+                    hintStyle: mediumTextStyle().copyWith(color: konLightColor),
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                  child: Wrap(
-                    direction: Axis.horizontal,
-                    spacing: 20.0,
-                    runSpacing: 20.0,
-                    children: List.generate(
-                      10,
-                      (index) => Container(
-                        height: 80,
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.blueAccent,
-                        ),
-                        child: Center(
-                          child: Text(
-                            '${index + 1}',
-                            style: buttonTextStyle()
-                                .copyWith(fontSize: 18, color: konLightColor1),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      spacing: 20.0,
+                      runSpacing: 20.0,
+                      children: List.generate(
+                        _category.length,
+                        (index) => Container(
+                          height: 80,
+                          width: MediaQuery.of(context).size.width / 2.5,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blueAccent,
+                          ),
+                          child: Center(
+                            child: Text(
+                              _category[index].name.toString(),
+                              style: buttonTextStyle()
+                                  .copyWith(fontSize: 18, color: konLightColor1),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            )
-          ],
-        ),
+              )
+            ],
+          ),
+        ):!_loading && _category.length == 0?Container(child: Center(
+          child: Text(
+            "No category found",
+            textAlign: TextAlign.center,
+          ),
+        ),):Container(child: Text(''),),
       ),
     );
   }

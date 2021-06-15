@@ -6,7 +6,30 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+Future getrequest(data,module) async {
+  Fluttertoast.cancel();
+  final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
+  final client = new http.Client();
+  try {
+    final response = await client.get(
+      endpoint,
+      headers: await _headerwithouttoken(),
+    );
+    if (response.statusCode == 200) {
+      print(response.body);
+      return json.decode(response.body);
+    } else {
+      print(Exception(response.body).toString());
+      return null;
+    }
+  } on SocketException {
+    print(Exception('Failed to load post'));
+    return null;
+  }
+}
+
 Future requestwithoutheader(data,module) async {
+  Fluttertoast.cancel();
   final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
   final client = new http.Client();
   try {
@@ -29,6 +52,7 @@ Future requestwithoutheader(data,module) async {
 }
 
 Future requestwithheader(data,module) async {
+  Fluttertoast.cancel();
   final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
   final client = new http.Client();
   try {
@@ -76,15 +100,16 @@ Future getusername() async {
 
 Future saveuserdata(data) async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
-  _prefs.setInt('user_id', data['id']);
-  _prefs.setString('full_name', data['full_name']);
-  _prefs.setString('pincode', data['pincode']);
+  _prefs.setString('user_id', data['user_id'].toString());
+  _prefs.setString('full_name', data['first_name']);
+  _prefs.setString('role', data['role']);
   if(data['token'] != '' && data['token'] != null){
     _prefs.setString('token', data['token']);
   }
   _prefs.setString('email', data['email']);
-  _prefs.setString('phone', data['phone']);
+  _prefs.setString('role_id', data['role_id']);
   print('saved sharedpreferences');
+  return true;
 }
 
 Future logout() async {
@@ -125,6 +150,7 @@ Future<bool> validateMobile(String value) async{
 }
 
 Future toastmsg(String value,String time) async {
+  Fluttertoast.cancel();
   return Fluttertoast.showToast(
       msg: value,
       toastLength: time == 'short'?Toast.LENGTH_SHORT:Toast.LENGTH_LONG,

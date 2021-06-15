@@ -10,6 +10,8 @@ import 'package:ilminneed/src/widgets/button.dart';
 import 'package:ilminneed/src/widgets/header_text.dart';
 import 'package:ilminneed/src/widgets/hint_text.dart';
 import 'package:get/get.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
+import 'package:loading_overlay/loading_overlay.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key key}) : super(key: key);
@@ -19,6 +21,30 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+
+  final GlobalKey<FormState> _formKey  = GlobalKey<FormState>();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  bool _loading = false;
+  bool _obscureText = true;
+
+  _login() async {
+    if(!_formKey.currentState.validate()) {
+      return;
+    }
+    _formKey.currentState.save();
+    setState(() { _loading = true;});
+    var res = await ctrl.requestwithoutheader({'email': _email.text,'password': _password.text}, 'login');
+    setState(() { _loading = false; });
+    if (res != null && res['validity'] == 1) {
+      await ctrl.saveuserdata(res);
+      Get.offAllNamed('/');
+    } else {
+      setState(() { _loading = false; });
+      await ctrl.toastmsg('Enter valid credentials', 'long');
+    }
+  }
+
   Widget SocialMediaButton(String svgAsset, String title) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -44,116 +70,156 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: konLightColor2,
-      body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.only(top: 20, bottom: 8, left: 8, right: 8),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SvgPicture.asset(signIn),
-                HeaderTextWidget(label: CONTINUE_LEARNING),
-                HintWidget(label: SIGN_IN_HINT),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  child: TextFormField(
-                    style: mediumTextStyle().copyWith(color: konDarkColorB1),
-                    decoration: textFormFieldInputDecoration('email'),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  child: TextFormField(
-                    style: mediumTextStyle().copyWith(color: konDarkColorB1),
-                    decoration: textFormFieldInputDecoration('password')
-                        .copyWith(suffixIcon: Icon(Icons.visibility)),
-                  ),
-                ),
-                ButtonWidget(
-                  value: SIGN_IN,
-                ),
-                InkWell(
-                  onTap: () {
-                    Get.toNamed('/forgotPassword');
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(top: 30),
-                    child: Center(
-                      child: Text(
-                        FORGOT_PASSWORD,
-                        style: buttonTextStyle()
-                            .copyWith(color: konTextInputBorderActiveColor),
+    return LoadingOverlay(
+      isLoading: _loading,
+      child: Scaffold(
+        backgroundColor: konLightColor2,
+        body: SafeArea(
+          child: Container(
+            margin: EdgeInsets.only(top: 20, bottom: 8, left: 8, right: 8),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(signIn),
+                    HeaderTextWidget(label: CONTINUE_LEARNING),
+                    HintWidget(label: SIGN_IN_HINT),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                      child: TextFormField(
+                        controller: _email,
+                        validator: (String value) {
+                          if(value.isEmpty){
+                            return 'Email is required';
+                          }
+                          if(!RegExp("^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*").hasMatch(value)){
+                            return 'Enter a valid email address';
+                          }
+                          return null;
+                        },
+                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        decoration: textFormFieldInputDecoration('email'),
                       ),
                     ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 1.5,
-                        width: MediaQuery.of(context).size.width / 4,
-                        color: konLightColor3,
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: TextFormField(
+                        controller: _password,
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: _obscureText,
+                        validator: (String value) {
+                          if(value.isEmpty){
+                            return 'Password is required';
+                          }
+                        },
+                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        decoration: textFormFieldInputDecoration('password')
+                            .copyWith(suffixIcon: InkWell(onTap: (){  setState(() {
+                          _obscureText = !_obscureText;
+                        });},child: Icon(_obscureText ? Icons.visibility : Icons.visibility_off))),
                       ),
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          SIGN_IN_OPTION,
-                          style:
-                              smallTextStyle().copyWith(color: konLightColor3),
-                        ),
-                      ),
-                      Container(
-                        height: 1.5,
-                        width: MediaQuery.of(context).size.width / 4,
-                        color: konLightColor3,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 25, left: 15, right: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SocialMediaButton(google, GOOGLE),
-                      SocialMediaButton(facebook, FACEBOOK),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Get.offAllNamed('/signUp');
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(top: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          NEW_MEMBER,
-                          style: smallTextStyle().copyWith(color: konDarkColorB1),
-                        ),
-                        Text(
-                          CREATE_ACCOUNT,
-                          style: buttonTextStyle().copyWith(
-                              decoration: TextDecoration.underline,
-                              decorationColor: konPrimaryColor1,
-                              color: konPrimaryColor1),
-                        ),
-                      ],
                     ),
-                  ),
-                )
-              ],
+                    InkWell(
+                      onTap: _login,
+                      child: ButtonWidget(
+                        value: SIGN_IN,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.toNamed('/forgotPassword');
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 30),
+                        child: Center(
+                          child: Text(
+                            FORGOT_PASSWORD,
+                            style: buttonTextStyle()
+                                .copyWith(color: konTextInputBorderActiveColor),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 1.5,
+                            width: MediaQuery.of(context).size.width / 4,
+                            color: konLightColor3,
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 8),
+                            child: Text(
+                              SIGN_IN_OPTION,
+                              style:
+                                  smallTextStyle().copyWith(color: konLightColor3),
+                            ),
+                          ),
+                          Container(
+                            height: 1.5,
+                            width: MediaQuery.of(context).size.width / 4,
+                            color: konLightColor3,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 25, left: 15, right: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SocialMediaButton(google, GOOGLE),
+                          SocialMediaButton(facebook, FACEBOOK),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.offAllNamed('/signUp');
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              NEW_MEMBER,
+                              style: smallTextStyle().copyWith(color: konDarkColorB1),
+                            ),
+                            Text(
+                              CREATE_ACCOUNT,
+                              style: buttonTextStyle().copyWith(
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: konPrimaryColor1,
+                                  color: konPrimaryColor1),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
           ),
         ),

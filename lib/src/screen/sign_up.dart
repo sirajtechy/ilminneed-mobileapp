@@ -27,25 +27,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool _loading = false;
+  bool _obscureText = true;
 
   _register() async {
-    setState(() {
-      _loading = true;
-    });
+    if(!_formKey.currentState.validate()) {
+      return;
+    }
+    _formKey.currentState.save();
+    setState(() { _loading = true;});
     var res = await ctrl.requestwithoutheader({'name': _name.text,'email': _email.text,'password': _password.text}, 'register/user');
-    setState(() {
-      _loading = false;
-    });
-    if (res != null && res['status'] == 'success') {
-      //await ctrl.toastmsg('Registered', 'long');
-      setState(() {
-        _formKey.currentState.reset();
-      });
+    setState(() { _loading = false; });
+    if (res != null && res['error'] == null) {
+      await ctrl.toastmsg(res['message'], 'long');
+      Get.offAllNamed('/signIn');
     } else {
-      setState(() {
-        _loading = false;
-      });
-      await ctrl.toastmsg('Error. Please try again', 'long');
+      setState(() { _loading = false; });
+      await ctrl.toastmsg(res['message'], 'long');
     }
   }
 
@@ -72,6 +69,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -133,6 +140,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: TextFormField(
                         controller: _password,
                         keyboardType: TextInputType.visiblePassword,
+                        obscureText: _obscureText,
                         validator: (String value) {
                           if(value.isEmpty){
                             return 'Password is required';
@@ -143,17 +151,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                         style: mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('password')
-                            .copyWith(suffixIcon: Icon(Icons.visibility)),
+                            .copyWith(suffixIcon: InkWell(onTap: (){  setState(() {
+                          _obscureText = !_obscureText;
+                        });},child: Icon(_obscureText ? Icons.visibility : Icons.visibility_off))),
                       ),
                     ),
                     InkWell(
-                      onTap: (){
-                        if(!_formKey.currentState.validate()) {
-                          return;
-                        }
-                        _formKey.currentState.save();
-                        _register();
-                      },
+                      onTap: _register,
                       child: ButtonWidget(
                         value: SIGN_UP,
                       ),
