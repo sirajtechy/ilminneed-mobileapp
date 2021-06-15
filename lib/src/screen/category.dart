@@ -31,7 +31,7 @@ class _CategoryState extends State<Category> {
       }
     } else {
       setState(() { _loading = false; });
-      await ctrl.toastmsg('Enter valid credentials', 'long');
+      await ctrl.toastmsg('Error. please try again', 'long');
     }
   }
 
@@ -81,6 +81,9 @@ class _CategoryState extends State<Category> {
                     borderRadius: BorderRadius.circular(8)),
                 margin: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
                 child: TextFormField(
+                  onTap: (){
+                    Get.toNamed('/search');
+                  },
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     suffixIcon: Icon(Icons.search),

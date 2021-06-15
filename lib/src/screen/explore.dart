@@ -84,6 +84,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: TextFormField(
+                        onTap: (){
+                          Get.toNamed('/search');
+                        },
                         style: mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration:
                         searchTextFormFieldInputDecoration(SEARCH_COURSES).copyWith(suffixIcon: Icon(Icons.search)),
