@@ -1,17 +1,17 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ilminneed/helper/resources/images.dart';
+import 'package:ilminneed/src/model/course.dart';
+import 'package:ilminneed/src/model/courselevel.dart';
 import 'package:ilminneed/src/screen/courses/latest_course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/widgets/filter_button.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:get/get.dart';
-import 'package:ilminneed/src/model/category.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key key}) : super(key: key);
@@ -23,31 +23,90 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _coursename = TextEditingController();
   bool _loading = false;
-  Timer timer;
+  List<Course> _course = new List<Course>();
+  int pageno = 1;
+  bool isLoadingVertical = false;
+  bool _current = false;
+  bool _loading_finished = false;
+  bool _loading_product = true;
+
 
   _searchcourse() async {
-    timer?.cancel();
-    timer = new Timer(new Duration(seconds: 2), () async {
-      setState(() { _loading = true;});
-      var res = await ctrl.getrequest({}, 'categories');
-      setState(() { _loading = false; });
+    if (_current == false && _loading_finished == false) {
+      setState(() {
+        _current = true;
+        isLoadingVertical = true;
+      });
+      await new Future.delayed(const Duration(seconds: 2));
+      Map d = {
+        'search': _coursename.text,
+        'category': '',
+        'level': '',
+        'price': '',
+        'language': '',
+      };
+      var oldtxt = _coursename.text;
+      var res = await ctrl.requestwithoutheader(d, 'filter_course');
+      if (mounted) {
+        setState(() {
+          _loading_finished = true;
+          _loading = false;
+          _loading_product = false;
+          _current = false;
+          isLoadingVertical = false;
+        });
+      }
       if (res != null) {
+        if (oldtxt == _coursename.text) {
+          _course.clear();
+        }
+        List<dynamic> data = res;
+        print(data.length.toString());
+        for (int i = 0; i < data.length; i++) {
+          if (mounted) {
+            setState(() {
+              _course.add(Course.fromJson(data[i]));
+            });
+          }
+        }
+        setState(() {
+          pageno++;
+        });
       } else {
-        setState(() { _loading = false; });
+        if (mounted) {
+          setState(() {
+            _loading_finished = true;
+            _loading = false;
+            _loading_product = false;
+            _current = false;
+            isLoadingVertical = false;
+          });
+        }
         await ctrl.toastmsg('Error. please try again', 'long');
       }
-    });
+    } else {
+      print('no');
+    }
+  }
 
+  _filtercourse() {
+    setState(() {
+      _loading_finished = false;
+      _current = false;
+    });
+    _searchcourse();
   }
 
 
   @override
   void initState() {
+    _filtercourse();
     super.initState();
   }
 
   @override
   void dispose() {
+    _course?.clear();
     super.dispose();
   }
 
@@ -78,15 +137,30 @@ class _SearchScreenState extends State<SearchScreen> {
                               color: konLightColor2),
                           child: TextFormField(
                             controller: _coursename,
-                            onChanged: (v){
-                              _searchcourse();
+                            onChanged: (v) {
+                              setState(() {
+                                _course.clear();
+                              });
+                              _filtercourse();
                             },
                             autofocus: true,
                             decoration: InputDecoration(
-                                prefixIcon: InkWell(onTap:(){ FocusScope.of(context).unfocus();
-                                Get.back(); },child: Icon(Icons.arrow_back)),
+                                prefixIcon: InkWell(
+                                    onTap: () {
+                                      FocusScope.of(context).unfocus();
+                                      Get.back();
+                                    },
+                                    child: Icon(Icons.arrow_back)),
                                 border: InputBorder.none,
-                                suffixIcon: Icon(Icons.close)),
+                                suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _course.clear();
+                                        _coursename.text = '';
+                                        _filtercourse();
+                                      });
+                                    },
+                                    child: Icon(Icons.close))),
                           ),
                         ),
                       ),
@@ -115,6 +189,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       Spacer(),
                       GestureDetector(
                           onTap: () {
+                            CourselevelList _levellist = new CourselevelList();
                             return showModalBottomSheet(
                                 context: context,
                                 shape: RoundedRectangleBorder(
@@ -155,7 +230,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                         .copyWith(
                                                             fontSize: 18,
                                                             fontWeight:
-                                                                FontWeight.bold),
+                                                                FontWeight
+                                                                    .bold),
                                                   ),
                                                   Spacer(),
                                                   Icon(Icons.close),
@@ -164,10 +240,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                             ),
                                             Container(
                                               color: konLightColor1,
-                                              margin: EdgeInsets.only(top: 2),
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 15, horizontal: 20),
-                                              height: 100,
+                                              padding: EdgeInsets.only(
+                                                  top: 10,
+                                                  bottom: 10,
+                                                  left: 20,
+                                                  right: 20),
                                               width: double.infinity,
                                               child: Column(
                                                 mainAxisAlignment:
@@ -182,87 +259,38 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             color:
                                                                 konDarkColorB1),
                                                   ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
-                                                    children: [
-                                                      FilterButton(
-                                                          label: 'Beginner'),
-                                                      FilterButton(
-                                                          label: 'Intermediate'),
-                                                      FilterButton(
-                                                          label: 'Advanced'),
-                                                    ],
-                                                  )
                                                 ],
                                               ),
                                             ),
                                             Container(
                                               color: konLightColor1,
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 15, horizontal: 20),
+                                              height: 60,
                                               width: double.infinity,
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'Price',
-                                                    style: buttonTextStyle()
-                                                        .copyWith(
-                                                            color:
-                                                                konDarkColorB1),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  RangeSlider(
-                                                    inactiveColor:
-                                                        rangeInActiveColor,
-                                                    activeColor: konPrimaryColor1,
-                                                    values: _currentRangeValues,
-                                                    min: 0,
-                                                    max: 100,
-                                                    divisions: 5,
-                                                    labels: RangeLabels(
-                                                      _currentRangeValues.start
-                                                          .round()
-                                                          .toString(),
-                                                      _currentRangeValues.end
-                                                          .round()
-                                                          .toString(),
-                                                    ),
-                                                    onChanged:
-                                                        (RangeValues values) {},
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Container(
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        FilterButton(label: '0'),
-                                                        SizedBox(
-                                                          width: 15,
+                                              child: ListView(
+                                                scrollDirection: Axis.horizontal,
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                        child: Row(
+                                                          children: List.generate(
+                                                              _levellist.list.length, (index) {
+                                                            return Container(
+                                                              margin: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                              decoration: BoxDecoration(
+                                                                  color: konLightColor2, borderRadius: BorderRadius.circular(5)),
+                                                              child: Text(
+                                                                _levellist.list[index].name.toString(),
+                                                                style: smallTextStyle().copyWith(fontSize: 16, color: konDarkColorD3),
+                                                              ),
+                                                            );
+                                                          }),
                                                         ),
-                                                        FilterButton(
-                                                            label: '2500'),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                    ],
                                                   )
                                                 ],
                                               ),
@@ -274,39 +302,108 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   bottom: 10,
                                                   left: 20,
                                                   right: 20),
-                                              height: 100,
                                               width: double.infinity,
                                               child: Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.start,
+                                                MainAxisAlignment.start,
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     'Language',
                                                     style: buttonTextStyle()
                                                         .copyWith(
-                                                            color:
-                                                                konDarkColorB1),
+                                                        color:
+                                                        konDarkColorB1),
                                                   ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              color: konLightColor1,
+                                              height: 60,
+                                              width: double.infinity,
+                                              child: ListView(
+                                                scrollDirection: Axis.horizontal,
+                                                children: <Widget>[
                                                   Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.start,
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      FilterButton(
-                                                          label: 'English'),
-                                                      FilterButton(
-                                                          label: 'Arabic'),
-                                                      FilterButton(
-                                                          label: 'Tamil'),
-                                                      FilterButton(
-                                                          label: 'Hindi'),
+                                                      Container(
+                                                        child: Row(
+                                                          children: List.generate(
+                                                              7, (index) {
+                                                            return Container(
+                                                              margin: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                              decoration: BoxDecoration(
+                                                                  color: konLightColor2, borderRadius: BorderRadius.circular(5)),
+                                                              child: Text(
+                                                                'English',
+                                                                style: smallTextStyle().copyWith(fontSize: 16, color: konDarkColorD3),
+                                                              ),
+                                                            );
+                                                          }),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              color: konLightColor1,
+                                              padding: EdgeInsets.only(
+                                                  top: 10,
+                                                  bottom: 10,
+                                                  left: 20,
+                                                  right: 20),
+                                              width: double.infinity,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Language',
+                                                    style: buttonTextStyle()
+                                                        .copyWith(
+                                                        color:
+                                                        konDarkColorB1),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                              color: konLightColor1,
+                                              height: 60,
+                                              width: double.infinity,
+                                              child: ListView(
+                                                scrollDirection: Axis.horizontal,
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                        child: Row(
+                                                          children: List.generate(
+                                                              7, (index) {
+                                                            return Container(
+                                                              margin: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                              decoration: BoxDecoration(
+                                                                  color: konLightColor2, borderRadius: BorderRadius.circular(5)),
+                                                              child: Text(
+                                                                'English',
+                                                                style: smallTextStyle().copyWith(fontSize: 16, color: konDarkColorD3),
+                                                              ),
+                                                            );
+                                                          }),
+                                                        ),
+                                                      ),
                                                     ],
                                                   )
                                                 ],
@@ -334,10 +431,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                 color:
                                                                     konLightColor2,
                                                                 width: 1.5))),
-                                                    width: MediaQuery.of(context)
-                                                            .size
-                                                            .width /
-                                                        2,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            2,
                                                     padding: EdgeInsets.all(10),
                                                     child: Center(
                                                         child: Text(
@@ -349,10 +447,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                     )),
                                                   ),
                                                   Container(
-                                                    width: MediaQuery.of(context)
-                                                            .size
-                                                            .width /
-                                                        2,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            2,
                                                     padding: EdgeInsets.all(10),
                                                     child: Center(
                                                         child: Text(
@@ -382,19 +481,60 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 8),
-                    padding: EdgeInsets.only(left: 15, top: 10, right: 10),
-                    color: konLightColor1,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: 10,
-                      itemBuilder: (BuildContext context, int index) {
-                        return LatestCourse();
-                      },
+                  child: Padding(
+                    padding: const EdgeInsets.all(0),
+                    child: Column(
+                      children: [
+                        !_loading_product && _course.isNotEmpty
+                            ? Expanded(
+                                child: Container(
+                                margin: EdgeInsets.only(top: 8),
+                                padding: EdgeInsets.only(
+                                    left: 15, top: 10, right: 10),
+                                color: konLightColor1,
+                                child: LazyLoadScrollView(
+                                  scrollOffset: 100,
+                                  scrollDirection: Axis.vertical,
+                                  isLoading: isLoadingVertical,
+                                  onEndOfPage: _filtercourse,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: _course.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return LatestCourse(
+                                          course: _course[index]);
+                                    },
+                                  ),
+                                ),
+                              ))
+                            : !_loading_product && _course.isEmpty && !_current
+                                ? Container(
+                                    child: Center(
+                                      child: Text(
+                                        "Course not found",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                        _current
+                            ? Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: Opacity(
+                                      opacity: 1.0,
+                                      child: new CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                      ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),

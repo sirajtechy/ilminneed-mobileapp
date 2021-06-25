@@ -16,7 +16,7 @@ Future getrequest(data,module) async {
       headers: await _headerwithouttoken(),
     );
     if (response.statusCode == 200) {
-      print(response.body);
+      //print(response.body);
       return json.decode(response.body);
     } else {
       print(Exception(response.body).toString());

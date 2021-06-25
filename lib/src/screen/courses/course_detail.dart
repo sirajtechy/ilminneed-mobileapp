@@ -418,7 +418,7 @@ class _CourseDetailState extends State<CourseDetail> {
                                 Icon(
                                   isActive ? Icons.done : Icons.lock,
                                   color:
-                                      isActive ? konGreenColor : konDarkColorB1,
+                                      isActive ? konDarkColorB1 : konDarkColorB1,
                                 )
                               ],
                             ),

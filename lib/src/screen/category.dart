@@ -103,17 +103,24 @@ class _CategoryState extends State<Category> {
                       children: List.generate(
                         _category.length,
                         (index) => Container(
-                          height: 80,
+                          height: 100,
                           width: MediaQuery.of(context).size.width / 2.5,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Colors.blueAccent,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(_category[index].thumbnail),
+                            ),
                           ),
                           child: Center(
-                            child: Text(
-                              _category[index].name.toString(),
-                              style: buttonTextStyle()
-                                  .copyWith(fontSize: 18, color: konLightColor1),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal:20),
+                              child: Text(
+                                _category[index].name.toString(),
+                                textAlign: TextAlign.center,
+                                style: buttonTextStyle()
+                                    .copyWith(fontSize: 18, color: konLightColor1),
+                              ),
                             ),
                           ),
                         ),

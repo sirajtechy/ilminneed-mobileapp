@@ -35,6 +35,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     setState(() { _loading = false; });
     if (res != null && res['error'] == null) {
       await ctrl.toastmsg(res['message'], 'long');
+      Map param = { 'email': _email.text };
+      Get.toNamed('/resetLink',arguments: param);
     } else {
       setState(() { _loading = false; });
       await ctrl.toastmsg(res['message'], 'long');

@@ -9,7 +9,6 @@ import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/screen/sign_in.dart';
 import 'package:ilminneed/src/screen/sign_up.dart';
 import 'package:ilminneed/src/screen/welcome.dart';
-
 import 'src/screen/home_screen.dart';
 import 'src/screen/splash.dart';
 
@@ -30,7 +29,7 @@ class RouteGenerator {
       case '/forgotPassword':
         return MaterialPageRoute(builder: (_) => ForgotPassword());
       case '/resetLink':
-        return MaterialPageRoute(builder: (_) => ResetLink());
+        return MaterialPageRoute(builder: (_) => ResetLink(param: args));
       case '/myAccount':
         return MaterialPageRoute(builder: (_) => MyAccountScreen());
       case '/homeScreen':

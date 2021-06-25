@@ -10,3 +10,4 @@ const String star = 'assets/images/star.svg';
 const String forgot_password = 'assets/images/forgot_password.svg';
 const String reset_link = 'assets/images/reset_link.svg';
 const String course_detail_bg = 'assets/images/course_detail_bg.png';
+const String placeholder = 'assets/images/placeholder.jpg';

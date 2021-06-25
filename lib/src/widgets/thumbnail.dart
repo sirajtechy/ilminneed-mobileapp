@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
+import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class ThumbNailWidget extends StatelessWidget {
   final bool continueLearing;
+  final Course course;
 
-  const ThumbNailWidget({Key key, this.continueLearing}) : super(key: key);
+  const ThumbNailWidget({Key key, this.continueLearing, this.course}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +25,15 @@ class ThumbNailWidget extends StatelessWidget {
           Stack(
             children: [
               Container(
+                height: 120,
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 decoration: !continueLearing
                     ? BoxDecoration(
                         color: konImageBGColor,
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: this.course.thumbnail!='null'?NetworkImage(this.course.thumbnail.toString()):Text(''),
+                  ),
                         borderRadius: BorderRadius.circular(8),
                       )
                     : BoxDecoration(
@@ -34,10 +42,6 @@ class ThumbNailWidget extends StatelessWidget {
                           colors: orangeGradient,
                         ),
                       ),
-                child: SvgPicture.asset(
-                  laptop,
-                  height: 100,
-                ),
               ),
               Positioned(
                 bottom: 5,
@@ -58,24 +62,29 @@ class ThumbNailWidget extends StatelessWidget {
           Container(
             margin: EdgeInsets.symmetric(vertical: 8),
             child: Text(
-              'IT & Technology',
+              this.course.language,
               style: smallTextStyle()
                   .copyWith(fontSize: 10, color: konLightColor3),
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 4),
-            child: Text(
-              'Declarative interfaces for any Apple Devices..',
-              style: smallTextStyle()
-                  .copyWith(fontSize: 14, color: konDarkColorB1),
+          InkWell(
+            onTap: (){
+              Get.toNamed('/courseDetail');
+            },
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                this.course.title,
+                style: smallTextStyle()
+                    .copyWith(fontSize: 14, color: konDarkColorB1),
+              ),
             ),
           ),
           !continueLearing
               ? Container(
                   margin: EdgeInsets.only(top: 2),
                   child: Text(
-                    'By Shamsudeen',
+                    this.course.instructor_name.toString(),
                     style: smallTextStyle()
                         .copyWith(fontSize: 12, color: konLightColor3),
                   ),

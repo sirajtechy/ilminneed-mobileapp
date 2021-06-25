@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ilminneed/helper/resources/images.dart';
+import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class LatestCourse extends StatelessWidget {
-  const LatestCourse({Key key}) : super(key: key);
+  final Course course;
+  const LatestCourse({Key key, this.course}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +23,11 @@ class LatestCourse extends StatelessWidget {
               height: 110,
               width: 110,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xff4481EB),
-                    Color(0xff04BEFE),
-                  ],
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: NetworkImage(this.course.thumbnail),
                 ),
-                borderRadius: BorderRadius.circular(8),
               ),
             ),
           ),
@@ -43,7 +43,7 @@ class LatestCourse extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    'Declarative interfaces for any Apple Devices.. ',
+                    this.course.title,
                     softWrap: true,
                     style: smallTextStyle()
                         .copyWith(fontSize: 14, color: konDarkColorB1),
@@ -52,7 +52,7 @@ class LatestCourse extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(top: 4),
                   child: Text(
-                    'By Shamsudeen',
+                    this.course.instructor_name.toString(),
                     style: smallTextStyle()
                         .copyWith(fontSize: 12, color: konLightColor3),
                   ),
@@ -81,7 +81,7 @@ class LatestCourse extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(top: 8),
                   child: Text(
-                    "8500.00",
+                    this.course.discounted_price.toString(),
                     style: mediumTextStyle().copyWith(
                         fontSize: 14,
                         color: konDarkColorB1,
