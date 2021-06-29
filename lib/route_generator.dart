@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/screen/author.dart';
 import 'package:ilminneed/src/screen/category.dart';
 import 'package:ilminneed/src/screen/courses/course_detail.dart';
 import 'package:ilminneed/src/screen/courses/latest_course.dart';
@@ -9,6 +10,7 @@ import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/screen/sign_in.dart';
 import 'package:ilminneed/src/screen/sign_up.dart';
 import 'package:ilminneed/src/screen/welcome.dart';
+
 import 'src/screen/home_screen.dart';
 import 'src/screen/splash.dart';
 
@@ -42,6 +44,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => CourseDetail());
       case '/latestCourse':
         return MaterialPageRoute(builder: (_) => LatestCourse());
+      case '/author':
+        return MaterialPageRoute(builder: (_) => AuthorScreen());
       default:
         return _errorRoute();
     }
