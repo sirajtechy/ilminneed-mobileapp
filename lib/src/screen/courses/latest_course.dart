@@ -7,7 +7,10 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class LatestCourse extends StatelessWidget {
   final Course course;
-  const LatestCourse({Key key, this.course}) : super(key: key);
+  final bool isRating;
+
+  const LatestCourse({Key key, this.course, this.isRating = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +38,10 @@ class LatestCourse extends StatelessWidget {
             width: 5,
           ),
           Container(
+            padding: EdgeInsets.only(top: 15),
             width: MediaQuery.of(context).size.width / 1.75,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
@@ -57,27 +61,29 @@ class LatestCourse extends StatelessWidget {
                         .copyWith(fontSize: 12, color: konLightColor3),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 4),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        star,
-                        height: 15,
-                      ),
-                      Text(
-                        ' 4.5 ',
-                        style: buttonTextStyle()
-                            .copyWith(fontSize: 12, color: konDarkColorD3),
-                      ),
-                      Text(
-                        ' (1.2k) ',
-                        style:
-                            mediumTextStyle().copyWith(color: konLightColor3),
-                      ),
-                    ],
-                  ),
-                ),
+                isRating
+                    ? Container(
+                        margin: EdgeInsets.only(top: 4),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              star,
+                              height: 15,
+                            ),
+                            Text(
+                              ' 4.5 ',
+                              style: buttonTextStyle().copyWith(
+                                  fontSize: 12, color: konDarkColorD3),
+                            ),
+                            Text(
+                              ' (1.2k) ',
+                              style: mediumTextStyle()
+                                  .copyWith(color: konLightColor3),
+                            ),
+                          ],
+                        ),
+                      )
+                    : SizedBox(),
                 Container(
                   margin: EdgeInsets.only(top: 8),
                   child: Text(

@@ -110,7 +110,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Get.toNamed('/author');
+                              Get.toNamed('/cart');
                             },
                             child: Container(
                               child: SvgPicture.asset(
