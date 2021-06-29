@@ -8,6 +8,7 @@ import 'package:ilminneed/src/screen/welcome.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
+import 'package:ilminneed/src/widgets/recent_items.dart';
 import '../widgets/thumbnail.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
@@ -223,6 +224,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    RecentItems(
+                      label: 'Categories you may like',
+                      value: ['UI Design', 'Design Principles', 'Adobe XD', 'Illustrator', 'Mobile Application'],
+                    ),
                     Container(
                       margin:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 10),

@@ -4,6 +4,7 @@ import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
+import 'package:ilminneed/src/widgets/recent_items.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/src/model/category.dart';
@@ -94,38 +95,48 @@ class _CategoryState extends State<Category> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
-                    child: Wrap(
-                      direction: Axis.horizontal,
-                      spacing: 20.0,
-                      runSpacing: 20.0,
-                      children: List.generate(
-                        _category.length,
-                        (index) => Container(
-                          height: 100,
-                          width: MediaQuery.of(context).size.width / 2.5,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(_category[index].thumbnail),
-                            ),
-                          ),
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal:20),
-                              child: Text(
-                                _category[index].name.toString(),
-                                textAlign: TextAlign.center,
-                                style: buttonTextStyle()
-                                    .copyWith(fontSize: 18, color: konLightColor1),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RecentItems(
+                        label: 'Related Categories',
+                        value: ['UI Design', 'Design Principles', 'Adobe XD', 'Illustrator', 'Mobile Application'],
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                        child: Wrap(
+                          direction: Axis.horizontal,
+                          spacing: 20.0,
+                          runSpacing: 20.0,
+                          children: List.generate(
+                            _category.length,
+                            (index) => Container(
+                              height: 100,
+                              width: MediaQuery.of(context).size.width / 2.5,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(_category[index].thumbnail),
+                                ),
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal:20),
+                                  child: Text(
+                                    _category[index].name.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: buttonTextStyle()
+                                        .copyWith(fontSize: 18, color: konLightColor1),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               )
