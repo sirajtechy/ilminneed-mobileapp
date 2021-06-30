@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
@@ -91,31 +92,36 @@ class _CartScreenState extends State<CartScreen> {
                 },
               ),
             ),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 10),
-              padding: EdgeInsets.all(12),
-              color: Color(0xffF6F5FF),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '%',
-                    style: largeTextStyle()
-                        .copyWith(fontSize: 16, color: konDarkColorB2),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Apply coupon',
-                    style: largeTextStyle()
-                        .copyWith(fontSize: 16, color: konDarkColorB2),
-                  ),
-                  Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 15,
-                  )
-                ],
+            GestureDetector(
+              onTap: () {
+                Get.toNamed('/coupon');
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.all(12),
+                color: Color(0xffF6F5FF),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '%',
+                      style: largeTextStyle()
+                          .copyWith(fontSize: 16, color: konDarkColorB2),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      'Apply coupon',
+                      style: largeTextStyle()
+                          .copyWith(fontSize: 16, color: konDarkColorB2),
+                    ),
+                    Spacer(),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 15,
+                    )
+                  ],
+                ),
               ),
             ),
             Container(

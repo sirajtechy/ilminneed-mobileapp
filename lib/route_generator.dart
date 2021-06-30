@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ilminneed/src/screen/author.dart';
 import 'package:ilminneed/src/screen/cart.dart';
 import 'package:ilminneed/src/screen/category.dart';
+import 'package:ilminneed/src/screen/coupon.dart';
 import 'package:ilminneed/src/screen/courses/course_detail.dart';
 import 'package:ilminneed/src/screen/courses/latest_course.dart';
 import 'package:ilminneed/src/screen/forgot_password.dart';
@@ -49,6 +50,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => AuthorScreen());
       case '/cart':
         return MaterialPageRoute(builder: (_) => CartScreen());
+      case '/coupon':
+        return MaterialPageRoute(builder: (_) => CouponScreen());
       default:
         return _errorRoute();
     }
