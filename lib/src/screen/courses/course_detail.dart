@@ -255,10 +255,10 @@ class _CourseDetailState extends State<CourseDetail> {
                   ],
                 ),
               ),
-              RecentItems(
-                label: 'Skills you will gain',
-                value: ['UI Design', 'Java', 'Adobe XD', 'Flutter', 'React'],
-              ),
+//              RecentItems(
+//                label: 'Skills you will gain',
+//                value: ['UI Design', 'Java', 'Adobe XD', 'Flutter', 'React'],
+//              ),
               Container(
                 margin: EdgeInsets.only(bottom: 10),
                 color: Colors.white,

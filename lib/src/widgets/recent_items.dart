@@ -4,7 +4,7 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class RecentItems extends StatelessWidget {
-  final List<String> value;
+  final List value;
   final String label;
 
   const RecentItems({Key key, this.value, this.label}) : super(key: key);
@@ -30,7 +30,7 @@ class RecentItems extends StatelessWidget {
                 .map(
                   (e) => Chip(
                     backgroundColor: konTextInputBorderActiveColor,
-                    label: Text(e, style: smallTextStyle().copyWith(color: konLightColor1),),
+                    label: Text(e.name.toString(), style: smallTextStyle().copyWith(color: konLightColor1),),
                   ),
                 )
                 .toList(),

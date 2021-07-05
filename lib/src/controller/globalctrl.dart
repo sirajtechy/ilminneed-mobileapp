@@ -74,9 +74,31 @@ Future requestwithheader(data,module) async {
   }
 }
 
+Future getrequestwithheader(module) async {
+  Fluttertoast.cancel();
+  final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
+  final client = new http.Client();
+  try {
+    final response = await client.get(
+      endpoint,
+      headers: await _headerwithtoken(),
+    );
+    if (response.statusCode == 200) {
+      print(response.body);
+      return json.decode(response.body);
+    } else {
+      print(Exception(response.body).toString());
+      return null;
+    }
+  } on SocketException {
+    print(Exception('Failed to load post'));
+    return null;
+  }
+}
+
 Future _headerwithtoken() async{
   String token = await gettoken();
-  return { HttpHeaders.contentTypeHeader: 'application/json', 'Authorization' : 'Bearer $token' };
+  return { HttpHeaders.contentTypeHeader: 'application/json', 'X-Auth-Token' : '$token' };
 }
 
 Future _headerwithouttoken() async {

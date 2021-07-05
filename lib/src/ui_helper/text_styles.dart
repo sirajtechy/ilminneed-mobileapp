@@ -8,6 +8,11 @@ TextStyle largeTextStyle() {
       fontSize: 24, fontWeight: FontWeight.w700, color: konBlackColor);
 }
 
+TextStyle ctaTextStyle() {
+  return GoogleFonts.dmSans(
+      fontSize: 16, fontWeight: FontWeight.w700, color: konBlackColor);
+}
+
 TextStyle mediumTextStyle() {
   return GoogleFonts.dmSans(
     fontWeight: FontWeight.w400,

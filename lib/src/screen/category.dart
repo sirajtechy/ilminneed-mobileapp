@@ -20,6 +20,21 @@ class _CategoryState extends State<Category> {
 
   bool _loading = true;
   List<CategoryModel> _category = new List<CategoryModel>();
+  List<CategoryModel> _recentsearch = new List<CategoryModel>();
+
+  _fetchpopular() async {
+    var res = await ctrl.requestwithoutheader({}, 'search_recent_history');
+    print(res);
+    return;
+    if (res != null) {
+      List<dynamic> data = res;
+      for (int i = 0; i < data.length; i++) {
+        setState(() {
+          _recentsearch.add(CategoryModel.fromJson(data[i]));
+        });
+      }
+    }
+  }
 
   _fetchcategory() async {
     setState(() { _loading = true;});
@@ -39,6 +54,7 @@ class _CategoryState extends State<Category> {
 
   @override
   void initState() {
+    _fetchpopular();
     _fetchcategory();
     super.initState();
   }
@@ -69,7 +85,7 @@ class _CategoryState extends State<Category> {
       backgroundColor: konLightColor1,
       body: LoadingOverlay(
         isLoading: _loading,
-        child: !_loading && _category.length != 0?Container(
+        child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,14 +111,14 @@ class _CategoryState extends State<Category> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  child: Column(
+                  child: !_loading && _category.length != 0?Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RecentItems(
+                      _recentsearch.length != 0?RecentItems(
                         label: 'Related Categories',
-                        value: ['UI Design', 'Design Principles', 'Adobe XD', 'Illustrator', 'Mobile Application'],
-                      ),
+                        value: _recentsearch,
+                      ):SizedBox(),
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                         child: Wrap(
@@ -111,24 +127,29 @@ class _CategoryState extends State<Category> {
                           runSpacing: 20.0,
                           children: List.generate(
                             _category.length,
-                            (index) => Container(
-                              height: 100,
-                              width: MediaQuery.of(context).size.width / 2.5,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(_category[index].thumbnail),
+                            (index) => InkWell(
+                              onTap: (){
+
+                              },
+                              child: Container(
+                                height: 100,
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(_category[index].thumbnail),
+                                  ),
                                 ),
-                              ),
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal:20),
-                                  child: Text(
-                                    _category[index].name.toString(),
-                                    textAlign: TextAlign.center,
-                                    style: buttonTextStyle()
-                                        .copyWith(fontSize: 18, color: konLightColor1),
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal:20),
+                                    child: Text(
+                                      _category[index].name.toString(),
+                                      textAlign: TextAlign.center,
+                                      style: buttonTextStyle()
+                                          .copyWith(fontSize: 18, color: konLightColor1),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -137,17 +158,17 @@ class _CategoryState extends State<Category> {
                         ),
                       ),
                     ],
-                  ),
+                  ):!_loading && _category.length == 0?Container(child: Center(
+                child: Text(
+                "No category found",
+                  textAlign: TextAlign.center,
+                ),
+              ),):Container(child: Text(''),),
                 ),
               )
             ],
           ),
-        ):!_loading && _category.length == 0?Container(child: Center(
-          child: Text(
-            "No category found",
-            textAlign: TextAlign.center,
-          ),
-        ),):Container(child: Text(''),),
+        ),
       ),
     );
   }

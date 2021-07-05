@@ -12,7 +12,6 @@ import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/screen/sign_in.dart';
 import 'package:ilminneed/src/screen/sign_up.dart';
 import 'package:ilminneed/src/screen/welcome.dart';
-
 import 'src/screen/home_screen.dart';
 import 'src/screen/splash.dart';
 
