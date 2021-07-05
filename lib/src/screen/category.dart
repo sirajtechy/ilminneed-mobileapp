@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
+import 'package:ilminneed/src/model/category.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/widgets/recent_items.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:get/get.dart';
-import 'package:ilminneed/src/model/category.dart';
 
 class Category extends StatefulWidget {
   const Category({Key key}) : super(key: key);
@@ -129,8 +129,8 @@ class _CategoryState extends State<Category> {
                             _category.length,
                             (index) => InkWell(
                               onTap: (){
-
-                              },
+                                Get.toNamed('/categoryresult');
+                                    },
                               child: Container(
                                 height: 100,
                                 width: MediaQuery.of(context).size.width / 2.5,
