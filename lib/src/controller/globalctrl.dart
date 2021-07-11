@@ -5,6 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ilminneed/cart_bloc.dart';
+import 'package:provider/provider.dart';
 
 Future getrequest(data,module) async {
   Fluttertoast.cancel();
@@ -39,7 +41,7 @@ Future requestwithoutheader(data,module) async {
       body: json.encode(data),
     );
     if (response.statusCode == 200) {
-      print(response.body);
+      //print(response.body);
       return json.decode(response.body);
     } else {
       print(Exception(response.body).toString());
@@ -84,7 +86,7 @@ Future getrequestwithheader(module) async {
       headers: await _headerwithtoken(),
     );
     if (response.statusCode == 200) {
-      print(response.body);
+      //print(response.body);
       return json.decode(response.body);
     } else {
       print(Exception(response.body).toString());
@@ -180,6 +182,23 @@ Future toastmsg(String value,String time) async {
       timeInSecForIosWeb: 1,
       backgroundColor: Colors.black,
       textColor: Colors.white,
-      fontSize: 15.0
+      fontSize: 15.0,
   );
+}
+
+Future addtocart(course_id,context) async {
+  var res = await requestwithheader({'courseId': course_id }, 'toggle_cart');
+  print(res);
+  var bloc = Provider.of<CartBloc>(context, listen: false);
+  if(res != null && res != 'null' && res['cart']['status'] == 'added'){
+    bloc.totalCount(bloc.getcount() + 1);
+  }else if(res != null && res != 'null' && res['cart']['status'] == 'removed'){
+    bloc.totalCount(bloc.getcount() - 1);
+  }
+  return true;
+}
+
+Future addtowishlist(course_id) async {
+  var res = await requestwithheader({'courseId': course_id }, 'toggle_wishlist');
+  return true;
 }

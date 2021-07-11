@@ -12,6 +12,7 @@ import 'package:ilminneed/src/screen/reset_link.dart';
 import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/screen/sign_in.dart';
 import 'package:ilminneed/src/screen/sign_up.dart';
+import 'package:ilminneed/src/screen/thank_you.dart';
 import 'package:ilminneed/src/screen/welcome.dart';
 
 import 'src/screen/home_screen.dart';
@@ -28,7 +29,7 @@ class RouteGenerator {
       case '/welcome':
         return MaterialPageRoute(builder: (_) => WelcomeScreen());
       case '/signIn':
-        return MaterialPageRoute(builder: (_) => SignInScreen());
+        return MaterialPageRoute(builder: (_) => SignInScreen(data: args));
       case '/signUp':
         return MaterialPageRoute(builder: (_) => SignUpScreen());
       case '/forgotPassword':
@@ -42,19 +43,21 @@ class RouteGenerator {
       case '/category':
         return MaterialPageRoute(builder: (_) => Category());
       case '/search':
-        return MaterialPageRoute(builder: (_) => SearchScreen());
+        return MaterialPageRoute(builder: (_) => SearchScreen(term: args));
       case '/courseDetail':
-        return MaterialPageRoute(builder: (_) => CourseDetail());
+        return MaterialPageRoute(builder: (_) => CourseDetail(id: args));
       case '/latestCourse':
         return MaterialPageRoute(builder: (_) => LatestCourse());
       case '/author':
-        return MaterialPageRoute(builder: (_) => AuthorScreen());
+        return MaterialPageRoute(builder: (_) => AuthorScreen(id: args));
       case '/cart':
         return MaterialPageRoute(builder: (_) => CartScreen());
       case '/coupon':
         return MaterialPageRoute(builder: (_) => CouponScreen());
+      case '/thankyou':
+        return MaterialPageRoute(builder: (_) => ThankYou());
       case '/categoryresult':
-        return MaterialPageRoute(builder: (_) => CategoryResultScreen());
+        return MaterialPageRoute(builder: (_) => CategoryResultScreen(param: args));
       default:
         return _errorRoute();
     }

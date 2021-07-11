@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
-class RecentItems extends StatelessWidget {
+class SearchHistoryWidget extends StatelessWidget {
   final List value;
   final String label;
 
-  const RecentItems({Key key, this.value, this.label}) : super(key: key);
+  const SearchHistoryWidget({Key key, this.value, this.label}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class RecentItems extends StatelessWidget {
           Text(
             label,
             style:
-                largeTextStyle().copyWith(fontSize: 16, color: konDarkColorB2),
+            largeTextStyle().copyWith(fontSize: 16, color: konDarkColorB2),
           ),
           SizedBox(height: 10),
           Wrap(
@@ -30,15 +30,15 @@ class RecentItems extends StatelessWidget {
             children: value
                 .map(
                   (e) => InkWell(
-                    onTap: (){
-                      Get.toNamed('/categoryresult',arguments: { 'id': e.id,'name':e.name.toString() });
-                    },
-                    child: Chip(
-                      backgroundColor: konTextInputBorderActiveColor,
-                      label: Text(e.name.toString(), style: smallTextStyle().copyWith(color: konLightColor1),),
-                    ),
-                  ),
-                )
+                onTap: (){
+                  Get.toNamed('/search',arguments: e.term.toString());
+                },
+                child: Chip(
+                  backgroundColor: konTextInputBorderActiveColor,
+                  label: Text(e.term.toString(), style: smallTextStyle().copyWith(color: konLightColor1),),
+                ),
+              ),
+            )
                 .toList(),
           ),
         ],

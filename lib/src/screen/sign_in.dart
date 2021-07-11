@@ -14,7 +14,8 @@ import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({Key key}) : super(key: key);
+  final Map data;
+  const SignInScreen({Key key,this.data}) : super(key: key);
 
   @override
   _SignInScreenState createState() => _SignInScreenState();
@@ -35,10 +36,21 @@ class _SignInScreenState extends State<SignInScreen> {
     _formKey.currentState.save();
     setState(() { _loading = true;});
     var res = await ctrl.requestwithoutheader({'email': _email.text,'password': _password.text}, 'login');
+    print(res);
     setState(() { _loading = false; });
     if (res != null && res['validity'] == 1) {
       await ctrl.saveuserdata(res);
-      Get.offAllNamed('/');
+      if(widget.data == null){
+        Get.offAllNamed('/');
+        return;
+      }else{
+        Get.offAllNamed('/');
+        if(widget.data['arg'] == ''){
+          Get.toNamed(widget.data['name']);
+        }else{
+          Get.toNamed(widget.data['name'], arguments: widget.data['arg']);
+        }
+      }
     } else {
       setState(() { _loading = false; });
       await ctrl.toastmsg('Enter valid credentials', 'long');

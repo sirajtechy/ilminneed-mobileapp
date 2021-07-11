@@ -9,49 +9,55 @@ import 'package:ilminneed/src/screen/courses/latest_course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/recent_items.dart';
+import 'package:ilminneed/src/widgets/shopping_cart.dart';
 import 'package:ilminneed/src/widgets/thumbnail.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CategoryResultScreen extends StatefulWidget {
-  const CategoryResultScreen({Key key}) : super(key: key);
+  final Map param;
+  const CategoryResultScreen({Key key, this.param}) : super(key: key);
 
   @override
   _CategoryResultScreenState createState() => _CategoryResultScreenState();
 }
 
 class _CategoryResultScreenState extends State<CategoryResultScreen> {
-  List<Course> _popularcourse = <Course>[];
-  List<CategoryModel> _youmaylike = <CategoryModel>[];
+  List<Course> _studentpickcourse = <Course>[];
+  List<Course> _course = <Course>[];
+  List<CategoryModel> _relatedcategory = <CategoryModel>[];
 
-  _fetchpopularcourse() async {
-    var res = await ctrl.getrequest({}, 'popular_courses');
+  _fetchcourse() async {
+    var res = await ctrl.getrequest({}, 'course_by_category/'+widget.param['id']);
+    print(res);
     if (res != null) {
-      List<dynamic> data = res;
-      for (int i = 0; i < data.length; i++) {
+      List<dynamic> spc = res['students_pick'];
+      for (int i = 0; i < spc.length; i++) {
         setState(() {
-          _popularcourse.add(Course.fromJson(data[i]));
+          _studentpickcourse.add(Course.fromJson(spc[i]));
         });
       }
-    }
-  }
 
-  _fetchyoumaylike() async {
-    var res = await ctrl.getrequest({}, 'top_categories');
-    if (res != null) {
-      List<dynamic> data = res;
-      for (int i = 0; i < data.length; i++) {
+      List<dynamic> cou = res['results'];
+      for (int i = 0; i < cou.length; i++) {
         setState(() {
-          _youmaylike.add(CategoryModel.fromJson(data[i]));
+          _course.add(Course.fromJson(cou[i]));
         });
       }
+
+      List<dynamic> cat = res['related_categories'];
+      for (int i = 0; i < cat.length; i++) {
+        setState(() {
+          _relatedcategory.add(CategoryModel.fromJson(cat[i]));
+        });
+      }
+
     }
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    _fetchpopularcourse();
-    _fetchyoumaylike();
+    _fetchcourse();
     super.initState();
   }
 
@@ -70,28 +76,23 @@ class _CategoryResultScreenState extends State<CategoryResultScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      child: Icon(Icons.arrow_back),
-                    ),
-                    Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        Get.toNamed('/cart');
+                    InkWell(
+                      onTap: (){
+                        Get.back();
                       },
                       child: Container(
-                        child: SvgPicture.asset(
-                          cart,
-                          height: 35,
-                        ),
+                        child: Icon(Icons.arrow_back),
                       ),
                     ),
+                    Spacer(),
+                    ShoppingCartButtonWidget(),
                   ],
                 ),
               ),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                 child: Text(
-                  'Graphic Design',
+                  widget.param['name'].toString(),
                   style: largeTextStyle()
                       .copyWith(fontSize: 24, color: konDarkColorB1),
                 ),
@@ -102,18 +103,18 @@ class _CategoryResultScreenState extends State<CategoryResultScreen> {
                     'Students pick in the topic',
                     style: ctaTextStyle().copyWith(color: konDarkColorB2),
                   )),
-              _popularcourse.length != 0
+              _studentpickcourse.length != 0
                   ? Container(
                       margin: EdgeInsets.only(left: 15, right: 15, top: 8),
                       child: SizedBox(
                         height: 250,
                         child: ListView.builder(
-                          itemCount: _popularcourse.length,
+                          itemCount: _studentpickcourse.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (BuildContext context, int index) {
                             return ThumbNailWidget(
                                 continueLearing: false,
-                                course: _popularcourse[index]);
+                                course: _studentpickcourse[index]);
                           },
                         ),
                       ),
@@ -156,23 +157,23 @@ class _CategoryResultScreenState extends State<CategoryResultScreen> {
                       ),
                     ),
               Container(
-                child: _youmaylike.length != 0
+                child: _relatedcategory.length != 0
                     ? RecentItems(
                         label: 'Related Categories',
-                        value: _youmaylike,
+                        value: _relatedcategory,
                       )
                     : SizedBox(),
               ),
-              _popularcourse.length != 0
+              _course.length != 0
                   ? Container(
                       margin: EdgeInsets.only(left: 15, right: 15, bottom: 2),
                       child: SizedBox(
                         height: 250,
                         child: ListView.builder(
-                          itemCount: _popularcourse.length,
+                          itemCount: _course.length,
                           scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
-                            return LatestCourse(course: _popularcourse[index]);
+                            return LatestCourse(course: _course[index]);
                           },
                         ),
                       ),

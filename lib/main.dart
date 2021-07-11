@@ -2,6 +2,8 @@ import 'package:ilminneed/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:get/get.dart';
+import 'package:ilminneed/cart_bloc.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,16 +19,19 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      initialRoute: '/splash',
-      onGenerateRoute: RouteGenerator.generateRoute,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Barlow',
-        primaryColor: Colors.white,
-        brightness: Brightness.light,
-        textTheme: TextTheme(
-          button: TextStyle(color: Colors.white),
+    return ChangeNotifierProvider<CartBloc>(
+      create: (context) => CartBloc(),
+      child: GetMaterialApp(
+        initialRoute: '/splash',
+        onGenerateRoute: RouteGenerator.generateRoute,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Barlow',
+          primaryColor: Colors.white,
+          brightness: Brightness.light,
+          textTheme: TextTheme(
+            button: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     );

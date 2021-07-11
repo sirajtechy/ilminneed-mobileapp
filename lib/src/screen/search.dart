@@ -11,14 +11,15 @@ import 'package:ilminneed/src/screen/courses/latest_course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
-import 'package:ilminneed/src/widgets/searchwithsuggestiondelegate.dart';
+import 'package:ilminneed/src/widgets/shopping_cart.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key key}) : super(key: key);
+  final String term;
+  const SearchScreen({Key key,this.term}) : super(key: key);
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -29,16 +30,16 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _loading = false;
   List<Course> _course = new List<Course>();
   List<CategoryModel> _category = new List<CategoryModel>();
+  int filter = 0;
+  List<String> recent_history = [];
   String _filter_level = '';
   String _filter_category = '';
   String _filter_price = '';
-  List<String> recent_history = [];
-
   int pageno = 1;
   bool isLoadingVertical = false;
   bool _current = false;
-  bool _loading_finished = false;
   bool _loading_product = true;
+  int total_result = 0;
 
   _fetchcategory() async {
     await _getRecentSearchesLike('');
@@ -54,13 +55,19 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  _searchcourse() async {
-    if (_current == false && _loading_finished == false) {
+  _searchcourse(search) async {
+    print(filter.toString());
       setState(() {
         _current = true;
         isLoadingVertical = true;
       });
-      await new Future.delayed(const Duration(seconds: 2));
+      if(search){
+        setState(() {
+          _course.clear();
+          pageno = 1;
+        });
+      }
+      await new Future.delayed(const Duration(seconds: 3));
       Map d = {
         'search': _coursename.text,
         'category': _filter_category,
@@ -71,63 +78,50 @@ class _SearchScreenState extends State<SearchScreen> {
       var oldtxt = _coursename.text;
       var res = await ctrl.requestwithoutheader(
           d, 'filter_course/' + pageno.toString());
-      if (mounted) {
+        if (!mounted) return;
         setState(() {
-          _loading_finished = true;
           _loading = false;
           _loading_product = false;
           _current = false;
           isLoadingVertical = false;
         });
-      }
       if (res != null) {
-//        if (oldtxt == _coursename.text && _coursename.text != '') {
-//          _course.clear();
-//          pageno = 1;
-//        }
-        List<dynamic> data = res;
-        //print(data.length.toString());
+        if(search){
+          if (!mounted) return;
+          setState(() {
+            _course.clear();
+            pageno = 1;
+          });
+        }
+        List<dynamic> data = res[0]['courses'];
         for (int i = 0; i < data.length; i++) {
-          if (mounted) {
+          if (!mounted) return;
             setState(() {
               _course.add(Course.fromJson(data[i]));
             });
-          }
         }
-        print(_course.length.toString());
         if (_course.length != 5 && data.length == 0) {
           await ctrl.toastmsg('No more course found', 'short');
         }
         if(_coursename.text != ''){
           await _saveToRecentSearches(_coursename.text);
         }
+        if (!mounted) return;
         setState(() {
           pageno++;
           recent_history.clear();
+          total_result = res[0]['total_results'];
         });
       } else {
-        if (mounted) {
+        if (!mounted) return;
           setState(() {
-            _loading_finished = true;
             _loading = false;
             _loading_product = false;
             _current = false;
             isLoadingVertical = false;
           });
-        }
         await ctrl.toastmsg('Error. please try again', 'long');
       }
-    } else {
-      print('no');
-    }
-  }
-
-  _filtercourse() {
-    setState(() {
-      _loading_finished = false;
-      _current = false;
-    });
-    _searchcourse();
   }
 
   _showfiltermodal() {
@@ -140,6 +134,8 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         backgroundColor: konLightColor2,
         isScrollControlled: true,
+        //isDismissible: false,
+        //enableDrag: false,
         builder: (context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter mystate) {
@@ -206,9 +202,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                         _levellist.list.length, (index) {
                                       return InkWell(
                                         onTap: () {
-                                          mystate(() {
-                                            _filter_level = _levellist.list[index].id;
-                                          });
+                                            mystate(() {
+                                              if(_filter_level == ''){
+                                                filter++;
+                                              }
+                                              _filter_level = _levellist.list[index].id;
+                                            });
                                         },
                                         child: Container(
                                           margin: EdgeInsets.symmetric(
@@ -276,10 +275,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                         (index) {
                                       return InkWell(
                                         onTap: () {
-                                          mystate(() {
-                                            _filter_category =
-                                                _category[index].id.toString();
-                                          });
+                                            mystate(() {
+                                              if(_filter_category == ''){
+                                                filter++;
+                                              }
+                                              _filter_category =
+                                                  _category[index].id.toString();
+                                            });
                                         },
                                         child: Container(
                                           margin: EdgeInsets.symmetric(
@@ -346,10 +348,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                         _pricelist.list.length, (index) {
                                       return InkWell(
                                         onTap: () {
-                                          mystate(() {
-                                            _filter_price =
-                                                _pricelist.list[index].id;
-                                          });
+                                            mystate(() {
+                                              if(_filter_price == ''){
+                                                filter++;
+                                              }
+                                              _filter_price =
+                                                  _pricelist.list[index].id;
+                                            });
                                         },
                                         child: Container(
                                           margin: EdgeInsets.symmetric(
@@ -385,7 +390,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           ],
                         ),
                       ),
-                      Container(
+                      filter != 0?Container(
                         decoration:
                             BoxDecoration(color: konLightColor1, boxShadow: [
                             BoxShadow(
@@ -408,14 +413,13 @@ class _SearchScreenState extends State<SearchScreen> {
                               child: InkWell(
                                 onTap: () {
                                   setState(() {
-                                    _course.clear();
-                                    pageno = 1;
                                     _filter_price = '';
                                     _filter_level = '';
                                     _filter_category = '';
+                                    filter = 0;
                                   });
                                   Get.back();
-                                  _filtercourse();
+                                  _searchcourse(true);
                                 },
                                 child: Center(
                                     child: Text(
@@ -433,12 +437,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               padding: EdgeInsets.all(10),
                               child: InkWell(
                                 onTap: () {
-                                  setState(() {
-                                    _course.clear();
-                                    pageno = 1;
-                                  });
                                   Get.back();
-                                  _filtercourse();
+                                  _searchcourse(true);
                                 },
                                 child: Center(
                                     child: Text(
@@ -449,7 +449,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                           ],
                         ),
-                      )
+                      ):Container()
                     ],
                   ),
                 )
@@ -472,14 +472,16 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<List<String>> _getRecentSearchesLike(String query) async {
     final pref = await SharedPreferences.getInstance();
     final allSearches = pref.getStringList("recentSearches");
-    if(query != ''){
-      setState(() {
-        recent_history = allSearches.where((search) => search.startsWith(query)).toList();
-      });
-    }else{
-      setState(() {
-        recent_history = allSearches.toList();
-      });
+    if(allSearches != null){
+      if(query != ''){
+        setState(() {
+          recent_history = allSearches.where((search) => search.startsWith(query)).toList();
+        });
+      }else{
+        setState(() {
+          recent_history = allSearches.toList();
+        });
+      }
     }
   }
 
@@ -495,6 +497,11 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     _fetchcategory();
+    if(widget.term != '' && widget.term != 'null' && widget.term != null){
+      recent_history.clear();
+      _coursename.text = widget.term.toString();
+      _searchcourse(true);
+    }
    // _filtercourse();
     super.initState();
   }
@@ -534,11 +541,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             controller: _coursename,
                             onChanged: (v) async {
                               await _getRecentSearchesLike(v);
-                              setState(() {
-                                _course.clear();
-                                pageno = 1;
-                              });
-                              _filtercourse();
+                              _searchcourse(true);
                             },
                             autofocus: true,
                             decoration: InputDecoration(
@@ -549,25 +552,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                     },
                                     child: Icon(Icons.arrow_back)),
                                 border: InputBorder.none,
-                                suffixIcon: InkWell(
+                                suffixIcon: _coursename.text != ''?InkWell(
                                     onTap: () {
                                       setState(() {
-                                        _course.clear();
-                                        pageno = 1;
                                         _coursename.text = '';
-                                        _filtercourse();
                                       });
+                                      _searchcourse(true);
                                     },
-                                    child: Icon(Icons.close))),
+                                    child: Icon(Icons.close)):SizedBox()),
                           ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 10.0, left: 8),
-                        child: SvgPicture.asset(
-                          cart,
-                          height: 25,
-                        ),
+                        child: ShoppingCartButtonWidget(),
                       )
                     ],
                   ),
@@ -618,7 +616,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         _coursename.text = recent_history[index].toString();
                                         recent_history.clear();
                                       });
-                                      _filtercourse();
+                                      _searchcourse(true);
                                     },
                                     child: RichText(
                                       text: TextSpan(
@@ -643,31 +641,36 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                 ):SizedBox(),
 
-                _course.length != 0?Container(
+                Container(
                   color: konLightColor1,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '15 Results found',
+                      _course.length != 0?Text(
+                        total_result.toString(),
+                        style: mediumTextStyle()
+                            .copyWith(fontSize: 16, color: konPrimaryColor),
+                      ):SizedBox(),
+                      _course.length != 0?Text(
+                        ' Results found',
                         style: mediumTextStyle()
                             .copyWith(fontSize: 16, color: konDarkColorB1),
-                      ),
+                      ):SizedBox(),
                       Spacer(),
                       GestureDetector(
                           onTap: () {
                             _showfiltermodal();
                           },
                           child: Text(
-                            'Filter',
+                            filter != 0?'('+filter.toString()+') Filter':'Filter',
                             style: mediumTextStyle()
-                                .copyWith(fontSize: 16, color: konDarkColorB1),
+                                .copyWith(fontSize: 16, color: filter != 0?konPrimaryColor:konDarkColorB1),
                           )),
                     ],
                   ),
-                ):SizedBox(),
+                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(0),
@@ -684,7 +687,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                   scrollOffset: 100,
                                   scrollDirection: Axis.vertical,
                                   isLoading: isLoadingVertical,
-                                  onEndOfPage: _filtercourse,
+                                  onEndOfPage: (){
+                                    _searchcourse(false);
+                                  },
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: _course.length,

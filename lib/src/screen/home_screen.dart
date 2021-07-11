@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/screen/category.dart';
 import 'package:ilminneed/src/screen/courses/course_detail.dart';
 import 'package:ilminneed/src/screen/explore.dart';
 import 'package:ilminneed/src/screen/myaccount.dart';
+import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/add_bookmark.dart';
@@ -37,10 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
           currentPage = ExploreScreen();
           break;
         case 1:
-          currentPage = CourseDetail();
+          currentPage = SearchScreen();
           break;
         case 2:
-          currentPage = AddBookmark();
+          currentPage = Category();
           break;
         case 3:
           currentPage = MyAccountScreen();
@@ -64,15 +66,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.menu_book_outlined,
+              Icons.search,
             ),
-            label: 'My Courses',
+            label: 'Search',
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.cloud_queue_outlined,
+              Icons.menu_book_outlined,
             ),
-            label: 'Connect',
+            label: 'Category',
           ),
           BottomNavigationBarItem(
             icon: Icon(

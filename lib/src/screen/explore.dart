@@ -12,8 +12,11 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/recent_items.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:ilminneed/cart_bloc.dart';
+import 'package:provider/provider.dart';
 import '../widgets/thumbnail.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ilminneed/src/widgets/shopping_cart.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key key}) : super(key: key);
@@ -36,6 +39,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     if (res != null) {
       List<dynamic> data = res;
       for (int i = 0; i < data.length; i++) {
+        if (!mounted) return;
         setState(() {
           _youmaylike.add(CategoryModel.fromJson(data[i]));
         });
@@ -48,6 +52,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     if (res != null) {
       List<dynamic> data = res;
       for (int i = 0; i < data.length; i++) {
+        if (!mounted) return;
         setState(() {
           _slider.add(BannerImg.fromJson(data[i]));
         });
@@ -59,6 +64,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     if (res != null) {
       List<dynamic> data = res;
       for (int i = 0; i < data.length; i++) {
+        if (!mounted) return;
         setState(() {
           _lookingfor.add(CategoryModel.fromJson(data[i]));
         });
@@ -72,6 +78,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       if (res != null) {
         List<dynamic> data = res;
         for (int i = 0; i < data.length; i++) {
+          if (!mounted) return;
           setState(() {
             _continuelearning.add(Course.fromJson(data[i]));
           });
@@ -79,7 +86,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
       }
     }
   }
-
   _fetchrecentvisit() async {
     if(await ctrl.LoggedIn() == true) {
       var res = await ctrl.getrequestwithheader('recent_courses_visit');
@@ -87,6 +93,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       if (res != null) {
         List<dynamic> data = res;
         for (int i = 0; i < data.length; i++) {
+          if (!mounted) return;
           setState(() {
             _continuelearning.add(Course.fromJson(data[i]));
           });
@@ -99,9 +106,28 @@ class _ExploreScreenState extends State<ExploreScreen> {
     if (res != null) {
       List<dynamic> data = res;
       for (int i = 0; i < data.length; i++) {
+        if (!mounted) return;
         setState(() {
           _popularcourse.add(Course.fromJson(data[i]));
         });
+      }
+    }
+  }
+
+  _updatecart() async {
+    if(await ctrl.LoggedIn() == true) {
+      var res = await ctrl.getrequestwithheader('my_cart');
+      var bloc = Provider.of<CartBloc>(context, listen: false);
+      if (res != null && res != 'null') {
+        if (!mounted) return;
+        if(res['courses'].length != 0){
+          List<dynamic> data = res['courses'];
+          bloc.totalCount(data.length);
+        }else{
+          bloc.totalCount(0);
+        }
+      }else{
+        bloc.totalCount(0);
       }
     }
   }
@@ -114,6 +140,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     _fetchcontinuelearning();
     _fetchrecentvisit();
     _fetchlookingfor();
+    _updatecart();
     super.initState();
   }
 
@@ -172,12 +199,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             onTap: () {
                               Get.toNamed('/cart');
                             },
-                            child: Container(
-                              child: SvgPicture.asset(
-                                cart,
-                                height: 35,
-                              ),
-                            ),
+                            child: ShoppingCartButtonWidget(),
                           ),
                         ],
                       ),
@@ -234,17 +256,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    InkWell(
-                      onTap: (){
-                          Get.toNamed('/category');
-                      },
-                      child: Text(
-                        'View All Category',
-                        style: mediumTextStyle().copyWith(
-                            fontSize: 16,
-                            color: konTextInputBorderActiveColor),
-                      ),
-                    ),
                     _youmaylike.length !=0?RecentItems(
                       label: 'Categories you may like',
                       value: _youmaylike,

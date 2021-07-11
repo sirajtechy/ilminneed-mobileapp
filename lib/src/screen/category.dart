@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/model/category.dart';
+import 'package:ilminneed/src/model/search_history.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/widgets/recent_items.dart';
+import 'package:ilminneed/src/widgets/search_history_widget.dart';
+import 'package:ilminneed/src/widgets/shopping_cart.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class Category extends StatefulWidget {
@@ -20,17 +21,15 @@ class _CategoryState extends State<Category> {
 
   bool _loading = true;
   List<CategoryModel> _category = new List<CategoryModel>();
-  List<CategoryModel> _recentsearch = new List<CategoryModel>();
+  List<SearchHistory> _recentsearch = new List<SearchHistory>();
 
   _fetchpopular() async {
-    var res = await ctrl.requestwithoutheader({}, 'search_recent_history');
-    print(res);
-    return;
+    var res = await ctrl.getrequest({}, 'search_recent_history');
     if (res != null) {
       List<dynamic> data = res;
       for (int i = 0; i < data.length; i++) {
         setState(() {
-          _recentsearch.add(CategoryModel.fromJson(data[i]));
+          _recentsearch.add(SearchHistory.fromJson(data[i]));
         });
       }
     }
@@ -68,17 +67,19 @@ class _CategoryState extends State<Category> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: InkWell(
+            onTap: () {
+              Get.offAllNamed('/');
+            },
+            child: Icon(Icons.arrow_back, color: Colors.black)),
         elevation: 0,
         backgroundColor: konLightColor1,
         title: Text('Category'),
         titleSpacing: 0,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 15.0),
-            child: SvgPicture.asset(
-              cart,
-              height: 20,
-            ),
+            padding: const EdgeInsets.only(top: 15.0, right: 10),
+            child: ShoppingCartButtonWidget(),
           )
         ],
       ),
@@ -115,8 +116,8 @@ class _CategoryState extends State<Category> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _recentsearch.length != 0?RecentItems(
-                        label: 'Related Categories',
+                      _recentsearch.length != 0?SearchHistoryWidget(
+                        label: 'Popular Search',
                         value: _recentsearch,
                       ):SizedBox(),
                       Container(
@@ -129,29 +130,53 @@ class _CategoryState extends State<Category> {
                             _category.length,
                             (index) => InkWell(
                               onTap: (){
-                                Get.toNamed('/categoryresult');
+                                Get.toNamed('/categoryresult',arguments: { 'id': _category[index].id,'name':_category[index].name });
                                     },
-                              child: Container(
-                                height: 100,
-                                width: MediaQuery.of(context).size.width / 2.5,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(_category[index].thumbnail),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal:20),
-                                    child: Text(
-                                      _category[index].name.toString(),
-                                      textAlign: TextAlign.center,
-                                      style: buttonTextStyle()
-                                          .copyWith(fontSize: 18, color: konLightColor1),
+                              child: Stack(
+                                alignment: AlignmentDirectional.topCenter,
+                                children: <Widget>[
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Hero(
+                                          tag: index,
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: FadeInImage(
+                                              height: 100,
+                                              width: MediaQuery.of(context).size.width / 2.5,
+                                              placeholder: AssetImage(placeholder),
+                                              image: _category[index].thumbnail  == null ?
+                                              Image.asset(placeholder) : NetworkImage(_category[index].thumbnail),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          left: 0,
+                                          right: 0,
+                                          bottom: 0,
+                                          child: Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(15.0),
+                                              child: Text(
+                                                _category[index].name.toString(),
+                                                textAlign: TextAlign.center,
+                                                style: buttonTextStyle()
+                                                    .copyWith(fontSize: 18, color: konLightColor1),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
