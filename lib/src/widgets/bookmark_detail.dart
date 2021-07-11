@@ -25,7 +25,7 @@ class BookMarkDetail extends StatelessWidget {
                 style: largeTextStyle().copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: konDarkColorB1),
+                    color: konTextInputBorderActiveColor),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
@@ -34,7 +34,7 @@ class BookMarkDetail extends StatelessWidget {
                   style: largeTextStyle().copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: konPrimaryColor1),
+                      color: konTextInputBorderActiveColor),
                 ),
               ),
               Spacer(),
