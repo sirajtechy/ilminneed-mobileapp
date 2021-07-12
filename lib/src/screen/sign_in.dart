@@ -41,10 +41,10 @@ class _SignInScreenState extends State<SignInScreen> {
     if (res != null && res['validity'] == 1) {
       await ctrl.saveuserdata(res);
       if(widget.data == null){
-        Get.offAllNamed('/');
+        Get.offAllNamed('/', arguments: 0);
         return;
       }else{
-        Get.offAllNamed('/');
+        Get.offAllNamed('/', arguments: 0);
         if(widget.data['arg'] == ''){
           Get.toNamed(widget.data['name']);
         }else{

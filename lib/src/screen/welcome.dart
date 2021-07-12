@@ -32,7 +32,7 @@ class WelcomeScreen extends StatelessWidget {
             InkWell(
               onTap: () async {
                 if(await ctrl.LoggedIn() == true){
-                  Get.offAllNamed('/');
+                  Get.offAllNamed('/', arguments: 0);
                 }else{
                   Get.offAllNamed('/signUp');
                 }
@@ -46,7 +46,7 @@ class WelcomeScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () async {
-                Get.offAllNamed('/');
+                Get.offAllNamed('/', arguments: 0);
               },
               child: Container(
                   margin: EdgeInsets.symmetric(vertical: 10),

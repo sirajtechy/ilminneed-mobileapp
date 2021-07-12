@@ -195,12 +195,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             style: buttonTextStyle()
                                 .copyWith(fontSize: 18, color: konDarkColorB1),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              Get.toNamed('/cart');
-                            },
-                            child: ShoppingCartButtonWidget(),
-                          ),
+                          ShoppingCartButtonWidget(),
                         ],
                       ),
                     ),

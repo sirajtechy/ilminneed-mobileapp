@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ilminneed/helper/resources/images.dart';
@@ -29,6 +30,9 @@ class _ResetLinkState extends State<ResetLink> {
   final TextEditingController _password = TextEditingController();
   final GlobalKey<FormState> _formKey  = GlobalKey<FormState>();
   bool _obscureText = true;
+  Timer _timer;
+  int _start = 60;
+  bool _resendbtn = false;
 
   _changepassword() async {
     if(!_formKey.currentState.validate()) {
@@ -48,16 +52,56 @@ class _ResetLinkState extends State<ResetLink> {
     }
   }
 
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+          (Timer timer) => setState(
+            () {
+          if (_start < 1) {
+            timer.cancel();
+            setState(() {
+              _resendbtn = true;
+            });
+          } else {
+            setState(() {
+              _start = _start - 1;
+            });
+          }
+        },
+      ),
+    );
+  }
+
+  _sendlink() async {
+    setState(() { _loading = true;});
+    var res = await ctrl.requestwithoutheader({'email': _email.text}, 'forgot/password');
+    setState(() { _loading = false; });
+    if (res != null && res['error'] == null) {
+      await ctrl.toastmsg(res['message'], 'long');
+      startTimer();
+      setState(() {
+        _start = 30;
+        _resendbtn = false;
+      });
+    } else {
+      setState(() { _loading = false; });
+      await ctrl.toastmsg(res['message'], 'long');
+    }
+  }
+
   @override
   void initState() {
     setState(() {
       _email.text = widget.param['email'];
     });
+    startTimer();
     super.initState();
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -140,6 +184,45 @@ class _ResetLinkState extends State<ResetLink> {
                       onTap: _changepassword,
                       child: ButtonWidget(
                         value: 'Change Password',
+                      ),
+                    ),
+                    !_resendbtn
+                        ?Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Resend in ',
+                            style: smallTextStyle().copyWith(color: konDarkColorB1),
+                          ),
+                          Text(
+                            _start.toString(),
+                            style: buttonTextStyle().copyWith(
+                                decoration: TextDecoration.underline,
+                                decorationColor: konPrimaryColor1,
+                                color: konPrimaryColor1),
+                          ),
+                        ],
+                      ),
+                    ):InkWell(
+                      onTap: (){
+                        _sendlink();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Resend passcode',
+                              style: buttonTextStyle().copyWith(
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: konPrimaryColor1,
+                                  color: konPrimaryColor1),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Container(
