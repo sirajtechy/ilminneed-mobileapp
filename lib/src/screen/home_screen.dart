@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ilminneed/src/screen/category.dart';
-import 'package:ilminneed/src/screen/courses/course_detail.dart';
 import 'package:ilminneed/src/screen/explore.dart';
-import 'package:ilminneed/src/screen/myaccount.dart';
+import 'package:ilminneed/src/screen/quiz.dart';
 import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/widgets/add_bookmark.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -45,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
           currentPage = Category();
           break;
         case 3:
-          currentPage = MyAccountScreen();
+          currentPage = QuizScreen();
           break;
       }
     });
