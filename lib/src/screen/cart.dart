@@ -1,17 +1,17 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ilminneed/cart_bloc.dart';
+import 'package:ilminneed/helper/resources/images.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
-import 'courses/latest_course.dart';
 import 'package:provider/provider.dart';
-import 'package:ilminneed/cart_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+
+import 'courses/latest_course.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key key}) : super(key: key);
@@ -139,14 +139,14 @@ class _CartScreenState extends State<CartScreen> {
     setState(() {
       _loading = true;
     });
-    if(res != null){
-      if(res['response']['status'] == true) {
+    if (res != null && res != 'null') {
+      if (res['response']['status'] == true) {
         Get.offAllNamed('/thankyou');
         return;
-      }else{
+      } else {
         await ctrl.toastmsg('Error. Please try again', 'long');
       }
-    }else{
+    } else {
       await ctrl.toastmsg('Error. Please try again', 'long');
     }
   }
@@ -280,24 +280,55 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ):Container(),
               _course.length == 0 && !_loading?Container(
-                child: Center(
-                  child: Text(
-                    "Cart empty",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ):Container(),
-              _course.length != 0?GestureDetector(
-                onTap: () {
-                  Get.toNamed('/coupon');
-                },
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  padding: EdgeInsets.all(12),
-                  color: Color(0xffF6F5FF),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            child: Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  children: [
+                                    Image(
+                                      image: AssetImage(empty_cart),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'Your cart is empty',
+                                      style: largeTextStyle().copyWith(
+                                          fontSize: 32,
+                                          color: konDarkBlackColor),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'Add courses to find here',
+                                      style: mediumTextStyle().copyWith(
+                                          fontSize: 15, color: konDarkColorD3),
+                                    ),
+                                  ],
+                                )),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              _course.length == 0 && _wishlist.length != 0
+                  ? Divider(color: konDarkColorB4, thickness: 1)
+                  : SizedBox(),
+              _course.length != 0
+                  ? GestureDetector(
+                      onTap: () {
+                        Get.toNamed('/coupon');
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        padding: EdgeInsets.all(12),
+                        color: Color(0xffF6F5FF),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         '%',
@@ -511,11 +542,11 @@ class _CartScreenState extends State<CartScreen> {
                       width: MediaQuery.of(context).size.width - 40,
                       child: FlatButton(
                         onPressed: () async {
-//                          setState(() {
-//                            _loading = true;
-//                          });
-//                            _checkout();
-                        },
+                                      setState(() {
+                                        _loading = true;
+                                      });
+                                      _checkout();
+                                    },
                         shape: StadiumBorder(),
                         padding: EdgeInsets.symmetric(vertical: 5),
                         color: konPrimaryColor,

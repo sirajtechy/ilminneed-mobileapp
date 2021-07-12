@@ -13,6 +13,11 @@ TextStyle ctaTextStyle() {
       fontSize: 16, fontWeight: FontWeight.w700, color: konBlackColor);
 }
 
+TextStyle titleTextStyle() {
+  return GoogleFonts.dmSans(
+      fontSize: 16, fontWeight: FontWeight.w600, color: konBlackColor);
+}
+
 TextStyle mediumTextStyle() {
   return GoogleFonts.dmSans(
     fontWeight: FontWeight.w400,
@@ -27,9 +32,23 @@ TextStyle buttonTextStyle() {
   );
 }
 
+TextStyle button2TextStyle() {
+  return GoogleFonts.dmSans(
+    fontWeight: FontWeight.w500,
+    fontSize: 13,
+  );
+}
+
 TextStyle smallTextStyle() {
   return GoogleFonts.dmSans(
     fontWeight: FontWeight.w400,
     fontSize: 14,
+  );
+}
+
+TextStyle descTextStyle() {
+  return GoogleFonts.dmSans(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
   );
 }

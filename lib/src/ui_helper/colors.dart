@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 
 const Color konPrimaryColor = Color(0xffB300E6);
 const Color konPrimaryColor1 = Color(0xffe6005c);
+const Color konPrimaryColor2 = Color(0xff7C15FF);
+const Color konPrimaryLightColor = Color(0xffF6F5FF);
 
 const Color konLightColor1 = Color(0xffFCFCFF);
 const Color konLightColor2 = Color(0xffF1F1FA);
 const Color konLightColor3 = Color(0xff91919F);
+const Color konLightColor4 = Color(0xfff6f5ff);
 
 const Color konDarkColorB1 = Color(0xff161719);
 const Color konDarkColorB2 = Color(0xff212325);

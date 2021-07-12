@@ -1,7 +1,8 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
+import 'package:ilminneed/cart_bloc.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/helper/resources/strings.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
@@ -11,12 +12,11 @@ import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/recent_items.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:ilminneed/cart_bloc.dart';
-import 'package:provider/provider.dart';
-import '../widgets/thumbnail.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ilminneed/src/widgets/shopping_cart.dart';
+import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../widgets/thumbnail.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key key}) : super(key: key);
@@ -46,6 +46,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       }
     }
   }
+
   _fetchslider() async {
     var res = await ctrl.getrequest({}, 'explore_image');
     print(res);
@@ -59,6 +60,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       }
     }
   }
+
   _fetchlookingfor() async {
     var res = await ctrl.getrequest({}, 'top_categories');
     if (res != null) {
@@ -71,6 +73,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       }
     }
   }
+
   _fetchcontinuelearning() async {
     if(await ctrl.LoggedIn() == true) {
       var res = await ctrl.getrequestwithheader('my_courses');
@@ -86,6 +89,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       }
     }
   }
+
   _fetchrecentvisit() async {
     if(await ctrl.LoggedIn() == true) {
       var res = await ctrl.getrequestwithheader('recent_courses_visit');
@@ -101,6 +105,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       }
     }
   }
+
   _fetchpopularcourse() async {
     var res = await ctrl.getrequest({}, 'popular_courses');
     if (res != null) {
@@ -195,12 +200,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             style: buttonTextStyle()
                                 .copyWith(fontSize: 18, color: konDarkColorB1),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              Get.toNamed('/cart');
-                            },
-                            child: ShoppingCartButtonWidget(),
-                          ),
+                          ShoppingCartButtonWidget(),
                         ],
                       ),
                     ),
@@ -208,16 +208,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       height: 175,
                       margin: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),),
+                        borderRadius: BorderRadius.circular(8),),
                       alignment: Alignment.center,
                       child:  CarouselSlider(
                         carouselController: _controller,
                         options: CarouselOptions(
                           autoPlay: true,
                           onPageChanged: (index, reason) {
-                              setState(() {
-                                _current = index;
-                              });},
+                            setState(() {
+                              _current = index;
+                            });},
                         ),
                         items: _slider
                             .map((item) => Container(
@@ -288,54 +288,54 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         height: 250,
                         child: ListView.builder(
                           itemCount: _popularcourse.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ThumbNailWidget(
-                                      continueLearing: false,
-                                      course: _popularcourse[index]);
-                                },
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ThumbNailWidget(
+                                continueLearing: false,
+                                course: _popularcourse[index]);
+                          },
+                        ),
+                      ),
+                    )
+                        : Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: 200.0,
+                            height: 100.0,
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey.withOpacity(0.3),
+                              highlightColor:
+                              Colors.grey.withOpacity(0.2),
+                              child: Container(
+                                margin: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 200.0,
+                            height: 100.0,
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey.withOpacity(0.3),
+                              highlightColor:
+                              Colors.grey.withOpacity(0.2),
+                              child: Container(
+                                margin: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
                           )
-                        : Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                SizedBox(
-                                  width: 200.0,
-                                  height: 100.0,
-                                  child: Shimmer.fromColors(
-                                    baseColor: Colors.grey.withOpacity(0.3),
-                                    highlightColor:
-                                        Colors.grey.withOpacity(0.2),
-                                    child: Container(
-                                      margin: EdgeInsets.all(15),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.withOpacity(0.8),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 200.0,
-                                  height: 100.0,
-                                  child: Shimmer.fromColors(
-                                    baseColor: Colors.grey.withOpacity(0.3),
-                                    highlightColor:
-                                        Colors.grey.withOpacity(0.2),
-                                    child: Container(
-                                      margin: EdgeInsets.all(15),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.withOpacity(0.8),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
+                        ],
+                      ),
+                    ),
                     _continuelearning.length != 0
                         ? Container(
                       margin: EdgeInsets.only(bottom: 10),
@@ -442,7 +442,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     ):SizedBox(),
                     Container(
                       margin:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -462,60 +462,60 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     ),
                     _popularcourse.length != 0
                         ? Container(
-                            margin: EdgeInsets.only(
-                                left: 15, right: 15, top: 8, bottom: 2),
-                            child: SizedBox(
-                              height: 250,
-                              child: ListView.builder(
-                                itemCount: _popularcourse.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ThumbNailWidget(
-                                      continueLearing: false,
-                                      course: _popularcourse[index]);
-                                },
+                      margin: EdgeInsets.only(
+                          left: 15, right: 15, top: 8, bottom: 2),
+                      child: SizedBox(
+                        height: 250,
+                        child: ListView.builder(
+                          itemCount: _popularcourse.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ThumbNailWidget(
+                                continueLearing: false,
+                                course: _popularcourse[index]);
+                          },
+                        ),
+                      ),
+                    )
+                        : Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: 200.0,
+                            height: 100.0,
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey.withOpacity(0.3),
+                              highlightColor:
+                              Colors.grey.withOpacity(0.2),
+                              child: Container(
+                                margin: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 200.0,
+                            height: 100.0,
+                            child: Shimmer.fromColors(
+                              baseColor: Colors.grey.withOpacity(0.3),
+                              highlightColor:
+                              Colors.grey.withOpacity(0.2),
+                              child: Container(
+                                margin: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
                           )
-                        : Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                SizedBox(
-                                  width: 200.0,
-                                  height: 100.0,
-                                  child: Shimmer.fromColors(
-                                    baseColor: Colors.grey.withOpacity(0.3),
-                                    highlightColor:
-                                        Colors.grey.withOpacity(0.2),
-                                    child: Container(
-                                      margin: EdgeInsets.all(15),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.withOpacity(0.8),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 200.0,
-                                  height: 100.0,
-                                  child: Shimmer.fromColors(
-                                    baseColor: Colors.grey.withOpacity(0.3),
-                                    highlightColor:
-                                        Colors.grey.withOpacity(0.2),
-                                    child: Container(
-                                      margin: EdgeInsets.all(15),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.withOpacity(0.8),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

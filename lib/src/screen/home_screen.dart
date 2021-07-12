@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:ilminneed/src/screen/category.dart';
 import 'package:ilminneed/src/screen/explore.dart';
-import 'package:ilminneed/src/screen/quiz.dart';
-import 'package:ilminneed/src/screen/search.dart';
+import 'package:ilminneed/src/screen/myaccount.dart';
+import 'package:ilminneed/src/screen/mycourses.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class HomeScreen extends StatefulWidget {
+  int currentTab = 0;
+  int selectedTab = 0;
+  Widget currentPage = ExploreScreen();
+
+  HomeScreen({
+    Key key,
+    this.currentTab,
+  }) : super(key: key);
+
   @override
   _HomeScreenState createState() {
     return _HomeScreenState();
@@ -14,8 +23,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-  Widget currentPage = ExploreScreen();
 
   Widget chipContainer(String label) {
     return Container(
@@ -29,32 +36,37 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onItemTapped(int tabItem) {
-    print(tabItem);
     setState(() {
-      _selectedIndex = tabItem;
+      widget.currentTab = tabItem;
+      widget.selectedTab = tabItem;
       switch (tabItem) {
         case 0:
-          currentPage = ExploreScreen();
+          widget.currentPage = ExploreScreen();
           break;
         case 1:
-          currentPage = SearchScreen();
+          widget.currentPage = Category();
           break;
         case 2:
-          currentPage = Category();
+          widget.currentPage = MyCourses();
           break;
         case 3:
-          currentPage = QuizScreen();
+          widget.currentPage = MyAccountScreen();
           break;
       }
     });
+  }
 
+  @override
+  initState() {
+    _onItemTapped(widget.currentTab);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: konLightColor2,
-      body: currentPage,
+      body: widget.currentPage,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
@@ -72,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(
               Icons.menu_book_outlined,
             ),
-            label: 'Category',
+            label: 'My courses',
           ),
           BottomNavigationBarItem(
             icon: Icon(
@@ -81,12 +93,14 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Account',
           ),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: widget.selectedTab,
         selectedItemColor: konTextInputBorderActiveColor,
         unselectedItemColor: konDarkColorD3,
         onTap: _onItemTapped,
-        selectedLabelStyle: smallTextStyle().copyWith(fontSize: 10, color: konTextInputBorderActiveColor),
-        unselectedLabelStyle: smallTextStyle().copyWith(fontSize: 10, color: konDarkColorD3),
+        selectedLabelStyle: smallTextStyle()
+            .copyWith(fontSize: 10, color: konTextInputBorderActiveColor),
+        unselectedLabelStyle:
+            smallTextStyle().copyWith(fontSize: 10, color: konDarkColorD3),
       ),
     );
   }

@@ -7,7 +7,9 @@ import 'package:ilminneed/src/screen/coupon.dart';
 import 'package:ilminneed/src/screen/courses/course_detail.dart';
 import 'package:ilminneed/src/screen/courses/latest_course.dart';
 import 'package:ilminneed/src/screen/forgot_password.dart';
+import 'package:ilminneed/src/screen/lesson.dart';
 import 'package:ilminneed/src/screen/myaccount.dart';
+import 'package:ilminneed/src/screen/mycourses.dart';
 import 'package:ilminneed/src/screen/reset_link.dart';
 import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/screen/sign_in.dart';
@@ -23,7 +25,8 @@ class RouteGenerator {
     final args = settings.arguments;
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => HomeScreen());
+        return MaterialPageRoute(
+            builder: (_) => HomeScreen(currentTab: args == null ? 0 : args));
       case '/splash':
         return MaterialPageRoute(builder: (_) => SplashScreen());
       case '/welcome':
@@ -57,7 +60,12 @@ class RouteGenerator {
       case '/thankyou':
         return MaterialPageRoute(builder: (_) => ThankYou());
       case '/categoryresult':
-        return MaterialPageRoute(builder: (_) => CategoryResultScreen(param: args));
+        return MaterialPageRoute(
+            builder: (_) => CategoryResultScreen(param: args));
+      case '/mycourses':
+        return MaterialPageRoute(builder: (_) => MyCourses());
+      case '/lesson':
+        return MaterialPageRoute(builder: (_) => LessonScreen());
       default:
         return _errorRoute();
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/bookmark_detail.dart';
@@ -152,6 +153,17 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: InkWell(
+            onTap: () {
+              Get.back();
+            },
+            child: Icon(Icons.arrow_back, color: Colors.black)),
+        elevation: 0,
+        backgroundColor: konLightColor1,
+        title: Text('Lessons'),
+        titleSpacing: 0,
+      ),
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       body: Container(
@@ -191,7 +203,7 @@ class _LessonScreenState extends State<LessonScreen>
                 controller: _tabController,
                 indicatorColor: konTextInputBorderActiveColor,
                 unselectedLabelStyle:
-                    smallTextStyle().copyWith(color: konDarkColorB1),
+                smallTextStyle().copyWith(color: konDarkColorB1),
                 labelStyle: buttonTextStyle().copyWith(color: konDarkColorB1),
                 tabs: <Widget>[
                   Text('Content'),
@@ -354,7 +366,7 @@ class _LessonScreenState extends State<LessonScreen>
                                           margin: EdgeInsets.only(right: 5),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
