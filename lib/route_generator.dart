@@ -7,6 +7,7 @@ import 'package:ilminneed/src/screen/coupon.dart';
 import 'package:ilminneed/src/screen/courses/course_detail.dart';
 import 'package:ilminneed/src/screen/courses/latest_course.dart';
 import 'package:ilminneed/src/screen/forgot_password.dart';
+import 'package:ilminneed/src/screen/lesson.dart';
 import 'package:ilminneed/src/screen/myaccount.dart';
 import 'package:ilminneed/src/screen/mycourses.dart';
 import 'package:ilminneed/src/screen/reset_link.dart';
@@ -60,6 +61,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => CategoryResultScreen(param: args));
       case '/mycourses':
         return MaterialPageRoute(builder: (_) => MyCourses());
+      case '/lesson':
+        return MaterialPageRoute(builder: (_) => LessonScreen());
       default:
         return _errorRoute();
     }

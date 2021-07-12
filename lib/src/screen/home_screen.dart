@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/screen/category.dart';
 import 'package:ilminneed/src/screen/explore.dart';
 import 'package:ilminneed/src/screen/myaccount.dart';
 import 'package:ilminneed/src/screen/mycourses.dart';
@@ -45,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
           widget.currentPage = ExploreScreen();
           break;
         case 1:
-          widget.currentPage = SearchScreen();
+          widget.currentPage = Category();
           break;
         case 2:
           widget.currentPage = MyCourses();

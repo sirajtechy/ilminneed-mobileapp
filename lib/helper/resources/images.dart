@@ -17,3 +17,4 @@ const String clock = 'assets/images/clock.png';
 const String quiz = 'assets/images/quiz.png';
 const String certificate = 'assets/images/certificate.png';
 const String empty_cart = 'assets/images/empty_cart.png';
+const String search = 'assets/images/search.png';

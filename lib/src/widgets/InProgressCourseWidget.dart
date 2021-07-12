@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -54,39 +55,44 @@ class _InProgressCourseWidgetState extends State<InProgressCourseWidget> {
           Expanded(
               child: Column (
                 children: [
-                  Container(
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      child: Column (
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                              'Declarative interfaces for any Apple Devices',
-                              softWrap: true,
-                              maxLines: 2,
-                              style: titleTextStyle().copyWith(color: konDarkColorB1)
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'By Siradueen',
-                            style: smallTextStyle().copyWith(color: konDarkColorD3),
-                          ),
-                          SizedBox(height: 10),
-                          Padding(
-                            padding: EdgeInsets.all(0),
-                            child:  LinearPercentIndicator(
-                              width: MediaQuery.of(context).size.width / 2.5,
-                              animation: true,
-                              lineHeight: 5.0,
-                              animationDuration: 2000,
-                              percent: 0.3,
-                              linearStrokeCap: LinearStrokeCap.roundAll,
-                              progressColor: konPrimaryColor2,
+                  InkWell(
+                    onTap: (){
+                      Get.toNamed('/lesson');
+                    },
+                    child: Container(
+                        margin: EdgeInsets.symmetric(vertical: 8),
+                        child: Column (
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                'Declarative interfaces for any Apple Devices',
+                                softWrap: true,
+                                maxLines: 2,
+                                style: titleTextStyle().copyWith(color: konDarkColorB1)
                             ),
-                          ),
-                          SizedBox(height: 10),
-                          Text ('25%', style: titleTextStyle().copyWith(color: konDarkColorB1)),
-                        ],
-                      )
+                            SizedBox(height: 8),
+                            Text(
+                              'By Siradueen',
+                              style: smallTextStyle().copyWith(color: konDarkColorD3),
+                            ),
+                            SizedBox(height: 10),
+                            Padding(
+                              padding: EdgeInsets.all(0),
+                              child:  LinearPercentIndicator(
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                animation: true,
+                                lineHeight: 5.0,
+                                animationDuration: 2000,
+                                percent: 0.3,
+                                linearStrokeCap: LinearStrokeCap.roundAll,
+                                progressColor: konPrimaryColor2,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            Text ('25%', style: titleTextStyle().copyWith(color: konDarkColorB1)),
+                          ],
+                        )
+                    ),
                   ),
                 ],
               )

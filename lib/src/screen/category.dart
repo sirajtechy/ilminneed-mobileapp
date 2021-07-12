@@ -105,7 +105,7 @@ class _CategoryState extends State<Category> {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     suffixIcon: Icon(Icons.search),
-                    hintText: 'Search course',
+                    hintText: 'Search courses, tutors',
                     hintStyle: mediumTextStyle().copyWith(color: konLightColor),
                   ),
                 ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ilminneed/helper/resources/images.dart';
@@ -19,7 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchScreen extends StatefulWidget {
   final String term;
-  const SearchScreen({Key key,this.term}) : super(key: key);
+  const SearchScreen({Key key, this.term}) : super(key: key);
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -57,71 +58,71 @@ class _SearchScreenState extends State<SearchScreen> {
 
   _searchcourse(search) async {
     print(filter.toString());
+    setState(() {
+      _current = true;
+      isLoadingVertical = true;
+    });
+    if (search) {
       setState(() {
-        _current = true;
-        isLoadingVertical = true;
+        _course.clear();
+        pageno = 1;
       });
-      if(search){
+    }
+    await new Future.delayed(const Duration(seconds: 3));
+    Map d = {
+      'search': _coursename.text,
+      'category': _filter_category,
+      'level': _filter_level,
+      'price': _filter_price,
+      'language': '',
+    };
+    var oldtxt = _coursename.text;
+    var res = await ctrl.requestwithoutheader(
+        d, 'filter_course/' + pageno.toString());
+    if (!mounted) return;
+    setState(() {
+      _loading = false;
+      _loading_product = false;
+      _current = false;
+      isLoadingVertical = false;
+    });
+    if (res != null) {
+      if (search) {
+        if (!mounted) return;
         setState(() {
           _course.clear();
           pageno = 1;
         });
       }
-      await new Future.delayed(const Duration(seconds: 3));
-      Map d = {
-        'search': _coursename.text,
-        'category': _filter_category,
-        'level': _filter_level,
-        'price': _filter_price,
-        'language': '',
-      };
-      var oldtxt = _coursename.text;
-      var res = await ctrl.requestwithoutheader(
-          d, 'filter_course/' + pageno.toString());
+      List<dynamic> data = res[0]['courses'];
+      for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
         setState(() {
-          _loading = false;
-          _loading_product = false;
-          _current = false;
-          isLoadingVertical = false;
+          _course.add(Course.fromJson(data[i]));
         });
-      if (res != null) {
-        if(search){
-          if (!mounted) return;
-          setState(() {
-            _course.clear();
-            pageno = 1;
-          });
-        }
-        List<dynamic> data = res[0]['courses'];
-        for (int i = 0; i < data.length; i++) {
-          if (!mounted) return;
-            setState(() {
-              _course.add(Course.fromJson(data[i]));
-            });
-        }
-        if (_course.length != 5 && data.length == 0) {
-          await ctrl.toastmsg('No more course found', 'short');
-        }
-        if(_coursename.text != ''){
-          await _saveToRecentSearches(_coursename.text);
-        }
-        if (!mounted) return;
-        setState(() {
-          pageno++;
-          recent_history.clear();
-          total_result = res[0]['total_results'];
-        });
-      } else {
-        if (!mounted) return;
-          setState(() {
-            _loading = false;
-            _loading_product = false;
-            _current = false;
-            isLoadingVertical = false;
-          });
-        await ctrl.toastmsg('Error. please try again', 'long');
       }
+      if (_course.length != 5 && data.length == 0) {
+        await ctrl.toastmsg('No more course found', 'short');
+      }
+      if (_coursename.text != '') {
+        await _saveToRecentSearches(_coursename.text);
+      }
+      if (!mounted) return;
+      setState(() {
+        pageno++;
+        recent_history.clear();
+        total_result = res[0]['total_results'];
+      });
+    } else {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _loading_product = false;
+        _current = false;
+        isLoadingVertical = false;
+      });
+      await ctrl.toastmsg('Error. please try again', 'long');
+    }
   }
 
   _showfiltermodal() {
@@ -202,12 +203,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                         _levellist.list.length, (index) {
                                       return InkWell(
                                         onTap: () {
-                                            mystate(() {
-                                              if(_filter_level == ''){
-                                                filter++;
-                                              }
-                                              _filter_level = _levellist.list[index].id;
-                                            });
+                                          mystate(() {
+                                            if (_filter_level == '') {
+                                              filter++;
+                                            }
+                                            _filter_level =
+                                                _levellist.list[index].id;
+                                          });
                                         },
                                         child: Container(
                                           margin: EdgeInsets.symmetric(
@@ -216,7 +218,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                               horizontal: 10, vertical: 10),
                                           decoration: BoxDecoration(
                                               color: _filter_level ==
-                                                  _levellist.list[index].id
+                                                      _levellist.list[index].id
                                                   ? konPrimaryColor1
                                                   : konLightColor2,
                                               borderRadius:
@@ -227,7 +229,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                             style: smallTextStyle().copyWith(
                                                 fontSize: 16,
                                                 color: _filter_level ==
-                                                    _levellist.list[index].id
+                                                        _levellist
+                                                            .list[index].id
                                                     ? konLightColor1
                                                     : konDarkColorD3),
                                           ),
@@ -275,13 +278,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                         (index) {
                                       return InkWell(
                                         onTap: () {
-                                            mystate(() {
-                                              if(_filter_category == ''){
-                                                filter++;
-                                              }
-                                              _filter_category =
-                                                  _category[index].id.toString();
-                                            });
+                                          mystate(() {
+                                            if (_filter_category == '') {
+                                              filter++;
+                                            }
+                                            _filter_category =
+                                                _category[index].id.toString();
+                                          });
                                         },
                                         child: Container(
                                           margin: EdgeInsets.symmetric(
@@ -289,8 +292,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                           padding: EdgeInsets.symmetric(
                                               horizontal: 10, vertical: 10),
                                           decoration: BoxDecoration(
-                                              color:  _filter_category ==
-                                                  _category[index].id.toString()
+                                              color: _filter_category ==
+                                                      _category[index]
+                                                          .id
+                                                          .toString()
                                                   ? konPrimaryColor1
                                                   : konLightColor2,
                                               borderRadius:
@@ -300,7 +305,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                             style: smallTextStyle().copyWith(
                                                 fontSize: 16,
                                                 color: _filter_category ==
-                                                    _category[index].id.toString()
+                                                        _category[index]
+                                                            .id
+                                                            .toString()
                                                     ? konLightColor1
                                                     : konDarkColorD3),
                                           ),
@@ -348,13 +355,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                         _pricelist.list.length, (index) {
                                       return InkWell(
                                         onTap: () {
-                                            mystate(() {
-                                              if(_filter_price == ''){
-                                                filter++;
-                                              }
-                                              _filter_price =
-                                                  _pricelist.list[index].id;
-                                            });
+                                          mystate(() {
+                                            if (_filter_price == '') {
+                                              filter++;
+                                            }
+                                            _filter_price =
+                                                _pricelist.list[index].id;
+                                          });
                                         },
                                         child: Container(
                                           margin: EdgeInsets.symmetric(
@@ -375,8 +382,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                             style: smallTextStyle().copyWith(
                                                 fontSize: 16,
                                                 color: _filter_price ==
-                                                    _pricelist.list[index].id
-                                                        .toString()
+                                                        _pricelist
+                                                            .list[index].id
+                                                            .toString()
                                                     ? konLightColor1
                                                     : konDarkColorD3),
                                           ),
@@ -390,66 +398,74 @@ class _SearchScreenState extends State<SearchScreen> {
                           ],
                         ),
                       ),
-                      filter != 0?Container(
-                        decoration:
-                            BoxDecoration(color: konLightColor1, boxShadow: [
-                            BoxShadow(
-                            color: Colors.greenAccent[200],
-                                offset: const Offset(
-                                  5.0,
-                                  5.0,
-                                ),
-                                blurRadius: 10.0,
-                                spreadRadius: 2.0,
-                            ),
-                        ]),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.all(10),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _filter_price = '';
-                                    _filter_level = '';
-                                    _filter_category = '';
-                                    filter = 0;
-                                  });
-                                  Get.back();
-                                  _searchcourse(true);
-                                },
-                                child: Center(
-                                    child: Text(
-                                      'Reset',
-                                      style: ctaTextStyle().copyWith(color: Color(0xff000000)),
-                                    )),
-                              ),
-                            ),
-                            Container(
+                      filter != 0
+                          ? Container(
                               decoration: BoxDecoration(
-                                  border: Border(
-                                      right: BorderSide(
-                                          color: konLightColor2, width: 1.5))),
-                              width: MediaQuery.of(context).size.width / 2,
-                              padding: EdgeInsets.all(10),
-                              child: InkWell(
-                                onTap: () {
-                                  Get.back();
-                                  _searchcourse(true);
-                                },
-                                child: Center(
-                                    child: Text(
-                                  'Apply',
-                                  style: ctaTextStyle().copyWith(color: konPrimaryColor),
-                                )),
+                                  color: konLightColor1,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.greenAccent[200],
+                                      offset: const Offset(
+                                        5.0,
+                                        5.0,
+                                      ),
+                                      blurRadius: 10.0,
+                                      spreadRadius: 2.0,
+                                    ),
+                                  ]),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    padding: EdgeInsets.all(10),
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          _filter_price = '';
+                                          _filter_level = '';
+                                          _filter_category = '';
+                                          filter = 0;
+                                        });
+                                        Get.back();
+                                        _searchcourse(true);
+                                      },
+                                      child: Center(
+                                          child: Text(
+                                        'Reset',
+                                        style: ctaTextStyle()
+                                            .copyWith(color: Color(0xff000000)),
+                                      )),
+                                    ),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            right: BorderSide(
+                                                color: konLightColor2,
+                                                width: 1.5))),
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    padding: EdgeInsets.all(10),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Get.back();
+                                        _searchcourse(true);
+                                      },
+                                      child: Center(
+                                          child: Text(
+                                        'Apply',
+                                        style: ctaTextStyle()
+                                            .copyWith(color: konPrimaryColor),
+                                      )),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ):Container()
+                            )
+                          : Container()
                     ],
                   ),
                 )
@@ -468,16 +484,17 @@ class _SearchScreenState extends State<SearchScreen> {
       recent_history = allSearches;
     });
   }
-  
+
   Future<List<String>> _getRecentSearchesLike(String query) async {
     final pref = await SharedPreferences.getInstance();
     final allSearches = pref.getStringList("recentSearches");
-    if(allSearches != null){
-      if(query != ''){
+    if (allSearches != null) {
+      if (query != '') {
         setState(() {
-          recent_history = allSearches.where((search) => search.startsWith(query)).toList();
+          recent_history =
+              allSearches.where((search) => search.startsWith(query)).toList();
         });
-      }else{
+      } else {
         setState(() {
           recent_history = allSearches.toList();
         });
@@ -497,12 +514,12 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     _fetchcategory();
-    if(widget.term != '' && widget.term != 'null' && widget.term != null){
+    if (widget.term != '' && widget.term != 'null' && widget.term != null) {
       recent_history.clear();
       _coursename.text = widget.term.toString();
       _searchcourse(true);
     }
-   // _filtercourse();
+    // _filtercourse();
     super.initState();
   }
 
@@ -552,14 +569,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                     },
                                     child: Icon(Icons.arrow_back)),
                                 border: InputBorder.none,
-                                suffixIcon: _coursename.text != ''?InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _coursename.text = '';
-                                      });
-                                      _searchcourse(true);
-                                    },
-                                    child: Icon(Icons.close)):SizedBox()),
+                                suffixIcon: _coursename.text != ''
+                                    ? InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _coursename.text = '';
+                                          });
+                                          _searchcourse(true);
+                                        },
+                                        child: Icon(Icons.close))
+                                    : SizedBox()),
                           ),
                         ),
                       ),
@@ -570,77 +589,95 @@ class _SearchScreenState extends State<SearchScreen> {
                     ],
                   ),
                 ),
-                recent_history.length!=0?Container(
-                  width: double.infinity,
-                  color: konLightColor1,
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    child: Column (
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Recent',
-                          style: mediumTextStyle()
-                              .copyWith(fontSize: 16, color: konDarkColorB1),
+                recent_history.length != 0
+                    ? Container(
+                        width: double.infinity,
+                        color: konLightColor1,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Recent',
+                              style: mediumTextStyle().copyWith(
+                                  fontSize: 16, color: konDarkColorB1),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                ):SizedBox(),
-                recent_history.length != 0?ListView.separated(
-                  padding: EdgeInsets.symmetric(vertical: 0),
-                  shrinkWrap: true,
-                  primary: false,
-                  itemCount: recent_history.length,
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: 0);
-                  },
-                  itemBuilder: (context, index) {
-                    return Container (
-                      color: konLightColor1,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      child: Column (
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.timer,
-                                    size: 15.0,
-                                  ),
-                                  SizedBox (width: 10),
-                                  InkWell(
-                                    onTap: (){
-                                      setState(() {
-                                        _coursename.text = recent_history[index].toString();
-                                        recent_history.clear();
-                                      });
-                                      _searchcourse(true);
-                                    },
-                                    child: RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: recent_history[index].toString(),
-                                            style: mediumTextStyle().copyWith(color:konPrimaryColor),
+                      )
+                    : SizedBox(),
+                recent_history.length != 0
+                    ? ListView.separated(
+                        padding: EdgeInsets.symmetric(vertical: 0),
+                        shrinkWrap: true,
+                        primary: false,
+                        itemCount: recent_history.length,
+                        separatorBuilder: (context, index) {
+                          return SizedBox(height: 0);
+                        },
+                        itemBuilder: (context, index) {
+                          return Container(
+                            color: konLightColor1,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: <Widget>[
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          Icons.timer,
+                                          size: 15.0,
+                                        ),
+                                        SizedBox(width: 10),
+                                        InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              _coursename.text =
+                                                  recent_history[index]
+                                                      .toString();
+                                              recent_history.clear();
+                                            });
+                                            _searchcourse(true);
+                                          },
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: recent_history[index]
+                                                      .toString(),
+                                                  style: mediumTextStyle()
+                                                      .copyWith(
+                                                          color:
+                                                              konPrimaryColor),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              InkWell(onTap:(){ _removefromhistory(recent_history[index].toString()); },child: Icon(Icons.close, color: Colors.black, size: 15)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ):SizedBox(),
-
+                                    Spacer(),
+                                    InkWell(
+                                        onTap: () {
+                                          _removefromhistory(
+                                              recent_history[index].toString());
+                                        },
+                                        child: Icon(Icons.close,
+                                            color: Colors.black, size: 15)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      )
+                    : SizedBox(),
                 Container(
                   color: konLightColor1,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -648,25 +685,34 @@ class _SearchScreenState extends State<SearchScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _course.length != 0?Text(
-                        total_result.toString(),
-                        style: mediumTextStyle()
-                            .copyWith(fontSize: 16, color: konPrimaryColor),
-                      ):SizedBox(),
-                      _course.length != 0?Text(
-                        ' Results found',
-                        style: mediumTextStyle()
-                            .copyWith(fontSize: 16, color: konDarkColorB1),
-                      ):SizedBox(),
+                      _course.length != 0
+                          ? Text(
+                              total_result.toString(),
+                              style: mediumTextStyle().copyWith(
+                                  fontSize: 16, color: konPrimaryColor),
+                            )
+                          : SizedBox(),
+                      _course.length != 0
+                          ? Text(
+                              ' Results found',
+                              style: mediumTextStyle().copyWith(
+                                  fontSize: 16, color: konDarkColorB1),
+                            )
+                          : SizedBox(),
                       Spacer(),
                       GestureDetector(
                           onTap: () {
                             _showfiltermodal();
                           },
                           child: Text(
-                            filter != 0?'('+filter.toString()+') Filter':'Filter',
-                            style: mediumTextStyle()
-                                .copyWith(fontSize: 16, color: filter != 0?konPrimaryColor:konDarkColorB1),
+                            filter != 0
+                                ? '(' + filter.toString() + ') Filter'
+                                : 'Filter',
+                            style: mediumTextStyle().copyWith(
+                                fontSize: 16,
+                                color: filter != 0
+                                    ? konPrimaryColor
+                                    : konDarkColorB1),
                           )),
                     ],
                   ),
@@ -687,7 +733,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   scrollOffset: 100,
                                   scrollDirection: Axis.vertical,
                                   isLoading: isLoadingVertical,
-                                  onEndOfPage: (){
+                                  onEndOfPage: () {
                                     _searchcourse(false);
                                   },
                                   child: ListView.builder(
@@ -703,12 +749,43 @@ class _SearchScreenState extends State<SearchScreen> {
                               ))
                             : !_loading_product && _course.isEmpty && !_current
                                 ? Container(
-                                    child: Center(
-                                      child: Text(
-                                        "Course not found",
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
+                                    child: Align(
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          children: [
+                                            Image(
+                                              image: AssetImage(search),
+                                            ),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              'No results found',
+                                              style: largeTextStyle().copyWith(
+                                                  fontSize: 32,
+                                                  color: konDarkBlackColor),
+                                            ),
+                                            SizedBox(height: 5),
+                                            Text(
+                                              'Search with other keys',
+                                              style: mediumTextStyle().copyWith(
+                                                  fontSize: 15,
+                                                  color: konDarkColorD3),
+                                            ),
+                                            RichText(
+                                              textAlign: TextAlign.center,
+                                              text: TextSpan(children: <TextSpan>[
+                                                TextSpan(
+                                                    text: "Or browse the  ",
+                                                    style: TextStyle(color: konDarkColorD3)),
+                                                TextSpan(
+                                                    recognizer: new TapGestureRecognizer()..onTap = () => Get.offAllNamed('/', arguments: 1),
+                                                    text: "categories",
+                                                    style: TextStyle(
+                                                        color: konPrimaryColor2,
+                                                        fontWeight: FontWeight.bold)),
+                                              ]),
+                                            ),
+                                          ],
+                                        )),
                                   )
                                 : Container(),
                         _current
