@@ -28,6 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _password = TextEditingController();
   bool _loading = false;
   bool _obscureText = true;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   _register() async {
     if(!_formKey.currentState.validate()) {
@@ -45,6 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       await ctrl.toastmsg(res['message'], 'long');
     }
   }
+
 
   Widget SocialMediaButton(String svgAsset, String title) {
     return Container(
@@ -87,6 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return LoadingOverlay(
       isLoading: _loading,
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: konLightColor2,
         body: SafeArea(
           child: Container(

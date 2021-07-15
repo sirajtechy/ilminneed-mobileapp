@@ -22,8 +22,9 @@ class Course {
   final String is_carted;
   final String is_wishlisted;
   final String course_total_reviews;
+  final int completion;
 
-  Course({this.id, this.title, this.short_description, this.language, this.price, this.discounted_price, this.thumbnail, this.instructor_name, this.level, this.last_edited,this.date_created,this.video_url, this.rating,this.discount_flag, this.total_lessons, this.total_number_of_quizzes, this.is_certificate, this.number_of_ratings, this.user_id, this.course_duration, this.is_carted, this.is_wishlisted,this.course_total_reviews});
+  Course({this.id, this.title, this.short_description, this.language, this.price, this.discounted_price, this.thumbnail, this.instructor_name, this.level, this.last_edited,this.date_created,this.video_url, this.rating,this.discount_flag, this.total_lessons, this.total_number_of_quizzes, this.is_certificate, this.number_of_ratings, this.user_id, this.course_duration, this.is_carted, this.is_wishlisted,this.course_total_reviews,this.completion});
 
   factory Course.fromJson(Map<String, dynamic> json) {
     return Course(
@@ -49,7 +50,8 @@ class Course {
         course_duration: json['course_duration'].toString(),
         is_carted: json['is_carted'].toString(),
         is_wishlisted: json['is_wishlisted'].toString(),
-        course_total_reviews: json['course_total_reviews'].toString()
+        course_total_reviews: json['course_total_reviews'].toString(),
+        completion: json.containsKey('completion')?json['completion']:0
     );
     //json.containsKey('sections')?json['sections'].length != 0?json['sections'][0]['lessons'].length.toString():'0':'0'
   }

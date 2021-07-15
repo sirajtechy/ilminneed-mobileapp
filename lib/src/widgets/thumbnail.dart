@@ -66,7 +66,7 @@ class ThumbNailWidget extends StatelessWidget {
             Container(
               margin: EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                this.course.language,
+                this.course.language.toString(),
                 style: smallTextStyle()
                     .copyWith(fontSize: 10, color: konLightColor3),
               ),
@@ -74,7 +74,7 @@ class ThumbNailWidget extends StatelessWidget {
             Container(
               margin: EdgeInsets.symmetric(vertical: 4),
               child: Text(
-                this.course.title,
+                this.course.title.toString(),
                 style: smallTextStyle()
                     .copyWith(fontSize: 14, color: konDarkColorB1),
               ),

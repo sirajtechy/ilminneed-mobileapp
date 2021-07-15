@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
+            icon: Icon(Icons.explore),
             label: 'Explore',
           ),
           BottomNavigationBarItem(

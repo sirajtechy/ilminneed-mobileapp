@@ -32,7 +32,6 @@ dependencies:
   flutter_svg: ^0.22.0
   google_fonts: ^1.1.2
   flutter_rating_bar: ^3.2.0
-  fluttertoast: ^8.0.7
   shared_preferences: ^2.0.6
   get: ^4.1.4
   loading_overlay: ^0.3.0
@@ -44,6 +43,7 @@ dependencies:
   flutter_bloc: ^7.0.1
   percent_indicator: ^3.0.1
   razorpay_flutter: ^1.2.7
+  bot_toast: ^4.0.1
 
 
 dev_dependencies:

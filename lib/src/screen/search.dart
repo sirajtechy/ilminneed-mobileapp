@@ -41,6 +41,7 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _current = false;
   bool _loading_product = true;
   int total_result = 0;
+  bool load_more = true;
 
   _fetchcategory() async {
     await _getRecentSearchesLike('');
@@ -57,6 +58,10 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   _searchcourse(search) async {
+    if (_course.length == total_result && _course.length != 0 && !search) {
+      await ctrl.toastmsg('No more course found', 'short');
+      return;
+    }
     print(filter.toString());
     setState(() {
       _current = true;
@@ -101,9 +106,6 @@ class _SearchScreenState extends State<SearchScreen> {
           _course.add(Course.fromJson(data[i]));
         });
       }
-      if (_course.length != 5 && data.length == 0) {
-        await ctrl.toastmsg('No more course found', 'short');
-      }
       if (_coursename.text != '') {
         await _saveToRecentSearches(_coursename.text);
       }
@@ -112,6 +114,7 @@ class _SearchScreenState extends State<SearchScreen> {
         pageno++;
         recent_history.clear();
         total_result = res[0]['total_results'];
+        print(total_result.toString());
       });
     } else {
       if (!mounted) return;

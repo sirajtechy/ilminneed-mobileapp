@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/model/lessonnote.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class NotesCourseWidget extends StatefulWidget {
-  NotesCourseWidget({Key key}) : super(key: key);
+  LessonNote lessonnote;
+  NotesCourseWidget({Key key,this.lessonnote}) : super(key: key);
 
   @override
   _NotesCourseWidgetState createState() => _NotesCourseWidgetState();
@@ -25,14 +27,14 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Declarative interfaces for any Apple Devices and Android Devices',
+                Text(widget.lessonnote.title.toString(),
                     softWrap: true,
                     maxLines: 2,
                     style: titleTextStyle().copyWith(color: konDarkColorB1)
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'By Siradueen',
+                  'By '+widget.lessonnote.instructor_name.toString(),
                   style: smallTextStyle().copyWith(color: konDarkColorD3),
                 ),
               ],
@@ -49,54 +51,69 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
                       color: konPrimaryLightColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Column (
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row (
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child:  ListView.separated(
+                      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                      shrinkWrap: true,
+                      primary: false,
+                      itemCount: widget.lessonnote.notes.length,
+                      separatorBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          child: Divider(color: Colors.grey),
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        return Column (
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text (
-                              '@ 00:01:23',
-                              style: ctaTextStyle().copyWith(color: konPrimaryColor2),
-                            ),
-                            Container(
-                              child: Row (
-                                children: [
-                                  Icon (
-                                    CupertinoIcons.trash, size: 20,
+                            Row (
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text (
+                                  '@ '+widget.lessonnote.notes[index].duration.toString(),
+                                  style: ctaTextStyle().copyWith(color: konPrimaryColor2),
+                                ),
+                                Container(
+                                  child: Row (
+                                    children: [
+                                      Icon (
+                                        CupertinoIcons.trash, size: 20,
+                                      ),
+                                      SizedBox(width: 20),
+                                      Icon (
+                                        Icons.edit, size: 20,
+                                      )
+                                    ],
                                   ),
-                                  SizedBox(width: 20),
-                                  Icon (
-                                      Icons.edit, size: 20,
-                                  )
-                                ],
-                              ),
-                            )
+                                )
+                              ],
+                            ),
+                            //SizedBox(height: 8),
+//                            Text(widget.lessonnote.notes[index].note,
+//                                softWrap: true,
+//                                maxLines: 2,
+//                                style: titleTextStyle().copyWith(color: konDarkColorB1)
+//                            ),
+//                            SizedBox(height: 8),
+//                            Text(
+//                              'Clean up the base code to make easy',
+//                              style: smallTextStyle().copyWith(color: konDarkColorD3),
+//                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              widget.lessonnote.notes[index].note.toString(),
+                              style: descTextStyle(),
+                            ),
+//                            SizedBox(height: 8),
+//                            Text(
+//                              '13 JUN 2021'.toUpperCase(),
+//                              style: smallTextStyle().copyWith(color: Colors.black),
+//                            ),
                           ],
-                        ),
-                        SizedBox(height: 8),
-                        Text('Python Variables',
-                            softWrap: true,
-                            maxLines: 2,
-                            style: titleTextStyle().copyWith(color: konDarkColorB1)
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Clean up the base code to make easy',
-                          style: smallTextStyle().copyWith(color: konDarkColorD3),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Phasellus vestibulum lorem sed risus ultricie',
-                          style: descTextStyle(),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          '13 JUN 2021'.toUpperCase(),
-                          style: smallTextStyle().copyWith(color: Colors.black),
-                        ),
-                      ],
+                        );
+                      },
                     ),
+
                   ),
                 ),
               )

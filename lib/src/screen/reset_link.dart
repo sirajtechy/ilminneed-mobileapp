@@ -33,6 +33,7 @@ class _ResetLinkState extends State<ResetLink> {
   Timer _timer;
   int _start = 60;
   bool _resendbtn = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   _changepassword() async {
     if(!_formKey.currentState.validate()) {
@@ -108,6 +109,7 @@ class _ResetLinkState extends State<ResetLink> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: konLightColor2,

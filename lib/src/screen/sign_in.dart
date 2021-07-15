@@ -23,6 +23,7 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey  = GlobalKey<FormState>();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
@@ -98,6 +99,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return LoadingOverlay(
       isLoading: _loading,
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: konLightColor2,
         body: SafeArea(
           child: Container(

@@ -4,6 +4,7 @@ import 'package:global_configuration/global_configuration.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/cart_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:bot_toast/bot_toast.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ class _MyAppState extends State<MyApp> {
     return ChangeNotifierProvider<CartBloc>(
       create: (context) => CartBloc(),
       child: GetMaterialApp(
+        builder: BotToastInit(),
         initialRoute: '/splash',
         onGenerateRoute: RouteGenerator.generateRoute,
         debugShowCheckedModeBanner: false,

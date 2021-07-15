@@ -62,7 +62,7 @@ class RouteGenerator {
       case '/mycourses':
         return MaterialPageRoute(builder: (_) => MyCourses());
       case '/lesson':
-        return MaterialPageRoute(builder: (_) => LessonScreen());
+        return MaterialPageRoute(builder: (_) => LessonScreen(id: args));
       default:
         return _errorRoute();
     }

@@ -74,9 +74,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
   _fetchcontinuelearning() async {
     if(await ctrl.LoggedIn() == true) {
       var res = await ctrl.getrequestwithheader('my_courses');
-      print(res);
-      if (res != null) {
-        List<dynamic> data = res;
+      if (res != null && res != 'null') {
+        List<dynamic> data = res['my_courses'];
         for (int i = 0; i < data.length; i++) {
           if (!mounted) return;
           setState(() {
@@ -86,21 +85,21 @@ class _ExploreScreenState extends State<ExploreScreen> {
       }
     }
   }
-  _fetchrecentvisit() async {
-    if(await ctrl.LoggedIn() == true) {
-      var res = await ctrl.getrequestwithheader('recent_courses_visit');
-      print(res);
-      if (res != null) {
-        List<dynamic> data = res;
-        for (int i = 0; i < data.length; i++) {
-          if (!mounted) return;
-          setState(() {
-            _continuelearning.add(Course.fromJson(data[i]));
-          });
-        }
-      }
-    }
-  }
+//  _fetchrecentvisit() async {
+//    if(await ctrl.LoggedIn() == true) {
+//      var res = await ctrl.getrequestwithheader('recent_courses_visit');
+//      print(res);
+//      if (res != null) {
+//        List<dynamic> data = res;
+//        for (int i = 0; i < data.length; i++) {
+//          if (!mounted) return;
+//          setState(() {
+//            _continuelearning.add(Course.fromJson(data[i]));
+//          });
+//        }
+//      }
+//    }
+//  }
   _fetchpopularcourse() async {
     var res = await ctrl.getrequest({}, 'popular_courses');
     if (res != null) {
@@ -138,7 +137,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     _fetchyoumaylike();
     _fetchpopularcourse();
     _fetchcontinuelearning();
-    _fetchrecentvisit();
+    //_fetchrecentvisit();
     _fetchlookingfor();
     _updatecart();
     super.initState();
@@ -185,9 +184,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            child: SvgPicture.asset(
-                              cart,
-                              height: 35,
+                            child:  Image(
+                              width: 30,
+                              height: 30,
+                              image: AssetImage(favicon_logo),
                             ),
                           ),
                           Text(

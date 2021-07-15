@@ -18,3 +18,6 @@ const String quiz = 'assets/images/quiz.png';
 const String certificate = 'assets/images/certificate.png';
 const String empty_cart = 'assets/images/empty_cart.png';
 const String search = 'assets/images/search.png';
+const String mycourse_empty = 'assets/images/mycourse_empty.png';
+const String lesson_empty_notes = 'assets/images/lesson_empty_notes.png';
+const String favicon_logo = 'assets/images/logo.png';

@@ -142,6 +142,8 @@ class _CartScreenState extends State<CartScreen> {
     });
     if(res != null && res != 'null'){
       if(res['response']['status'] == true) {
+        var bloc = Provider.of<CartBloc>(context, listen: false);
+        bloc.totalCount(0);
         Get.offAllNamed('/thankyou');
         return;
       }else{

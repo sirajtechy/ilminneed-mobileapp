@@ -70,7 +70,7 @@ class ThankYou extends StatelessWidget {
                       width: MediaQuery.of(context).size.width - 40,
                       child: FlatButton(
                         onPressed: () async {
-                          Get.offAllNamed('/', arguments: 1);
+                          Get.offAllNamed('/', arguments: 2);
                         },
                         shape: StadiumBorder(),
                         padding: EdgeInsets.symmetric(vertical: 15),

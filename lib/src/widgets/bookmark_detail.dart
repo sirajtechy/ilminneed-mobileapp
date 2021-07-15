@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/model/notes.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
-class BookMarkDetail extends StatelessWidget {
-  const BookMarkDetail({Key key}) : super(key: key);
+class BookMarkDetail extends StatefulWidget {
+  final Notes note;
+  const BookMarkDetail({Key key,this.note}) : super(key: key);
 
+  @override
+  _BookMarkDetailState createState() => _BookMarkDetailState();
+}
+
+class _BookMarkDetailState extends State<BookMarkDetail> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,7 +28,7 @@ class BookMarkDetail extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Time',
+                '@',
                 style: largeTextStyle().copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -30,7 +37,7 @@ class BookMarkDetail extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Text(
-                  '00.10.23',
+                  widget.note.duration.toString(),
                   style: largeTextStyle().copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -58,7 +65,7 @@ class BookMarkDetail extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Python Variables',
+                  '',
                   style: largeTextStyle().copyWith(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -71,7 +78,7 @@ class BookMarkDetail extends StatelessWidget {
             margin: EdgeInsets.only(top: 7),
             width: double.infinity,
             child: Text(
-              'Phasellus vestibulum lorem sed risus ultricies tristique nulla aliquet. Vel quam elementum pulvinar etiamnim lobortis scelerisque',
+              widget.note.note.toString(),
               style: mediumTextStyle().copyWith(
                 fontSize: 14,
                 color: konDarkColorD3,
@@ -85,7 +92,7 @@ class BookMarkDetail extends StatelessWidget {
             margin: EdgeInsets.only(top: 7),
             width: double.infinity,
             child: Text(
-              '13 JUN 2021',
+              '',//13 JUN 2021
               style: mediumTextStyle().copyWith(
                 fontSize: 12,
                 color: konDarkColorB2,

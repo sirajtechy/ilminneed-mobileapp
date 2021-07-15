@@ -24,6 +24,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   bool _loading = false;
   final TextEditingController _email = TextEditingController();
   final GlobalKey<FormState> _formKey  = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   _sendlink() async {
     if(!_formKey.currentState.validate()) {
@@ -43,7 +44,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -58,6 +58,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: konLightColor2,

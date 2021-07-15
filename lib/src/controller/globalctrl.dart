@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +9,7 @@ import 'package:ilminneed/cart_bloc.dart';
 import 'package:provider/provider.dart';
 
 Future getrequest(data,module) async {
-  Fluttertoast.cancel();
+  //Fluttertoast.cancel();
   final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
   final client = new http.Client();
   try {
@@ -31,7 +31,7 @@ Future getrequest(data,module) async {
 }
 
 Future requestwithoutheader(data,module) async {
-  Fluttertoast.cancel();
+  //Fluttertoast.cancel();
   final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
   final client = new http.Client();
   try {
@@ -54,7 +54,7 @@ Future requestwithoutheader(data,module) async {
 }
 
 Future requestwithheader(data,module) async {
-  Fluttertoast.cancel();
+  //Fluttertoast.cancel();
   final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
   final client = new http.Client();
   try {
@@ -77,7 +77,7 @@ Future requestwithheader(data,module) async {
 }
 
 Future getrequestwithheader(module) async {
-  Fluttertoast.cancel();
+  //Fluttertoast.cancel();
   final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
   final client = new http.Client();
   try {
@@ -86,7 +86,7 @@ Future getrequestwithheader(module) async {
       headers: await _headerwithtoken(),
     );
     if (response.statusCode == 200) {
-      //print(response.body);
+      print(response.body);
       return json.decode(response.body);
     } else {
       print(Exception(response.body).toString());
@@ -174,16 +174,13 @@ Future<bool> validateMobile(String value) async{
 }
 
 Future toastmsg(String value,String time) async {
-  Fluttertoast.cancel();
-  return Fluttertoast.showToast(
-      msg: value,
-      toastLength: time == 'short'?Toast.LENGTH_SHORT:Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black,
-      textColor: Colors.white,
-      fontSize: 15.0,
-  );
+  if(time == 'long'){
+    BotToast.showSimpleNotification(title: value.toString(),backgroundColor: Colors.black54,crossPage: true, titleStyle: TextStyle(
+        color:Colors.white ),borderRadius: 15,duration: Duration(seconds: 5));
+  }else{
+    BotToast.showSimpleNotification(title: value.toString(),backgroundColor: Colors.black54,crossPage: true, titleStyle: TextStyle(
+        color:Colors.white ),borderRadius: 15,duration: Duration(seconds: 3));
+  }
 }
 
 Future addtocart(course_id,context) async {

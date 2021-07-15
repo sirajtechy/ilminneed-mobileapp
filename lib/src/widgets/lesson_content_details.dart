@@ -41,7 +41,7 @@ class LessonContentDetailsWidget extends StatelessWidget {
           ),
           Spacer(),
           Icon(
-            Icons.play_circle_outline_outlined,
+            isActive?Icons.pause_circle_outline:Icons.play_circle_outline_outlined,
           ),
         ],
       ),
