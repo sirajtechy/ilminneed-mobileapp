@@ -3,10 +3,8 @@ import 'package:ilminneed/src/screen/category.dart';
 import 'package:ilminneed/src/screen/explore.dart';
 import 'package:ilminneed/src/screen/myaccount.dart';
 import 'package:ilminneed/src/screen/mycourses.dart';
-import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-
 
 class HomeScreen extends StatefulWidget {
   int currentTab = 0;
@@ -56,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
           break;
       }
     });
-
   }
 
   @override
@@ -100,8 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: konTextInputBorderActiveColor,
         unselectedItemColor: konDarkColorD3,
         onTap: _onItemTapped,
-        selectedLabelStyle: smallTextStyle().copyWith(fontSize: 10, color: konTextInputBorderActiveColor),
-        unselectedLabelStyle: smallTextStyle().copyWith(fontSize: 10, color: konDarkColorD3),
+        selectedLabelStyle: smallTextStyle()
+            .copyWith(fontSize: 10, color: konTextInputBorderActiveColor),
+        unselectedLabelStyle:
+            smallTextStyle().copyWith(fontSize: 10, color: konDarkColorD3),
       ),
     );
   }

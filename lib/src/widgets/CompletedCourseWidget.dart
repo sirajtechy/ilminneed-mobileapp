@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 class CompletedCourseWidget extends StatefulWidget {
   CompletedCourseWidget({Key key}) : super(key: key);
@@ -15,7 +14,7 @@ class _CompletedCourseWidgetState extends State<CompletedCourseWidget> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return InkWell(
-      onTap: (){},
+      onTap: () {},
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,8 +31,7 @@ class _CompletedCourseWidgetState extends State<CompletedCourseWidget> {
                       image: NetworkImage('https://via.placeholder.com/140'),
                     ),
                     borderRadius: BorderRadius.circular(8),
-                  )
-              ),
+                  )),
               Positioned(
                 bottom: 5,
                 right: 5,
@@ -52,33 +50,32 @@ class _CompletedCourseWidgetState extends State<CompletedCourseWidget> {
           ),
           SizedBox(width: 20),
           Expanded(
-              child: Column (
-                children: [
-                  Container(
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      child: Column (
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                              'Declarative interfaces for any Apple Devices',
-                              softWrap: true,
-                              maxLines: 2,
-                              style: titleTextStyle().copyWith(color: konDarkColorB1)
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'By Siradueen',
-                            style: smallTextStyle().copyWith(color: konDarkColorD3),
-                          ),
-                          SizedBox(height: 10),
-                          Text ('Completed', style: titleTextStyle().copyWith(color: konPrimaryColor2)),
-                        ],
-                      )
-                  ),
-                ],
-              )
-          )
+              child: Column(
+            children: [
+              Container(
+                  margin: EdgeInsets.symmetric(vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Declarative interfaces for any Apple Devices',
+                          softWrap: true,
+                          maxLines: 2,
+                          style:
+                              titleTextStyle().copyWith(color: konDarkColorB1)),
+                      SizedBox(height: 8),
+                      Text(
+                        'By Siradueen',
+                        style: smallTextStyle().copyWith(color: konDarkColorD3),
+                      ),
+                      SizedBox(height: 10),
+                      Text('Completed',
+                          style: titleTextStyle()
+                              .copyWith(color: konPrimaryColor2)),
+                    ],
+                  )),
+            ],
+          ))
         ],
       ),
     );

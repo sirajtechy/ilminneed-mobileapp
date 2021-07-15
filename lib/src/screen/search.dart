@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/model/category.dart';
 import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/model/courselevel.dart';
@@ -11,15 +13,14 @@ import 'package:ilminneed/src/model/pricelist.dart';
 import 'package:ilminneed/src/screen/courses/latest_course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/widgets/shopping_cart.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchScreen extends StatefulWidget {
   final String term;
+
   const SearchScreen({Key key, this.term}) : super(key: key);
 
   @override
@@ -221,7 +222,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                               horizontal: 10, vertical: 10),
                                           decoration: BoxDecoration(
                                               color: _filter_level ==
-                                                      _levellist.list[index].id
+                                                  _levellist.list[index].id
                                                   ? konPrimaryColor1
                                                   : konLightColor2,
                                               borderRadius:
@@ -775,16 +776,24 @@ class _SearchScreenState extends State<SearchScreen> {
                                             ),
                                             RichText(
                                               textAlign: TextAlign.center,
-                                              text: TextSpan(children: <TextSpan>[
+                                              text:
+                                                  TextSpan(children: <TextSpan>[
                                                 TextSpan(
                                                     text: "Or browse the  ",
-                                                    style: TextStyle(color: konDarkColorD3)),
+                                                    style: TextStyle(
+                                                        color: konDarkColorD3)),
                                                 TextSpan(
-                                                    recognizer: new TapGestureRecognizer()..onTap = () => Get.offAllNamed('/', arguments: 1),
+                                                    recognizer:
+                                                        new TapGestureRecognizer()
+                                                          ..onTap = () =>
+                                                              Get.offAllNamed(
+                                                                  '/',
+                                                                  arguments: 1),
                                                     text: "categories",
                                                     style: TextStyle(
                                                         color: konPrimaryColor2,
-                                                        fontWeight: FontWeight.bold)),
+                                                        fontWeight:
+                                                            FontWeight.bold)),
                                               ]),
                                             ),
                                           ],

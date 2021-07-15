@@ -4,7 +4,7 @@ import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class SavedCourseWidget extends StatefulWidget {
   final String status;

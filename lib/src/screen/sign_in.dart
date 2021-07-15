@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/helper/resources/strings.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
 import 'package:ilminneed/src/widgets/header_text.dart';
 import 'package:ilminneed/src/widgets/hint_text.dart';
-import 'package:get/get.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -46,9 +46,9 @@ class _SignInScreenState extends State<SignInScreen> {
         return;
       }else{
         Get.offAllNamed('/', arguments: 0);
-        if(widget.data['arg'] == ''){
+        if (widget.data['arg'] == '') {
           Get.toNamed(widget.data['name']);
-        }else{
+        } else {
           Get.toNamed(widget.data['name'], arguments: widget.data['arg']);
         }
       }

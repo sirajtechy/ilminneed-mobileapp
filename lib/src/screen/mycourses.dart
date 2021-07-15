@@ -13,12 +13,12 @@ import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
 
 class MyCourses extends StatefulWidget {
-
   @override
   _MyCoursesState createState() => _MyCoursesState();
 }
 
-class _MyCoursesState extends State<MyCourses> with SingleTickerProviderStateMixin {
+class _MyCoursesState extends State<MyCourses>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _tabIndex = 0;
@@ -62,9 +62,9 @@ class _MyCoursesState extends State<MyCourses> with SingleTickerProviderStateMix
           });
         }
       }else{
-          setState(() {
-            empty = true;
-          });
+        setState(() {
+          empty = true;
+        });
       }
     }else{
       setState(() {
@@ -80,14 +80,14 @@ class _MyCoursesState extends State<MyCourses> with SingleTickerProviderStateMix
       _lessonnote.clear();
     });
     if (res != null && res != 'null' && res.length != 0) {
-        List<dynamic> data = res;
-        for (int i = 0; i < data.length; i++) {
-          if (!mounted) return;
-          setState(() {
-            _lessonnote.add(LessonNote.fromJson(data[i]));
-          });
-        }
+      List<dynamic> data = res;
+      for (int i = 0; i < data.length; i++) {
+        if (!mounted) return;
+        setState(() {
+          _lessonnote.add(LessonNote.fromJson(data[i]));
+        });
       }
+    }
   }
 
   checkifloggedin()async{

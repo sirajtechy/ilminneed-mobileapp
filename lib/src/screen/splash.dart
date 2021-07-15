@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../helper/resources/images.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:get/get.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
+
+import '../../helper/resources/images.dart';
 
 void main() {
   runApp(new MaterialApp(

@@ -1,21 +1,23 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/helper/resources/strings.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
 import 'package:ilminneed/src/widgets/header_text.dart';
 import 'package:ilminneed/src/widgets/hint_text.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:get/get.dart';
 
 
 class ResetLink extends StatefulWidget {
   final Map param;
+
   const ResetLink({Key key, this.param}) : super(key: key);
 
   @override
@@ -28,7 +30,7 @@ class _ResetLinkState extends State<ResetLink> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _passcode = TextEditingController();
   final TextEditingController _password = TextEditingController();
-  final GlobalKey<FormState> _formKey  = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
   Timer _timer;
   int _start = 60;
@@ -36,19 +38,29 @@ class _ResetLinkState extends State<ResetLink> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   _changepassword() async {
-    if(!_formKey.currentState.validate()) {
+    if (!_formKey.currentState.validate()) {
       return;
     }
     _formKey.currentState.save();
-    setState(() { _loading = true;});
-    var res = await ctrl.requestwithoutheader({'email': _email.text,'password': _password.text,'passcode': _passcode.text}, 'change/password');
+    setState(() {
+      _loading = true;
+    });
+    var res = await ctrl.requestwithoutheader({
+      'email': _email.text,
+      'password': _password.text,
+      'passcode': _passcode.text
+    }, 'change/password');
     print(res);
-    setState(() { _loading = false; });
+    setState(() {
+      _loading = false;
+    });
     if (res != null && res['error'] == null) {
       await ctrl.toastmsg(res['message'], 'long');
       Get.offAllNamed('/signIn');
     } else {
-      setState(() { _loading = false; });
+      setState(() {
+        _loading = false;
+      });
       await ctrl.toastmsg('Enter valid passcode', 'long');
     }
   }
@@ -57,8 +69,8 @@ class _ResetLinkState extends State<ResetLink> {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
-          (Timer timer) => setState(
-            () {
+      (Timer timer) => setState(
+        () {
           if (_start < 1) {
             timer.cancel();
             setState(() {
@@ -75,9 +87,14 @@ class _ResetLinkState extends State<ResetLink> {
   }
 
   _sendlink() async {
-    setState(() { _loading = true;});
-    var res = await ctrl.requestwithoutheader({'email': _email.text}, 'forgot/password');
-    setState(() { _loading = false; });
+    setState(() {
+      _loading = true;
+    });
+    var res = await ctrl
+        .requestwithoutheader({'email': _email.text}, 'forgot/password');
+    setState(() {
+      _loading = false;
+    });
     if (res != null && res['error'] == null) {
       await ctrl.toastmsg(res['message'], 'long');
       startTimer();
@@ -86,7 +103,9 @@ class _ResetLinkState extends State<ResetLink> {
         _resendbtn = false;
       });
     } else {
-      setState(() { _loading = false; });
+      setState(() {
+        _loading = false;
+      });
       await ctrl.toastmsg(res['message'], 'long');
     }
   }
@@ -178,8 +197,12 @@ class _ResetLinkState extends State<ResetLink> {
                         style: mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('password')
                             .copyWith(suffixIcon: InkWell(onTap: (){  setState(() {
-                          _obscureText = !_obscureText;
-                        });},child: Icon(_obscureText ? Icons.visibility : Icons.visibility_off))),
+                                        _obscureText = !_obscureText;
+                                      });
+                                    },
+                                    child: Icon(_obscureText
+                                        ? Icons.visibility
+                                        : Icons.visibility_off))),
                       ),
                     ),
                     InkWell(
@@ -189,44 +212,46 @@ class _ResetLinkState extends State<ResetLink> {
                       ),
                     ),
                     !_resendbtn
-                        ?Container(
-                      margin: EdgeInsets.only(top: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Resend in ',
-                            style: smallTextStyle().copyWith(color: konDarkColorB1),
-                          ),
-                          Text(
-                            _start.toString(),
-                            style: buttonTextStyle().copyWith(
-                                decoration: TextDecoration.underline,
-                                decorationColor: konPrimaryColor1,
-                                color: konPrimaryColor1),
-                          ),
-                        ],
-                      ),
-                    ):InkWell(
-                      onTap: (){
-                        _sendlink();
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Resend passcode',
-                              style: buttonTextStyle().copyWith(
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: konPrimaryColor1,
-                                  color: konPrimaryColor1),
+                        ? Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Resend in ',
+                                  style: smallTextStyle()
+                                      .copyWith(color: konDarkColorB1),
+                                ),
+                                Text(
+                                  _start.toString(),
+                                  style: buttonTextStyle().copyWith(
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: konPrimaryColor1,
+                                      color: konPrimaryColor1),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
+                          )
+                        : InkWell(
+                            onTap: () {
+                              _sendlink();
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(top: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Resend passcode',
+                                    style: buttonTextStyle().copyWith(
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: konPrimaryColor1,
+                                        color: konPrimaryColor1),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                     Container(
                       margin: EdgeInsets.only(top: 20),
                       child: Row(
@@ -234,7 +259,8 @@ class _ResetLinkState extends State<ResetLink> {
                         children: [
                           Text(
                             'Back to ',
-                            style: smallTextStyle().copyWith(color: konDarkColorB1),
+                            style: smallTextStyle()
+                                .copyWith(color: konDarkColorB1),
                           ),
                           Text(
                             SIGN_IN,

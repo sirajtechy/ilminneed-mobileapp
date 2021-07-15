@@ -31,9 +31,7 @@ class CustomAppBar extends StatelessWidget {
       bottom: bottom ??
           PreferredSize(
             preferredSize: Size.fromHeight(0.0),
-            child: Text(
-              'test'
-            ),
+            child: Text('test'),
           ),
     );
   }

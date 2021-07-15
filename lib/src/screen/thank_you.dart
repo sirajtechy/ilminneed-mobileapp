@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/widgets/button.dart';
-import 'package:get/get.dart';
 
 class ThankYou extends StatelessWidget {
   const ThankYou({Key key}) : super(key: key);
@@ -22,7 +20,7 @@ class ThankYou extends StatelessWidget {
             Container(
               child: Align(
                   alignment: Alignment.center,
-                  child: Column (
+                  child: Column(
                     children: [
                       Image(
                         image: AssetImage(success),
@@ -36,16 +34,16 @@ class ThankYou extends StatelessWidget {
                       SizedBox(height: 5),
                       Text(
                         'Your Purchase was successful',
-                        style: mediumTextStyle().copyWith(fontSize: 15, color: konDarkColorD3),
+                        style: mediumTextStyle()
+                            .copyWith(fontSize: 15, color: konDarkColorD3),
                       ),
                     ],
-                  )
-              ),
+                  )),
             ),
           ],
         ),
       ),
-      bottomNavigationBar:  Padding(
+      bottomNavigationBar: Padding(
         padding: EdgeInsets.all(0),
         child: GestureDetector(
           onTap: () {},
@@ -53,11 +51,10 @@ class ThankYou extends StatelessWidget {
             height: 80,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(0),
-                    topLeft: Radius.circular(0)),
-                ),
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(0), topLeft: Radius.circular(0)),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
@@ -78,7 +75,9 @@ class ThankYou extends StatelessWidget {
                         child: Text(
                           'Start Learning',
                           textAlign: TextAlign.left,
-                          style: ctaTextStyle().copyWith(color: konLightColor1, fontWeight: FontWeight.w400),
+                          style: ctaTextStyle().copyWith(
+                              color: konLightColor1,
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                     ),

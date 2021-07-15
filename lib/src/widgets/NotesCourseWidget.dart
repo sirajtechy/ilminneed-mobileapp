@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:ilminneed/src/model/lessonnote.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 class NotesCourseWidget extends StatefulWidget {
   LessonNote lessonnote;
@@ -30,8 +29,7 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
                 Text(widget.lessonnote.title.toString(),
                     softWrap: true,
                     maxLines: 2,
-                    style: titleTextStyle().copyWith(color: konDarkColorB1)
-                ),
+                    style: titleTextStyle().copyWith(color: konDarkColorB1)),
                 SizedBox(height: 8),
                 Text(
                   'By '+widget.lessonnote.instructor_name.toString(),
@@ -42,11 +40,10 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
             children: <Widget>[
               ListTile(
                 title: Padding(
-                  padding: const EdgeInsets.only(top:10, bottom: 10),
-                  child: Container (
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     decoration: BoxDecoration(
                       color: konPrimaryLightColor,
                       borderRadius: BorderRadius.circular(8),
