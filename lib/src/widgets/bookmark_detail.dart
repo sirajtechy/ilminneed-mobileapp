@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:ilminneed/src/model/notes.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 
 class BookMarkDetail extends StatefulWidget {
   final Notes note;
-  const BookMarkDetail({Key key,this.note}) : super(key: key);
+  final Function(Map data) callbackfunc;
+  final String lesson_id;
+  const BookMarkDetail({Key key,this.note,this.callbackfunc,this.lesson_id}) : super(key: key);
 
   @override
   _BookMarkDetailState createState() => _BookMarkDetailState();
@@ -37,7 +40,7 @@ class _BookMarkDetailState extends State<BookMarkDetail> {
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Text(
-                  widget.note.duration.toString(),
+                    widget.note.duration != 'null' && widget.note.duration != null?ctrl.getTimeString(int.parse(widget.note.duration)):'',
                   style: largeTextStyle().copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -45,16 +48,36 @@ class _BookMarkDetailState extends State<BookMarkDetail> {
                 ),
               ),
               Spacer(),
-              Icon(
-                Icons.delete,
-                color: konDarkColorB1,
+              InkWell(
+                onTap:(){
+                  Map data = {
+                    'note_id': widget.note.id,
+                    'lesson_id': widget.lesson_id,
+                    'action_type': 'delete'
+                  };
+                  widget.callbackfunc(data);
+                },
+                child: Icon(
+                  Icons.delete,
+                  color: konDarkColorB1,
+                ),
               ),
               SizedBox(
                 width: 15,
               ),
-              Icon(
-                Icons.edit_outlined,
-                color: konDarkColorB1,
+              InkWell(
+                onTap: (){
+                  Map data = {
+                    'note_id': widget.note.id,
+                    'lesson_id': widget.lesson_id,
+                    'action_type': 'edit'
+                  };
+                  widget.callbackfunc(data);
+                },
+                child: Icon(
+                  Icons.edit_outlined,
+                  color: konDarkColorB1,
+                ),
               ),
             ],
           ),

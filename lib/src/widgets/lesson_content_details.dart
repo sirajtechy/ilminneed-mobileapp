@@ -6,9 +6,10 @@ class LessonContentDetailsWidget extends StatelessWidget {
   final bool isActive;
   final String value;
   final List<Widget> children;
+  final bool lock;
 
   const LessonContentDetailsWidget(
-      {Key key, @required this.isActive, @required this.value, this.children})
+      {Key key, @required this.isActive, @required this.value, this.children,this.lock = false})
       : super(key: key);
 
   @override
@@ -41,7 +42,7 @@ class LessonContentDetailsWidget extends StatelessWidget {
           ),
           Spacer(),
           Icon(
-            isActive?Icons.pause_circle_outline:Icons.play_circle_outline_outlined,
+            lock?Icons.lock:isActive?Icons.pause_circle_outline:Icons.play_circle_outline_outlined,
           ),
         ],
       ),

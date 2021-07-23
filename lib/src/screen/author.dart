@@ -92,6 +92,7 @@ class _AuthorScreenState extends State<AuthorScreen> {
       ),
       body: LoadingOverlay(
         isLoading: _loading,
+        color: Colors.white,
         child: SingleChildScrollView(
           child: !_loading?Column(
             mainAxisAlignment: MainAxisAlignment.start,

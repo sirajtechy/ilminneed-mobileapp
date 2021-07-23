@@ -53,6 +53,14 @@ Future requestwithoutheader(data,module) async {
   }
 }
 
+String getTimeString(int value) {
+  var hour = value / 3600;
+  var  minutes = value / 60%60;
+  var  seconds = value % 60;
+  return '${hour.toInt().toString().padLeft(2, "0")}:${minutes.toInt().toString().padLeft(2, "0")}:${seconds.toInt().toString().padLeft(2, "0")}';
+}
+
+
 Future requestwithheader(data,module) async {
   //Fluttertoast.cancel();
   final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
@@ -64,7 +72,7 @@ Future requestwithheader(data,module) async {
       body: json.encode(data),
     );
     if (response.statusCode == 200) {
-      print(response.body);
+      //print(response.body);
       return json.decode(response.body);
     } else {
       print(Exception(response.body).toString());
@@ -86,7 +94,7 @@ Future getrequestwithheader(module) async {
       headers: await _headerwithtoken(),
     );
     if (response.statusCode == 200) {
-      print(response.body);
+      //print(response.body);
       return json.decode(response.body);
     } else {
       print(Exception(response.body).toString());
@@ -114,12 +122,17 @@ Future gettoken() async {
 
 Future getuserid() async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
-  return _prefs.getInt('user_id').toString();
+  return _prefs.getString('user_id').toString();
 }
 
 Future getusername() async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
   return _prefs.getString('full_name').toString();
+}
+
+Future getemail() async {
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  return _prefs.getString('email').toString();
 }
 
 Future saveuserdata(data) async {
@@ -184,6 +197,7 @@ Future toastmsg(String value,String time) async {
 }
 
 Future addtocart(course_id,context) async {
+  print(course_id);
   var res = await requestwithheader({'courseId': course_id }, 'toggle_cart');
   print(res);
   var bloc = Provider.of<CartBloc>(context, listen: false);

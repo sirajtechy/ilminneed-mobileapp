@@ -33,7 +33,7 @@ class LessonContentHeaderWidget extends StatelessWidget {
               ),
               SizedBox(width: 5),
               Text(
-                '114 mins',
+                '',
                 style: mediumTextStyle().copyWith(color: konDarkColorD3),
               ),
             ],

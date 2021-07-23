@@ -69,7 +69,7 @@ class _CategoryState extends State<Category> {
       appBar: AppBar(
         leading: InkWell(
             onTap: () {
-              Get.offAllNamed('/', arguments: 0);
+              Get.offNamed('/', arguments: 0);
             },
             child: Icon(Icons.arrow_back, color: Colors.black)),
         elevation: 0,
@@ -86,6 +86,7 @@ class _CategoryState extends State<Category> {
       backgroundColor: konLightColor1,
       body: LoadingOverlay(
         isLoading: _loading,
+        color: Colors.white,
         child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

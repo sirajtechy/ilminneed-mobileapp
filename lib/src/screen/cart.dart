@@ -33,13 +33,12 @@ class _CartScreenState extends State<CartScreen> {
 
   _fetchcourse() async {
     var res = await ctrl.getrequestwithheader('my_cart');
+    if (!mounted) return;
     setState(() {
-      _loading = false;
       _course.clear();
     });
     var bloc = Provider.of<CartBloc>(context, listen: false);
-    if (res != null && res != 'null') {
-      print(res);
+    if (res != null && res != 'null' && res.containsKey('courses')) {
       if(res['courses'].length != 0){
         List<dynamic> data = res['courses'];
         for (int i = 0; i < data.length; i++) {
@@ -57,7 +56,15 @@ class _CartScreenState extends State<CartScreen> {
             total_price = res['total_price'].toString();
           });
         }
+        if (!mounted) return;
+        setState(() {
+          _loading = false;
+        });
       }else{
+        if (!mounted) return;
+        setState(() {
+          _loading = false;
+        });
         bloc.totalCount(0);
         _course.clear();
       }
@@ -76,9 +83,7 @@ class _CartScreenState extends State<CartScreen> {
     if (res != null) {
         List<dynamic> data = res;
         for (int i = 0; i < data.length; i++) {
-          print(data[i]['is_wishlisted']);
           if (!mounted) return;
-          print(data[i]['is_carted']);
           setState(() {
             _wishlist.add(Course.fromJson(data[i]));
           });
@@ -91,32 +96,40 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   _checkout() async {
+    print('checkout....');
     var res = await ctrl.getrequestwithheader('razorpay_checkout');
+    print(res);
     setState(() {
       _loading = false;
     });
-    if (res != null) {
-      setState(() {
-        order_id = res['order_id'].toString();
-        paid_amt = res['amount'].toString();
-      });
-      print(order_id);
-      var options = res;
-      try {
-        _razorpay.open(options);
-      } catch (e) {
-        //debugPrint(e);
+    if (res != null && res != 'null') {
+      if(res['is_payment'] == false){
+        var bloc = Provider.of<CartBloc>(context, listen: false);
+        bloc.totalCount(0);
+        Get.offNamed('/thankyou');
+        return;
+      }else{
         setState(() {
-          _loading = false;
+          order_id = res['response']['order_id'].toString();
+          paid_amt = res['response']['amount'].toString();
         });
-        await ctrl.toastmsg('Payment Error. Please try again', 'long');
+        var options = res['response'];
+        try {
+          _razorpay.open(options);
+        } catch (e) {
+          print(e);
+          setState(() {
+            _loading = false;
+          });
+          await ctrl.toastmsg('Payment Error. Please try again1', 'long');
+        }
       }
     }
   }
 
   _userLoggedIn() async {
     if(await ctrl.LoggedIn() != true){
-      Get.offAllNamed('/signIn', arguments: {
+      Get.offNamed('/signIn', arguments: {
         'name': '/cart',
         'arg': ''
       });
@@ -143,20 +156,26 @@ class _CartScreenState extends State<CartScreen> {
       if(res['response']['status'] == true) {
         var bloc = Provider.of<CartBloc>(context, listen: false);
         bloc.totalCount(0);
-        Get.offAllNamed('/thankyou');
+        Get.offNamed('/thankyou');
         return;
       } else {
+        setState(() {
+          _loading = false;
+        });
         await ctrl.toastmsg('Error. Please try again', 'long');
       }
     } else {
+      setState(() {
+        _loading = false;
+      });
       await ctrl.toastmsg('Error. Please try again', 'long');
     }
   }
 
   void _handlePaymentError(PaymentFailureResponse response) async {
-    print('_handlePaymentError');
-    print(response.code.toString());
-    print(response.message);
+//    print('_handlePaymentError');
+//    print(response.code.toString());
+//    print(response.message);
     setState(() {
       _loading = false;
     });
@@ -164,9 +183,9 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) async {
-    print('_handleExternalWallet');
-    print(response.walletName);
-    print(response.toString());
+//    print('_handleExternalWallet');
+//    print(response.walletName);
+//    print(response.toString());
     setState(() {
       _loading = false;
     });
@@ -206,6 +225,7 @@ class _CartScreenState extends State<CartScreen> {
         ),
       ),
       body: LoadingOverlay(
+        color: Colors.white,
         isLoading: _loading,
         child: SingleChildScrollView(
           child: Column(
@@ -252,7 +272,7 @@ class _CartScreenState extends State<CartScreen> {
                               SizedBox(width: 30),
                               Icon(Icons.favorite_border_outlined),
                               SizedBox(width: 10),
-                              _course[index].is_wishlisted == 'false'?InkWell(
+                              _course[index].is_wishlisted.toString() == 'false'?InkWell(
                                 onTap: () async {
                                   setState(() {
                                     _loading = true;

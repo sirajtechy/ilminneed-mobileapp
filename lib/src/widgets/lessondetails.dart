@@ -40,7 +40,7 @@ class _LessonDetailWidgetState extends State<LessonDetailWidget> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  '114 mins',
+                  '',
                   style: smallTextStyle().copyWith(color: konDarkColorD3),
                 ),
               ],

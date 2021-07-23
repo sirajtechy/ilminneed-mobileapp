@@ -98,6 +98,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return LoadingOverlay(
       isLoading: _loading,
+      color: Colors.white,
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: konLightColor2,
@@ -202,8 +203,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SocialMediaButton(google, GOOGLE),
-                          SocialMediaButton(facebook, FACEBOOK),
+                          InkWell(onTap:(){ ctrl.toastmsg('Coming soon', 'short'); }, child: SocialMediaButton(google, GOOGLE)),
+                          InkWell(onTap:(){ ctrl.toastmsg('Coming soon', 'short'); }, child: SocialMediaButton(facebook, FACEBOOK)),
                         ],
                       ),
                     ),

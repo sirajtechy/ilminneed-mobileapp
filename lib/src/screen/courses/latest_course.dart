@@ -17,6 +17,8 @@ class LatestCourse extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
+        //print(this.course.id);
+        //return;
         Get.toNamed('/courseDetail', arguments: this.course.id);
       },
       child: Container(
@@ -34,7 +36,7 @@ class LatestCourse extends StatelessWidget {
                   height: 110,
                   width: 110,
                   placeholder: AssetImage(placeholder),
-                  image: this.course.thumbnail.toString()  == null ?
+                  image: this.course.thumbnail.toString()  == null || this.course.thumbnail.toString()  == 'null' ?
                   Image.asset(placeholder) : NetworkImage(this.course.thumbnail.toString()),
                   fit: BoxFit.cover,
                 ),
@@ -67,7 +69,7 @@ class LatestCourse extends StatelessWidget {
                           .copyWith(fontSize: 12, color: konLightColor3),
                     ),
                   ),
-                  isRating
+                  isRating && this.course.rating != 'null'
                       ? Container(
                           margin: EdgeInsets.only(top: 4),
                           child: Row(
@@ -77,12 +79,12 @@ class LatestCourse extends StatelessWidget {
                                 height: 15,
                               ),
                               Text(
-                                ' 4.5 ',
+                                this.course.rating.toString(),
                                 style: buttonTextStyle().copyWith(
                                     fontSize: 12, color: konDarkColorD3),
                               ),
                               Text(
-                                ' (1.2k) ',
+                                ' (${this.course.number_of_ratings.toString()}) ',
                                 style: mediumTextStyle()
                                     .copyWith(color: konLightColor3),
                               ),

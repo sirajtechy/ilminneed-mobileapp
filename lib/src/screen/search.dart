@@ -540,6 +540,7 @@ class _SearchScreenState extends State<SearchScreen> {
       backgroundColor: konLightColor2,
       body: LoadingOverlay(
         isLoading: _loading,
+        color: Colors.white,
         child: SafeArea(
           child: Container(
             child: Column(
@@ -786,7 +787,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                     recognizer:
                                                         new TapGestureRecognizer()
                                                           ..onTap = () =>
-                                                              Get.offAllNamed(
+                                                              Get.offNamed(
                                                                   '/',
                                                                   arguments: 1),
                                                     text: "categories",

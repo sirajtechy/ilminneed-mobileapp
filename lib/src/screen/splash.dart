@@ -27,6 +27,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
   startTime() async {
+    //return navigationPage();
     var _duration = new Duration(seconds: 2);
     return new Timer(_duration, navigationPage);
   }
@@ -42,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    startTime();
+    navigationPage();
   }
 
   @override
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child: SvgPicture.asset(
-          splashScreen,
+          startScreen,
           height: 350,
           width: 350,
         ),

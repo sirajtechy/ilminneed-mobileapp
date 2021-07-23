@@ -21,7 +21,7 @@ class WelcomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SvgPicture.asset(
-              splashScreen,
+              startScreen,
               height: 350,
               width: 350,
             ),

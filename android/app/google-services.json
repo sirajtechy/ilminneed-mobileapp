@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "266252148277",
+    "project_id": "ilminneed-281606",
+    "storage_bucket": "ilminneed-281606.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:266252148277:android:ef34d195bde228ebfcdb7c",
+        "android_client_info": {
+          "package_name": "com.ilminneed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "266252148277-jvhhj0kmm92351607slvdv7fa6ngk7ii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ilminneed",
+            "certificate_hash": "01b5a9941d0c5953982d3849259bc1941303bd01"
+          }
+        },
+        {
+          "client_id": "266252148277-gudll1jojp5o9e5nds24p9ujupnet5ej.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqMiBZ93Es1WFtllXdIzmKLI7Scufoz-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "266252148277-foqlc4ruul106dohfiaqgvienqghn7g0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

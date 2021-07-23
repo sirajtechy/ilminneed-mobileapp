@@ -136,6 +136,7 @@ class _ResetLinkState extends State<ResetLink> {
       backgroundColor: konLightColor2,
       body: LoadingOverlay(
         isLoading: _loading,
+        color: Colors.white,
         child: SafeArea(
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 15),

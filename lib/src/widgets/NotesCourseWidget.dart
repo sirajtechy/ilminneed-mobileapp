@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:ilminneed/src/model/lessonnote.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 
 class NotesCourseWidget extends StatefulWidget {
   LessonNote lessonnote;
-  NotesCourseWidget({Key key,this.lessonnote}) : super(key: key);
+  void Function(Map data) callbackfunc;
+  NotesCourseWidget({Key key,this.lessonnote,this.callbackfunc}) : super(key: key);
 
   @override
   _NotesCourseWidgetState createState() => _NotesCourseWidgetState();
@@ -67,18 +69,38 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text (
-                                  '@ '+widget.lessonnote.notes[index].duration.toString(),
+                                  '@ '+widget.lessonnote.notes[index].duration != 'null' && widget.lessonnote.notes[index].duration != null?ctrl.getTimeString(int.parse(widget.lessonnote.notes[index].duration)):'',
                                   style: ctaTextStyle().copyWith(color: konPrimaryColor2),
                                 ),
                                 Container(
                                   child: Row (
                                     children: [
-                                      Icon (
-                                        CupertinoIcons.trash, size: 20,
+                                      InkWell(
+                                        onTap:(){
+                                          Map data = {
+                                            'lesson_id': widget.lessonnote.lesson_id,
+                                            'note_id': widget.lessonnote.notes[index].id,
+                                            'action_type': 'delete'
+                                          };
+                                          widget.callbackfunc(data);
+                                        },
+                                        child: Icon (
+                                          CupertinoIcons.trash, size: 20,
+                                        ),
                                       ),
                                       SizedBox(width: 20),
-                                      Icon (
-                                        Icons.edit, size: 20,
+                                      InkWell(
+                                        onTap:(){
+                                          Map data = {
+                                            'lesson_id': widget.lessonnote.lesson_id,
+                                            'note_id': widget.lessonnote.notes[index].id,
+                                            'action_type': 'edit'
+                                          };
+                                          widget.callbackfunc(data);
+                                        },
+                                        child: Icon (
+                                          Icons.edit, size: 20,
+                                        ),
                                       )
                                     ],
                                   ),

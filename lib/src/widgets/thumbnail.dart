@@ -16,7 +16,12 @@ class ThumbNailWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: (){
-        Get.toNamed('/courseDetail', arguments: this.course.id);
+        //print(this.course.id); return;
+        if(this.course.is_purchased == 'true' || this.course.is_purchased == '1'){
+          Get.toNamed('/lesson', arguments: this.course.id);
+        }else{
+          Get.toNamed('/courseDetail', arguments: this.course.id);
+        }
       },
       child: Container(
         margin: EdgeInsets.all(5),
@@ -28,25 +33,29 @@ class ThumbNailWidget extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Container(
-                  height: 120,
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                  decoration: !continueLearing
-                      ? BoxDecoration(
-                          color: konImageBGColor,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: this.course.thumbnail!='null'?NetworkImage(this.course.thumbnail.toString()):Text(''),
-                    ),
-                          borderRadius: BorderRadius.circular(8),
-                        )
-                      : BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          gradient: LinearGradient(
-                            colors: orangeGradient,
-                          ),
-                        ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child:
+                  FadeInImage(
+                    height: 120,
+                    placeholder: AssetImage(placeholder),
+                    image: this.course.thumbnail.toString()  == null || this.course.thumbnail.toString()  == 'null' ?
+                    Image.asset(placeholder) : NetworkImage(this.course.thumbnail.toString()),
+                    fit: BoxFit.cover,
+                  ),
                 ),
+//                Container(
+//                  height: 120,
+//                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+//                  decoration: BoxDecoration(
+//                          color: konImageBGColor,
+//                    image: DecorationImage(
+//                      fit: BoxFit.cover,
+//                      image: this.course.thumbnail!='null'?NetworkImage(this.course.thumbnail.toString()):AssetImage(placeholder),
+//                    ),
+//                          borderRadius: BorderRadius.circular(8),
+//                        )
+//                ),
                 Positioned(
                   bottom: 5,
                   right: 5,
@@ -56,7 +65,7 @@ class ThumbNailWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                         color: konDarkColorB2),
                     child: Text(
-                      '12.15',
+                      this.course.course_duration.toString().replaceAll(RegExp('Hours'), ''),
                       style: mediumTextStyle().copyWith(color: konLightColor1),
                     ),
                   ),
@@ -89,7 +98,7 @@ class ThumbNailWidget extends StatelessWidget {
                     ),
                   )
                 : Container(),
-            !continueLearing
+            !continueLearing && this.course.rating != 'null'
                 ? Container(
                     margin: EdgeInsets.only(top: 4),
                     child: Row(
@@ -99,12 +108,12 @@ class ThumbNailWidget extends StatelessWidget {
                           height: 15,
                         ),
                         Text(
-                          ' 4.5 ',
+                          this.course.rating.toString(),
                           style: buttonTextStyle()
                               .copyWith(fontSize: 12, color: konDarkColorD3),
                         ),
                         Text(
-                          ' (1.2k) ',
+                          '(${this.course.number_of_ratings.toString()})',
                           style:
                               mediumTextStyle().copyWith(color: konLightColor3),
                         ),

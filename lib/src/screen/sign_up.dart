@@ -12,6 +12,8 @@ import 'package:ilminneed/src/widgets/hint_text.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key key}) : super(key: key);
@@ -29,6 +31,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _loading = false;
   bool _obscureText = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  GoogleSignInAuthentication googleAuth;
+  GoogleSignInAccount _currentUser;
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: <String>[
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
 
   _register() async {
     if(!_formKey.currentState.validate()) {
@@ -44,6 +54,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else {
       setState(() { _loading = false; });
       await ctrl.toastmsg(res['message'], 'long');
+    }
+  }
+
+  Future<void> _googlelogin() async {
+    ctrl.toastmsg('fetching info...','long');
+    try {
+      await _googleSignIn.signIn().then((value) {
+        print(value);
+        value.authentication.then((valueq) {
+          Map<String, dynamic> decodedToken = JwtDecoder.decode(valueq.idToken);
+          print(decodedToken.toString());
+          print(decodedToken['email'].toString());
+          //_showmsg(decodedToken.toString());
+          if(decodedToken['email'].toString() != '' && decodedToken['email'].toString() != null){
+            setState(() {
+              _loading = true;
+            });
+//            email_ctrl.text = decodedToken['email'].toString();
+//            name_ctrl.text = decodedToken['name'].toString();
+//            password_ctrl.text = decodedToken['iat'].toString();
+           // _createaccount();
+          }
+        });
+      });
+    } catch (error) {
+      setState(() {
+        _loading = false;
+      });
+      print(error.toString());
+      ctrl.toastmsg('Error. Please try again','long');
     }
   }
 
@@ -88,6 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     return LoadingOverlay(
       isLoading: _loading,
+      color: Colors.white,
       child: Scaffold(
         key: _scaffoldKey,
         backgroundColor: konLightColor2,
@@ -197,8 +238,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SocialMediaButton(google, GOOGLE),
-                          SocialMediaButton(facebook, FACEBOOK),
+                          InkWell(onTap:(){ _googlelogin(); }, child: SocialMediaButton(google, GOOGLE)),
+                          InkWell(onTap:(){ ctrl.toastmsg('Coming soon', 'short'); }, child: SocialMediaButton(facebook, FACEBOOK)),
                         ],
                       ),
                     ),

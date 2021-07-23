@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/src/model/course.dart';
+import 'package:ilminneed/src/model/lesson.dart';
 import 'package:ilminneed/src/model/review.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
@@ -36,6 +37,7 @@ class _CourseDetailState extends State<CourseDetail> {
   double star_3 = 0;
   double star_2 = 0;
   double star_1 = 0;
+  List<Lesson> _lesson = new List<Lesson>();
 
   _fetchcourse() async {
     if (await ctrl.LoggedIn() == true) {
@@ -43,28 +45,49 @@ class _CourseDetailState extends State<CourseDetail> {
     } else {
       res = await ctrl.getrequest({}, 'course/' + widget.id);
     }
-    if (res != null) {
+    if (res != null && res != 'null' && res.containsKey('courses')) {
       setState(() {
-        Course _data = new Course.fromJson(res[0]);
+        Course _data = new Course.fromJson(res['courses'][0]);
         _course = _data;
+        print(_course.id);
       });
-      List<dynamic> re = res[0].containsKey('reviews') ? res[0]['reviews'] : [];
+      List<dynamic> re = res['courses'][0].containsKey('reviews') ? res['courses'][0]['reviews'] : [];
       for (int i = 0; i < re.length; i++) {
         if (!mounted) return;
         setState(() {
           _review.add(Review.fromJson(re[i]));
         });
       }
-      var rating = res[0].containsKey('number_of_ratings_basedon') ? res[0]['number_of_ratings_basedon'] : '';
+      var rating = res['courses'][0].containsKey('number_of_ratings_basedon') ? res['courses'][0]['number_of_ratings_basedon'] : '';
       if(rating != ''){
         setState(() {
-          star_5 = double.parse(res[0]['number_of_ratings_basedon']['5_stars'].toString());
-          star_4 = double.parse(res[0]['number_of_ratings_basedon']['4_stars'].toString());
-          star_3 = double.parse(res[0]['number_of_ratings_basedon']['3_stars'].toString());
-          star_2 = double.parse(res[0]['number_of_ratings_basedon']['2_stars'].toString());
-          star_1 = double.parse(res[0]['number_of_ratings_basedon']['1_stars'].toString());
+          star_5 = double.parse(res['courses'][0]['number_of_ratings_basedon']['5_stars'].toString());
+          star_4 = double.parse(res['courses'][0]['number_of_ratings_basedon']['4_stars'].toString());
+          star_3 = double.parse(res['courses'][0]['number_of_ratings_basedon']['3_stars'].toString());
+          star_2 = double.parse(res['courses'][0]['number_of_ratings_basedon']['2_stars'].toString());
+          star_1 = double.parse(res['courses'][0]['number_of_ratings_basedon']['1_stars'].toString());
         });
       }
+
+      var sections = res['courses'][0].containsKey('sections') ? res['courses'][0]['sections'][0].containsKey('lessons') ?'yes':'': '';
+      if(sections != '') {
+        for (int i = 0; i < res['courses'][0]['sections'].length; i++) {
+          if (!mounted) return;
+          setState(() {
+            _lesson.add(Lesson.fromJson(res['courses'][0]['sections'][i]));
+          });
+        }
+      }
+
+      if(res.containsKey('related_courses')){
+        for (int i = 0; i < res['related_courses'].length; i++) {
+          if (!mounted) return;
+          setState(() {
+            _relatedcourse.add(Course.fromJson(res['related_courses'][i]));
+          });
+        }
+      }
+
       setState(() {
         _loading = false;
         _first = false;
@@ -108,10 +131,10 @@ class _CourseDetailState extends State<CourseDetail> {
                 await ctrl.toastmsg('Login to add wishlist', 'short');
               }
             },
-            child: Padding(
+            child: _course.is_purchased != 'true'?Padding(
               padding: const EdgeInsets.only(left: 15.0),
               child: _course.is_wishlisted == 'true'?Icon(Icons.favorite, color: Colors.red):Icon(Icons.favorite_border, color: konLightColor1),
-            ),
+            ):Padding(padding: const EdgeInsets.only(left: 15.0),),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 8.0),
@@ -120,6 +143,7 @@ class _CourseDetailState extends State<CourseDetail> {
         ],
       ),
       body: LoadingOverlay(
+        color: Colors.white,
         isLoading: _loading,
         child: !_first
             ? Container(
@@ -142,7 +166,7 @@ class _CourseDetailState extends State<CourseDetail> {
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) =>
-                                    AutoFullscreenOrientationPage()));
+                                    AutoFullscreenOrientationPage(video_url: _course.video_url)));
                           },
                           child: FlatButton(
                             color: Colors.black.withOpacity(0.5),
@@ -269,7 +293,7 @@ class _CourseDetailState extends State<CourseDetail> {
                             _course.discount_flag.toString() != '' &&
                                     _course.discount_flag.toString() != 'null'
                                 ? Text(
-                                    _course.discount_flag.toString(),
+                              _course.discount_flag.substring(0, _course.discount_flag.indexOf('.')).toString()+'% off',
                                     style: mediumTextStyle().copyWith(
                                         fontSize: 14, color: konGreenColor),
                                   )
@@ -332,16 +356,16 @@ class _CourseDetailState extends State<CourseDetail> {
                               ),
                             ),
                             Spacer(),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10.0),
-                              child: Text(
-                                'Follow',
-                                style: buttonTextStyle().copyWith(
-                                    fontSize: 16,
-                                    color: konTextInputBorderActiveColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
+//                            Padding(
+//                              padding: const EdgeInsets.only(right: 10.0),
+//                              child: Text(
+//                                'Follow',
+//                                style: buttonTextStyle().copyWith(
+//                                    fontSize: 16,
+//                                    color: konTextInputBorderActiveColor,
+//                                    fontWeight: FontWeight.bold),
+//                              ),
+//                            ),
                           ],
                         ),
                       ),
@@ -384,13 +408,23 @@ class _CourseDetailState extends State<CourseDetail> {
                               value2: '', //cc: Tamil, Arabic,
                               icon: Icons.language,
                             ),
-                            CourseFeatureWidget(
-                              iconBGColor: Color(0xffFFC5FC),
-                              iconColor: Color(0xffBA00EB),
-                              value1: _course.total_lessons.toString() +
-                                  ' video lesson',
-                              value2: 'Total ' + _course.course_duration,
-                              icon: Icons.play_arrow_outlined,
+                            InkWell(
+                              onTap: () {
+                                Map data = {
+                                  'course_id': _course.id,
+                                  'course_name': _course.title,
+                                  'sections': _lesson
+                                };
+                                Get.toNamed('/lessondetail', arguments: data);
+                              },
+                              child: CourseFeatureWidget(
+                                iconBGColor: Color(0xffFFC5FC),
+                                iconColor: Color(0xffBA00EB),
+                                value1: _course.total_lessons.toString() +
+                                    ' video lesson',
+                                value2: 'Total ' + _course.course_duration,
+                                icon: Icons.play_arrow_outlined,
+                              ),
                             ),
 //                      CourseFeatureWidget(
 //                        iconBGColor: Color(0xffFEBED3),
@@ -447,24 +481,13 @@ class _CourseDetailState extends State<CourseDetail> {
                                     child: SizedBox(
                                       height: 250,
                                       child: ListView.builder(
-                                        itemCount: 5,
+                                        itemCount: _relatedcourse.length,
                                         scrollDirection: Axis.horizontal,
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           return ThumbNailWidget(
                                             continueLearing: false,
-                                            course: Course(
-                                                id: '1',
-                                                title: 'title',
-                                                short_description:
-                                                    'this is a short description',
-                                                language: 'Tamil',
-                                                price: '2500',
-                                                discounted_price: '4500',
-                                                thumbnail:
-                                                    'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
-                                                instructor_name: 'Adil Basha',
-                                                level: '5'),
+                                            course: _relatedcourse[index],
                                           );
                                         },
                                       ),
@@ -613,19 +636,24 @@ class _CourseDetailState extends State<CourseDetail> {
                         children: <Widget>[
                           SizedBox(
                             width: MediaQuery.of(context).size.width - 40,
-                            child: FlatButton(
+                            child: _course.is_purchased != 'true'?FlatButton(
                               onPressed: () async {
                                 if (await ctrl.LoggedIn() == true) {
-                                  setState(() {
-                                    _loading = true;
-                                  });
-                                  var res = await ctrl.addtocart(
-                                      _course.id, this.context);
-                                  if (res) {
-                                    _fetchcourse();
+                                  if(_course.is_carted == 'true'){
+                                    //Get.offNamed('/', arguments: 0);
+                                    Get.offNamed('/cart');
+                                  }else{
+                                    setState(() {
+                                      _loading = true;
+                                    });
+                                    var res = await ctrl.addtocart(
+                                        _course.id, this.context);
+                                    if (res) {
+                                      _fetchcourse();
+                                    }
                                   }
                                 } else {
-                                  Get.offAllNamed('/signIn', arguments: {
+                                  Get.offNamed('/signIn', arguments: {
                                     'name': '/courseDetail',
                                     'arg': _course.id
                                   });
@@ -634,36 +662,55 @@ class _CourseDetailState extends State<CourseDetail> {
                               shape: StadiumBorder(),
                               padding: EdgeInsets.symmetric(vertical: 5),
                               color: konLightColor1,
-                              child: Text(
-                                'Buy now & Unlock the course',
-                                textAlign: TextAlign.left,
-                                style: ctaTextStyle().copyWith(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    _course.is_carted == 'true'
+                                        ? Icons.check_circle
+                                        : Icons.shopping_cart,
                                     color: konTextInputBorderActiveColor,
-                                    fontWeight: FontWeight.w400),
+                                    size: 18,
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    _course.is_carted == 'true' ? 'View cart' : 'Add to cart',
+                                    style: ctaTextStyle()
+                                        .copyWith(color: konTextInputBorderActiveColor),
+                                  )
+                                ],
+                              ),
+                            ):FlatButton(
+                              onPressed: () async {
+                                Get.toNamed('/lesson', arguments: _course.id);
+                              },
+                              shape: StadiumBorder(),
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              color: konLightColor1,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: 5),
+                                  Text(
+                                    'Start Learning',
+                                    style: ctaTextStyle()
+                                        .copyWith(color: konTextInputBorderActiveColor),
+                                  )
+                                ],
                               ),
                             ),
                           ),
                         ],
                       ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            _course.is_carted == 'true'
-                                ? Icons.check_circle
-                                : Icons.shopping_cart,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            _course.is_carted == 'true' ? 'Added to cart' : 'Add to cart',
-                            style: buttonTextStyle()
-                                .copyWith(color: konLightColor1),
-                          )
-                        ],
-                      )
+                      _course.is_purchased != 'true'?Text(
+                        'Buy now & Unlock the course',
+                        textAlign: TextAlign.left,
+                        style: buttonTextStyle().copyWith(
+                            color: konLightColor1,
+                            fontWeight: FontWeight.w400),
+                      ):SizedBox()
                     ],
                   ),
                 ),

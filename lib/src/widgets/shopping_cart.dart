@@ -16,7 +16,7 @@ class ShoppingCartButtonWidget extends StatelessWidget {
     return InkWell(
       onTap: () async{
         if(await ctrl.LoggedIn() == true){
-          Get.toNamed('/cart');
+          Get.offNamed('/cart');
         }else{
           ctrl.toastmsg('Login to continue', 'short');
         }

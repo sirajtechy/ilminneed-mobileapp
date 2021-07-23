@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/src/screen/author.dart';
 import 'package:ilminneed/src/screen/cart.dart';
 import 'package:ilminneed/src/screen/category.dart';
@@ -10,13 +11,14 @@ import 'package:ilminneed/src/screen/forgot_password.dart';
 import 'package:ilminneed/src/screen/lesson.dart';
 import 'package:ilminneed/src/screen/myaccount.dart';
 import 'package:ilminneed/src/screen/mycourses.dart';
+import 'package:ilminneed/src/screen/qandareply.dart';
 import 'package:ilminneed/src/screen/reset_link.dart';
 import 'package:ilminneed/src/screen/search.dart';
 import 'package:ilminneed/src/screen/sign_in.dart';
 import 'package:ilminneed/src/screen/sign_up.dart';
 import 'package:ilminneed/src/screen/thank_you.dart';
 import 'package:ilminneed/src/screen/welcome.dart';
-
+import 'package:ilminneed/src/widgets/lesson_details.dart';
 import 'src/screen/home_screen.dart';
 import 'src/screen/splash.dart';
 
@@ -33,6 +35,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => WelcomeScreen());
       case '/signIn':
         return MaterialPageRoute(builder: (_) => SignInScreen(data: args));
+
       case '/signUp':
         return MaterialPageRoute(builder: (_) => SignUpScreen());
       case '/forgotPassword':
@@ -66,6 +69,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => MyCourses());
       case '/lesson':
         return MaterialPageRoute(builder: (_) => LessonScreen(id: args));
+      case '/lessondetail':
+        return MaterialPageRoute(builder: (_) => CourseLesson(data: args));
+      case '/qandareply':
+        return MaterialPageRoute(builder: (_) => QandAReplyScreen(data: args));
       default:
         return _errorRoute();
     }

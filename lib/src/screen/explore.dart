@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/cart_bloc.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/helper/resources/strings.dart';
@@ -30,6 +31,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   List<CategoryModel> _lookingfor = new List<CategoryModel>();
   List<Course> _popularcourse = new List<Course>();
   List<Course> _continuelearning = new List<Course>();
+  List<Course> _recent_visit = new List<Course>();
   List<BannerImg> _slider = new List<BannerImg>();
   final CarouselController _controller = CarouselController();
   int _current = 0;
@@ -49,7 +51,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   _fetchslider() async {
     var res = await ctrl.getrequest({}, 'explore_image');
-    print(res);
+   // print(res);
     if (res != null) {
       List<dynamic> data = res;
       for (int i = 0; i < data.length; i++) {
@@ -78,35 +80,33 @@ class _ExploreScreenState extends State<ExploreScreen> {
     if(await ctrl.LoggedIn() == true) {
       var res = await ctrl.getrequestwithheader('my_courses');
       if (res != null && res != 'null') {
-        List<dynamic> data = res['my_courses'];
+        if(res['my_courses'].length != 0){
+          List<dynamic> data = res['my_courses'];
+          for (int i = 0; i < data.length; i++) {
+            if (!mounted) return;
+            setState(() {
+              _continuelearning.add(Course.fromJson(data[i]));
+            });
+          }
+        }
+      }
+  }
+  }
+
+  _fetchrecentvisit() async {
+    //if(await ctrl.LoggedIn() == true) {
+      var res = await ctrl.getrequestwithheader('recent_courses_visit');
       if (res != null) {
         List<dynamic> data = res;
         for (int i = 0; i < data.length; i++) {
           if (!mounted) return;
           setState(() {
-            _continuelearning.add(Course.fromJson(data[i]));
+            _recent_visit.add(Course.fromJson(data[i]));
           });
         }
       }
-    }
+    //}
   }
-  }
-
-//  _fetchrecentvisit() async {
-//    if(await ctrl.LoggedIn() == true) {
-//      var res = await ctrl.getrequestwithheader('recent_courses_visit');
-//      print(res);
-//      if (res != null) {
-//        List<dynamic> data = res;
-//        for (int i = 0; i < data.length; i++) {
-//          if (!mounted) return;
-//          setState(() {
-//            _continuelearning.add(Course.fromJson(data[i]));
-//          });
-//        }
-//      }
-//    }
-//  }
 
   _fetchpopularcourse() async {
     var res = await ctrl.getrequest({}, 'popular_courses');
@@ -126,7 +126,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
       var res = await ctrl.getrequestwithheader('my_cart');
       var bloc = Provider.of<CartBloc>(context, listen: false);
       if (res != null && res != 'null') {
-        if (!mounted) return;
         if(res['courses'].length != 0){
           List<dynamic> data = res['courses'];
           bloc.totalCount(data.length);
@@ -145,7 +144,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     _fetchyoumaylike();
     _fetchpopularcourse();
     _fetchcontinuelearning();
-    //_fetchrecentvisit();
+    _fetchrecentvisit();
     _fetchlookingfor();
     _updatecart();
     super.initState();
@@ -262,6 +261,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     _youmaylike.length !=0?RecentItems(
                       label: 'Categories you may like',
                       value: _youmaylike,
+                      type: 'category',
                     ):SizedBox(),
                     Container(
                       margin:
@@ -274,11 +274,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             style: buttonTextStyle()
                                 .copyWith(fontSize: 16, color: konDarkColorB2),
                           ),
-                          Text(
-                            VIEW_ALL,
-                            style: mediumTextStyle().copyWith(
-                                fontSize: 16,
-                                color: konTextInputBorderActiveColor),
+                          InkWell(
+                            onTap: () {
+                              Get.toNamed('/', arguments: 1);
+                            },
+                            child: Text(
+                              VIEW_ALL,
+                              style: mediumTextStyle().copyWith(
+                                  fontSize: 16,
+                                  color: konTextInputBorderActiveColor),
+                            ),
                           )
                         ],
                       ),
@@ -359,11 +364,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   style: buttonTextStyle().copyWith(
                                       fontSize: 16, color: konDarkColorB2),
                                 ),
-                                Text(
-                                  MY_COURSES,
-                                  style: mediumTextStyle().copyWith(
-                                      fontSize: 16,
-                                      color: konTextInputBorderActiveColor),
+                                InkWell(
+                                  onTap: (){
+                                    Get.toNamed('/', arguments: 2);
+                                  },
+                                  child: Text(
+                                    MY_COURSES,
+                                    style: mediumTextStyle().copyWith(
+                                        fontSize: 16,
+                                        color: konTextInputBorderActiveColor),
+                                  ),
                                 )
                               ],
                             ),
@@ -389,53 +399,37 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       ),
                     )
                         : Container(),
-                    _popularcourse.length != 0
-                        ? Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      width: double.infinity,
-                      color: Colors.white,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+
+                    _recent_visit.length != 0
+                        ?Container(
+                      margin:
+                      EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Topics Your Interested',
-                                  style: buttonTextStyle().copyWith(
-                                      fontSize: 16, color: konDarkColorB2),
-                                ),
-//                                Text(
-//                                  MY_COURSES,
-//                                  style: mediumTextStyle().copyWith(
-//                                      fontSize: 16,
-//                                      color: konTextInputBorderActiveColor),
-//                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                left: 15, right: 15, top: 4, bottom: 2),
-                            child: SizedBox(
-                              height: 215,
-                              child: ListView.builder(
-                                itemCount: _popularcourse.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ThumbNailWidget(
-                                    continueLearing: true,
-                                    course: _popularcourse[index],
-                                  );
-                                },
-                              ),
-                            ),
+                          Text(
+                            'Topics Your Interested',
+                            style: buttonTextStyle()
+                                .copyWith(fontSize: 16, color: konDarkColorB2),
                           ),
                         ],
+                      ),
+                    ):SizedBox(),
+                    _recent_visit.length != 0
+                        ? Container(
+                      margin: EdgeInsets.only(
+                          left: 15, right: 15, top: 8, bottom: 2),
+                      child: SizedBox(
+                        height: 250,
+                        child: ListView.builder(
+                          itemCount: _recent_visit.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ThumbNailWidget(
+                                continueLearing: false,
+                                course: _recent_visit[index]);
+                          },
+                        ),
                       ),
                     )
                         : Container(),
@@ -443,7 +437,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       label: 'Are you looking for',
                       value: _lookingfor,
                     ):SizedBox(),
-                    Container(
+                    _recent_visit.length != 0
+                        ?Container(
                       margin:
                       EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: Row(
@@ -454,71 +449,27 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             style: buttonTextStyle()
                                 .copyWith(fontSize: 16, color: konDarkColorB2),
                           ),
-                          Text(
-                            VIEW_ALL,
-                            style: mediumTextStyle().copyWith(
-                                fontSize: 16,
-                                color: konTextInputBorderActiveColor),
-                          )
                         ],
                       ),
-                    ),
-                    _popularcourse.length != 0
+                    ):SizedBox(),
+                    _recent_visit.length != 0
                         ? Container(
                       margin: EdgeInsets.only(
                           left: 15, right: 15, top: 8, bottom: 2),
                       child: SizedBox(
                         height: 250,
                         child: ListView.builder(
-                          itemCount: _popularcourse.length,
+                          itemCount: _recent_visit.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (BuildContext context, int index) {
                             return ThumbNailWidget(
                                 continueLearing: false,
-                                course: _popularcourse[index]);
+                                course: _recent_visit[index]);
                           },
                         ),
                       ),
                     )
-                        : Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: 200.0,
-                            height: 100.0,
-                            child: Shimmer.fromColors(
-                              baseColor: Colors.grey.withOpacity(0.3),
-                              highlightColor:
-                              Colors.grey.withOpacity(0.2),
-                              child: Container(
-                                margin: EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.8),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 200.0,
-                            height: 100.0,
-                            child: Shimmer.fromColors(
-                              baseColor: Colors.grey.withOpacity(0.3),
-                              highlightColor:
-                              Colors.grey.withOpacity(0.2),
-                              child: Container(
-                                margin: EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.8),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                        : Container(),
                   ],
                 ),
               ),

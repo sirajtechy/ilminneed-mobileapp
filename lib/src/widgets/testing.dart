@@ -4,6 +4,10 @@ import 'package:get/get.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 
 class AutoFullscreenOrientationPage extends StatefulWidget {
+
+  final String video_url;
+  const AutoFullscreenOrientationPage({Key key,this.video_url}) : super(key: key);
+
   @override
   _AutoFullscreenOrientationPageState createState() =>
       _AutoFullscreenOrientationPageState();
@@ -13,10 +17,11 @@ class _AutoFullscreenOrientationPageState
     extends State<AutoFullscreenOrientationPage> {
 
    BetterPlayerController _betterPlayerController;
-   String url = 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4';
+   String url;
 
   @override
   void initState() {
+    url = widget.video_url.toString();
     BetterPlayerConfiguration betterPlayerConfiguration =
     BetterPlayerConfiguration(
         autoDispose: true,
