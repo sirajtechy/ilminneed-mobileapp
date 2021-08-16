@@ -85,7 +85,10 @@ class _CategoryResultScreenState extends State<CategoryResultScreen> {
                       ),
                     ),
                     Spacer(),
-                    ShoppingCartButtonWidget(),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5.0, right: 0),
+                      child: ShoppingCartButtonWidget(),
+                    )
                   ],
                 ),
               ),

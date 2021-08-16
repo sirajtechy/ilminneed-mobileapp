@@ -69,7 +69,7 @@ class _CategoryState extends State<Category> {
       appBar: AppBar(
         leading: InkWell(
             onTap: () {
-              Get.offNamed('/', arguments: 0);
+              Get.offNamed('/', arguments: { 'currentTab': 0,'data':'' });
             },
             child: Icon(Icons.arrow_back, color: Colors.black)),
         elevation: 0,

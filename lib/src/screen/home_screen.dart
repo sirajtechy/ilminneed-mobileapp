@@ -7,7 +7,7 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class HomeScreen extends StatefulWidget {
-  int currentTab = 0;
+  Map currentTab = { 'currentTab': 0,'data':'' };
   int selectedTab = 0;
   Widget currentPage = ExploreScreen();
 
@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
+  int cTap = 0;
   Widget chipContainer(String label) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onItemTapped(int tabItem) {
     setState(() {
-      widget.currentTab = tabItem;
+      cTap = tabItem;
       widget.selectedTab = tabItem;
       switch (tabItem) {
         case 0:
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
           widget.currentPage = Category();
           break;
         case 2:
-          widget.currentPage = MyCourses();
+          widget.currentPage = MyCourses(data: widget.currentTab['data']);
           break;
         case 3:
           widget.currentPage = MyAccountScreen();
@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   initState() {
-    _onItemTapped(widget.currentTab);
+    _onItemTapped(widget.currentTab['currentTab']);
     super.initState();
   }
 

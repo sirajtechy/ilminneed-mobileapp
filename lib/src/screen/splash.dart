@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigationPage() async {
     if(await ctrl.LoggedIn() == true){
-      Get.offAllNamed('/', arguments: 0);
+      Get.offAllNamed('/', arguments: { 'currentTab': 0,'data':'' });
     }else{
       Get.offAllNamed('/welcome');
     }

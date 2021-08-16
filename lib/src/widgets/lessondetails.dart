@@ -17,6 +17,7 @@ class LessonDetailWidget extends StatefulWidget {
 }
 
 class _LessonDetailWidgetState extends State<LessonDetailWidget> {
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -60,12 +61,12 @@ class _LessonDetailWidgetState extends State<LessonDetailWidget> {
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
-                      print(widget.lesson.lesson_video[index].id);
                       if(widget.active_lesson_id != widget.lesson.lesson_video[index].id){
                         Map data = {
                           'lesson_index': index,
                           'section_index': widget.index,
-                          'lesson_id': widget.lesson.lesson_video[index].id
+                          'lesson_id': widget.lesson.lesson_video[index].id,
+                          'source_count': int.parse(widget.lesson.lesson_video[index].source_count)
                         };
                         setState(() {
                           widget.active_lesson_id = widget.lesson.lesson_video[index].id;

@@ -12,6 +12,8 @@ import 'package:ilminneed/src/widgets/button.dart';
 import 'package:ilminneed/src/widgets/header_text.dart';
 import 'package:ilminneed/src/widgets/hint_text.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:ilminneed/cart_bloc.dart';
+import 'package:provider/provider.dart';
 
 class SignInScreen extends StatefulWidget {
   final Map data;
@@ -41,11 +43,15 @@ class _SignInScreenState extends State<SignInScreen> {
     setState(() { _loading = false; });
     if (res != null && res['validity'] == 1) {
       await ctrl.saveuserdata(res);
+      if(res.containsKey('image')){
+        var bloc = Provider.of<CartBloc>(context, listen: false);
+        await bloc.updateUserImage(res['image'].toString());
+      }
       if(widget.data == null){
-        Get.offAllNamed('/', arguments: 0);
+        Get.offAllNamed('/', arguments: { 'currentTab': 0,'data':'' });
         return;
       }else{
-        Get.offAllNamed('/', arguments: 0);
+        Get.offAllNamed('/', arguments: { 'currentTab': 0,'data':'' });
         if (widget.data['arg'] == '') {
           Get.toNamed(widget.data['name']);
         } else {

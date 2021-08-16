@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ilminneed/src/screen/author.dart';
 import 'package:ilminneed/src/screen/cart.dart';
 import 'package:ilminneed/src/screen/category.dart';
 import 'package:ilminneed/src/screen/category_result.dart';
+import 'package:ilminneed/src/screen/change_password.dart';
 import 'package:ilminneed/src/screen/coupon.dart';
 import 'package:ilminneed/src/screen/courses/course_detail.dart';
 import 'package:ilminneed/src/screen/courses/latest_course.dart';
 import 'package:ilminneed/src/screen/forgot_password.dart';
 import 'package:ilminneed/src/screen/lesson.dart';
+import 'package:ilminneed/src/screen/metting.dart';
+import 'package:ilminneed/src/screen/my_profile.dart';
 import 'package:ilminneed/src/screen/myaccount.dart';
 import 'package:ilminneed/src/screen/mycourses.dart';
 import 'package:ilminneed/src/screen/qandareply.dart';
@@ -18,7 +20,10 @@ import 'package:ilminneed/src/screen/sign_in.dart';
 import 'package:ilminneed/src/screen/sign_up.dart';
 import 'package:ilminneed/src/screen/thank_you.dart';
 import 'package:ilminneed/src/screen/welcome.dart';
+import 'package:ilminneed/src/screen/wishlist.dart';
+import 'package:ilminneed/src/widgets/file_reader.dart';
 import 'package:ilminneed/src/widgets/lesson_details.dart';
+import 'package:ilminneed/src/widgets/view_image.dart';
 import 'src/screen/home_screen.dart';
 import 'src/screen/splash.dart';
 
@@ -28,7 +33,7 @@ class RouteGenerator {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(
-            builder: (_) => HomeScreen(currentTab: args == null ? 0 : args));
+            builder: (_) => HomeScreen(currentTab: args == null ? { 'currentTab': 0,'data':'' } : args));
       case '/splash':
         return MaterialPageRoute(builder: (_) => SplashScreen());
       case '/welcome':
@@ -73,6 +78,18 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => CourseLesson(data: args));
       case '/qandareply':
         return MaterialPageRoute(builder: (_) => QandAReplyScreen(data: args));
+      case '/viewimage':
+        return MaterialPageRoute(builder: (_) => ViewImage(url: args));
+      case '/wishlist':
+        return MaterialPageRoute(builder: (_) => WishlistScreen());
+      case '/myprofile':
+        return MaterialPageRoute(builder: (_) => MyProfileScreen());
+      case '/changepassword':
+        return MaterialPageRoute(builder: (_) => ChangePasswordScreen());
+      case '/meetings':
+        return MaterialPageRoute(builder: (_) => MeetingScreen());
+      case '/file_reader':
+        return MaterialPageRoute(builder: (_) => FileReaderPage(filePath: args));
       default:
         return _errorRoute();
     }

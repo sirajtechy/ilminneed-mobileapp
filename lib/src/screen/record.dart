@@ -59,9 +59,9 @@ class SimpleRecorder extends StatefulWidget {
 }
 
 class _SimpleRecorderState extends State<SimpleRecorder> {
-  FlutterSoundPlayer _mPlayer = FlutterSoundPlayer(logLevel: Level.debug);
+  FlutterSoundPlayer _mPlayer = FlutterSoundPlayer();
   FlutterSoundRecorder _mRecorder =
-  FlutterSoundRecorder(logLevel: Level.debug);
+  FlutterSoundRecorder();
   bool _mPlayerIsInited = false;
   bool _mRecorderIsInited = false;
   bool _mplaybackReady = false;

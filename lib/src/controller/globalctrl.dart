@@ -125,6 +125,11 @@ Future getuserid() async {
   return _prefs.getString('user_id').toString();
 }
 
+Future getuserimage() async {
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  return _prefs.getString('user_image').toString();
+}
+
 Future getusername() async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
   return _prefs.getString('full_name').toString();
@@ -139,6 +144,7 @@ Future saveuserdata(data) async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
   _prefs.setString('user_id', data['user_id'].toString());
   _prefs.setString('full_name', data['first_name']);
+  _prefs.setString('user_image', data['image'].toString());
   _prefs.setString('role', data['role']);
   if(data['token'] != '' && data['token'] != null){
     _prefs.setString('token', data['token']);
@@ -148,6 +154,7 @@ Future saveuserdata(data) async {
   print('saved sharedpreferences');
   return true;
 }
+
 
 Future logout() async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();

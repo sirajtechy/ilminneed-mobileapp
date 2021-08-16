@@ -8,6 +8,7 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SavedCourseWidget extends StatefulWidget {
   final String status;
@@ -20,6 +21,10 @@ class SavedCourseWidget extends StatefulWidget {
 
 class _SavedCourseWidgetState extends State<SavedCourseWidget> {
   bool d = false;
+
+  void _launchURL(_url) async =>
+      await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
+
   _download() async {
     var s = await ctrl.getuserid();
     var res = await ctrl
@@ -28,17 +33,20 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
       d = false;
     });
     if (res.containsKey('path')) {
-      final dir = await getApplicationDocumentsDirectory();
-      var _localPath = dir.path;
-      print(res['path']);
-      final taskId = await FlutterDownloader.enqueue(
-        url: res['path'],
-        savedDir: _localPath,
-        showNotification:
-            true, // show download progress in status bar (for Android)
-        openFileFromNotification:
-            true, // click on notification to open downloaded file (for Android)
-      );
+//      final dir = await getApplicationDocumentsDirectory();
+//      var _localPath = dir.path;
+//      print(res['path']);
+//      final taskId = await FlutterDownloader.enqueue(
+//        url: res['path'],
+//        savedDir: _localPath,
+//        showNotification:
+//            true, // show download progress in status bar (for Android)
+//        openFileFromNotification:
+//            true, // click on notification to open downloaded file (for Android)
+//      );
+
+    _launchURL(res['path']);
+
     }else{
       await ctrl.toastmsg('File not found', 'long');
     }
@@ -123,9 +131,14 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
                     ),
                     SizedBox(height: 10),
                     widget.status == 'saved'
-                        ? Text('Start Learning',
-                            style: titleTextStyle()
-                                .copyWith(color: konPrimaryColor2))
+                        ? InkWell(
+                      onTap: (){
+                        Get.toNamed('/lesson', arguments: widget.course.id);
+                      },
+                          child: Text('Start Learning',
+                              style: titleTextStyle()
+                                  .copyWith(color: konPrimaryColor2)),
+                        )
                         : SizedBox(),
                     widget.status == 'progress'
                         ? Padding(
@@ -164,7 +177,7 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
                                 _download();
                               }
                             },
-                            child: Text(d == false?'Download':'Downloading...',
+                            child: Text(d == false?'View/Download':'Opening...',
                                 style: titleTextStyle().copyWith(
                                     color: konPrimaryColor2, fontSize: 14)))
                         : SizedBox(),

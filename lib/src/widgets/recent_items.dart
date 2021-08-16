@@ -27,7 +27,7 @@ class RecentItems extends StatelessWidget {
                   recognizer:
                   new TapGestureRecognizer()
                     ..onTap = () =>
-                        Get.offNamed('/', arguments: 1),
+                        Get.offNamed('/', arguments: { 'currentTab': 1,'data':'' }),
                   text: "Categories ",
                   style: largeTextStyle().copyWith(fontSize: 16, color: konPrimaryColor2)),
               TextSpan(

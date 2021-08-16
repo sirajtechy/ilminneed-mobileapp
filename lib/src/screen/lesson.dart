@@ -5,12 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
-import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/model/lesson.dart';
 import 'package:ilminneed/src/model/notes.dart';
 import 'package:ilminneed/src/model/qanda.dart';
 import 'package:ilminneed/src/model/task.dart';
-import 'package:ilminneed/src/screen/record.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/bookmark_detail.dart';
@@ -24,15 +22,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:images_picker/images_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:gesture_x_detector/gesture_x_detector.dart';
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 typedef _Fn = void Function();
 const theSource = AudioSource.microphone;
 
@@ -46,11 +40,9 @@ class LessonScreen extends StatefulWidget {
 
 class _LessonScreenState extends State<LessonScreen>
     with SingleTickerProviderStateMixin {
-
   //recording
-  FlutterSoundPlayer _mPlayer = FlutterSoundPlayer(logLevel: Level.debug);
-  FlutterSoundRecorder _mRecorder =
-  FlutterSoundRecorder(logLevel: Level.debug);
+  FlutterSoundPlayer _mPlayer = FlutterSoundPlayer();
+  FlutterSoundRecorder _mRecorder = FlutterSoundRecorder();
   final String _mPath = 'ilminneed_voice_record.wav';
   //recording
 
@@ -72,12 +64,32 @@ class _LessonScreenState extends State<LessonScreen>
   String author_name = '';
   String q_camera = '';
   String q_camera_extension = '';
+  String q_camera_preview = '';
+  String q_doc_preview = '';
+  String q_audio_preview = '';
   String q_gallery = '';
   String q_gallery_extension = '';
+  String q_gallery_preview = '';
   String q_doc = '';
   String q_doc_extension = '';
   String q_voice = '';
   String q_voice_extension = '';
+
+  //task
+  String t_camera = '';
+  String t_camera_extension = '';
+  String t_camera_preview = '';
+  String t_doc_preview = '';
+  String t_audio_preview = '';
+  String t_gallery = '';
+  String t_gallery_extension = '';
+  String t_gallery_preview = '';
+  String t_doc = '';
+  String t_doc_extension = '';
+  String t_voice = '';
+  String t_voice_extension = '';
+  //task
+
   FlutterSound flutterSound = new FlutterSound();
   bool recording = false;
   BetterPlayerConfiguration _betterPlayerConfiguration;
@@ -91,6 +103,8 @@ class _LessonScreenState extends State<LessonScreen>
   List<BetterPlayerEvent> events = [];
   bool load_notes = true;
   bool load_qanda = true;
+  bool pauseIcon = false;
+  bool v_play = true;
 
   _fetchlesson() async {
     setState(() {
@@ -112,13 +126,10 @@ class _LessonScreenState extends State<LessonScreen>
             ' ' +
             res['course_details'][0]['last_name'].toString();
       });
+      var s = 0;
       if (res['courses'].length != 0) {
         List<dynamic> data = res['courses'];
         for (int i = 0; i < data.length; i++) {
-          if (!mounted) return;
-          setState(() {
-            _lesson.add(Lesson.fromJson(data[i]));
-          });
           for (int c = 0; c < data[i]['lessons'].length; c++) {
             if (data[i]['lessons'][c]['active'] == true) {
               if (!mounted) return;
@@ -133,12 +144,23 @@ class _LessonScreenState extends State<LessonScreen>
             }
             //https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4
             //https://www.rmp-streaming.com/media/big-buck-bunny-360p.mp4
+            //print('video_url_for_mobile_application');
+            //print(data[i]['lessons'][c]['video_url_for_mobile_application'].toString());
+            //print(data[i]['lessons'][c]);
+            data[i]['lessons'][c]['source_count'] = s.toString();
             _dataSourceList.add(
-              BetterPlayerDataSource(BetterPlayerDataSourceType.network,
-                  data[i]['lessons'][c]['video_url'].toString()),
+              BetterPlayerDataSource(
+                  BetterPlayerDataSourceType.network,
+                  data[i]['lessons'][c]['video_url_for_mobile_application']
+                      .toString()),
             );
             _dataSourceListIds.add(data[i]['lessons'][c]['id'].toString());
+            s++;
           }
+          if (!mounted) return;
+          setState(() {
+            _lesson.add(Lesson.fromJson(data[i]));
+          });
         }
       }
     }
@@ -193,7 +215,7 @@ class _LessonScreenState extends State<LessonScreen>
     if (res != null && res != 'null' && res.containsKey('data')) {
       List<dynamic> data = res['data'];
       for (int i = 0; i < data.length; i++) {
-        print(data[i]);
+        //print(data[i]);
         if (!mounted) return;
         setState(() {
           _qanda.add(QandA.fromJson(data[i]));
@@ -203,13 +225,12 @@ class _LessonScreenState extends State<LessonScreen>
   }
 
   _callbackfunc(data) {
-    print(data['section_index']);
     setState(() {
       active_lesson_id = data['lesson_id'];
       _fetchlessonnote();
       _fetchtask();
     });
-    _betterPlayerPlaylistController.setupDataSource(data['section_index']);
+    _betterPlayerPlaylistController.setupDataSource(data['source_count']);
   }
 
   _addnotes() async {
@@ -249,10 +270,23 @@ class _LessonScreenState extends State<LessonScreen>
       'qanda_course_id': widget.id,
       'qanda_lesson_id': active_lesson_id,
       'qanda_question': _qandactrl.text,
-      'lesson_qanda_audio': q_voice != ''?q_voice.toString():null,
-      'lesson_qanda_file': q_gallery != ''?q_gallery.toString():q_camera != ''?q_camera.toString():q_doc != ''?q_doc.toString():null,
-      'lesson_qanda_audio_extension': q_voice != ''?q_voice_extension.toString():null,
-      'lesson_qanda_file_extension': q_gallery != ''?q_gallery_extension.toString():q_camera != ''?q_camera_extension.toString():q_doc != ''?q_doc_extension.toString():null,
+      'lesson_qanda_audio': q_voice != '' ? q_voice.toString() : null,
+      'lesson_qanda_file': q_gallery != ''
+          ? q_gallery.toString()
+          : q_camera != ''
+              ? q_camera.toString()
+              : q_doc != ''
+                  ? q_doc.toString()
+                  : null,
+      'lesson_qanda_audio_extension':
+          q_voice != '' ? q_voice_extension.toString() : null,
+      'lesson_qanda_file_extension': q_gallery != ''
+          ? q_gallery_extension.toString()
+          : q_camera != ''
+              ? q_camera_extension.toString()
+              : q_doc != ''
+                  ? q_doc_extension.toString()
+                  : null,
     };
     var res = await ctrl.requestwithheader(data, 'save_qanda_answer');
     if (!mounted) return;
@@ -263,7 +297,7 @@ class _LessonScreenState extends State<LessonScreen>
       q_camera = '';
       q_doc = '';
     });
-    print(res);
+    //print(res);
     _fetchqanda();
   }
 
@@ -352,7 +386,11 @@ class _LessonScreenState extends State<LessonScreen>
                                 },
                                 child: Icon(Icons.close)),
                             Text(
-                              '@ ' + res['duration'] != 'null' && res['duration'] != null?ctrl.getTimeString(int.parse(res['duration'])):'',
+                              '@ ' + res['duration'] != 'null' &&
+                                      res['duration'] != null
+                                  ? ctrl
+                                      .getTimeString(int.parse(res['duration']))
+                                  : '',
                               style: buttonTextStyle()
                                   .copyWith(color: konPrimaryColor1),
                             ),
@@ -392,6 +430,18 @@ class _LessonScreenState extends State<LessonScreen>
               );
             });
       }
+    } else if (data['action_type'] == 'position') {
+//      setState(() {
+//        active_lesson_id = data['lesson_id'];
+//        _fetchlessonnote();
+//        _fetchtask();
+//      });
+//      _betterPlayerPlaylistController.setupDataSource(data['section_index']);
+      final now = Duration(seconds: data['duration']);
+      Duration duration = Duration(milliseconds: now.inMilliseconds);
+      _betterPlayerPlaylistController
+          .betterPlayerController.videoPlayerController
+          .seekTo(duration);
     }
   }
 
@@ -472,20 +522,6 @@ class _LessonScreenState extends State<LessonScreen>
           ],
         ),
       );
-    }else if (data['action_type'] == 'audio') {
-      if(!_mPlayer.isPlaying == true){
-        _mPlayer
-            .startPlayer(
-            fromURI: data['url'],
-            //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
-            whenFinished: () async {
-              setState(() {});
-            })
-            .then((value) {
-        });
-      }else{
-        _mPlayer.stopPlayer();
-      }
     }
   }
 
@@ -502,6 +538,7 @@ class _LessonScreenState extends State<LessonScreen>
     if (res != null && res != 'null' && res.containsKey('data')) {
       List<dynamic> data = res['data'];
       for (int i = 0; i < data.length; i++) {
+        print(data[i]);
         if (!mounted) return;
         setState(() {
           _task.add(Task.fromJson(data[i]));
@@ -515,22 +552,39 @@ class _LessonScreenState extends State<LessonScreen>
       'task_lesson_id': active_lesson_id,
       'task_course_id': widget.id,
       'lesson_task_answer': _taskctrl.text.toString(),
-      'lesson_task_file': task_file.toString()
+      'lesson_task_audio': t_voice != '' ? t_voice.toString() : null,
+      'lesson_task_file': t_gallery != ''
+          ? t_gallery.toString()
+          : t_camera != ''
+          ? t_camera.toString()
+          : t_doc != ''
+          ? t_doc.toString()
+          : null,
+      'lesson_task_audio_extension':
+      t_voice != '' ? t_voice_extension.toString() : null,
+      'lesson_task_file_extension': t_gallery != ''
+          ? t_gallery_extension.toString()
+          : t_camera != ''
+          ? t_camera_extension.toString()
+          : t_doc != ''
+          ? t_doc_extension.toString()
+          : null,
     };
-    print(data);
+    //print(data);
     var res = await ctrl.requestwithheader(data, 'save_task_answer');
     if (!mounted) return;
     setState(() {
-      task_file = '';
       _taskctrl.text = '';
+      t_voice = '';
+      t_gallery = '';
+      t_camera = '';
+      t_doc = '';
     });
     if (res.containsKey('message')) {
       await ctrl.toastmsg(res['message'], 'long');
     }
     _fetchtask();
   }
-
-
 
   Future<void> openTheRecorder() async {
     if (!kIsWeb) {
@@ -541,6 +595,17 @@ class _LessonScreenState extends State<LessonScreen>
     }
     await _mRecorder.openAudioSession();
     //_mRecorderIsInited = true;
+  }
+
+  checkpermission () async {
+    var storage = await Permission.storage.request();
+    var camera = await Permission.camera.request();
+    var microphone = await Permission.microphone.request();
+    if (storage != PermissionStatus.granted || microphone != PermissionStatus.granted || camera != PermissionStatus.granted) {
+      return 'false';
+      return;
+    }
+    return 'true';
   }
 
   @override
@@ -567,30 +632,62 @@ class _LessonScreenState extends State<LessonScreen>
           progressBarHandleColor: konPrimaryColor2,
           skipBackIcon: Icons.replay_10,
           skipForwardIcon: Icons.forward_10,
+          enablePip: true,
           forwardSkipTimeInMilliseconds: 10000,
           backwardSkipTimeInMilliseconds: 10000),
       eventListener: (event) async {
-        if(_betterPlayerPlaylistController?.currentDataSourceIndex != null){
+        if (_betterPlayerPlaylistController?.currentDataSourceIndex != null) {
           // print(_betterPlayerPlaylistController.currentDataSourceIndex);
           //print(event.betterPlayerEventType);
-          // print(BetterPlayerEventType.values);
+          //print(BetterPlayerEventType.values);
           //print(event.betterPlayerEventType);
           if (event.betterPlayerEventType ==
               BetterPlayerEventType.setupDataSource) {
             setState(() {
-              active_lesson_id = _dataSourceListIds[_betterPlayerPlaylistController.currentDataSourceIndex];
+              active_lesson_id = _dataSourceListIds[
+                  _betterPlayerPlaylistController.currentDataSourceIndex];
               _fetchlessonnote();
               _fetchtask();
             });
           }
-          if(event.betterPlayerEventType == BetterPlayerEventType.finished){
-            print(_dataSourceListIds[_betterPlayerPlaylistController.currentDataSourceIndex]);
+          if (event.betterPlayerEventType == BetterPlayerEventType.pause) {
+            setState(() {
+              pauseIcon = true;
+            });
+          }
+          if (event.betterPlayerEventType == BetterPlayerEventType.progress) {
+            setState(() {
+              pauseIcon = false;
+            });
+            if(v_play){
+              setState(() {
+                v_play = false;
+              });
+              Map data = {
+                'lessonId': _dataSourceListIds[
+                _betterPlayerPlaylistController.currentDataSourceIndex]
+                    .toString(),
+                'progress': 0.toString()
+              };
+              print(data);
+              var res =
+              await ctrl.requestwithheader(data, 'mark_lesson_completed');
+              print(res);
+              print('first_timeeeeeeeeeeeeeeeee');
+            }
+          }
+          if (event.betterPlayerEventType == BetterPlayerEventType.finished) {
+            print(_dataSourceListIds[
+                _betterPlayerPlaylistController.currentDataSourceIndex]);
             Map data = {
-              'lessonId': _dataSourceListIds[_betterPlayerPlaylistController.currentDataSourceIndex].toString(),
-              'progress': 1
+              'lessonId': _dataSourceListIds[
+                      _betterPlayerPlaylistController.currentDataSourceIndex]
+                  .toString(),
+              'progress': 1.toString()
             };
             print(data);
-            var res = await ctrl.requestwithheader(data, 'mark_lesson_completed');
+            var res =
+                await ctrl.requestwithheader(data, 'mark_lesson_completed');
             print(res);
           }
         }
@@ -603,22 +700,8 @@ class _LessonScreenState extends State<LessonScreen>
     //_betterPlayerPlaylistController.betterPlayerController.addEventsListener(_handlevideoevent);
     _fetchlesson();
     _fetchqanda();
-
-    _mPlayer.openAudioSession().then((value) {
-//      setState(() {
-//        _mPlayerIsInited = true;
-//      });
-    });
-
-    openTheRecorder().then((value) {
-//      setState(() {
-//        _mRecorderIsInited = true;
-//      });
-    });
-
     super.initState();
   }
-
 
   @override
   void dispose() {
@@ -697,13 +780,15 @@ class _LessonScreenState extends State<LessonScreen>
             }
             if (_betterPlayerPlaylistController
                 .betterPlayerController.videoPlayerController.value.isPlaying) {
-              await ctrl.toastmsg('Pause video and add notes', 'short');
-              return;
+              _betterPlayerPlaylistController.betterPlayerController.pause();
+              //await ctrl.toastmsg('Pause video and add notes', 'short');
+              //return;
             }
             setState(() {
               _notesctrl.text = '';
             });
             showModalBottomSheet(
+                isDismissible: false,
                 context: context,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(
@@ -730,6 +815,16 @@ class _LessonScreenState extends State<LessonScreen>
                               children: [
                                 InkWell(
                                     onTap: () {
+                                      if (!_betterPlayerPlaylistController
+                                          .betterPlayerController
+                                          .videoPlayerController
+                                          .value
+                                          .isPlaying) {
+                                        _betterPlayerPlaylistController
+                                            .betterPlayerController
+                                            .videoPlayerController
+                                            .play();
+                                      }
                                       Get.back();
                                     },
                                     child: Icon(Icons.close)),
@@ -797,6 +892,11 @@ class _LessonScreenState extends State<LessonScreen>
         return FloatingActionButton(
           backgroundColor: konTextInputBorderActiveColor,
           onPressed: () async {
+            var s = await checkpermission();
+            if(s == 'false'){
+              await ctrl.toastmsg('Permission cancelled', 'short');
+              return;
+            }
             showModalBottomSheet(
                 context: context,
                 shape: RoundedRectangleBorder(
@@ -869,19 +969,22 @@ class _LessonScreenState extends State<LessonScreen>
                                 children: [
                                   InkWell(
                                     onTap: () async {
-                                      if(q_gallery != ''){
-                                        await ctrl.toastmsg('Remove gallery image', 'long');
+                                      if (q_gallery != '') {
+                                        await ctrl.toastmsg(
+                                            'Remove gallery image', 'long');
                                         return;
                                       }
-                                      if(q_doc != ''){
-                                        await ctrl.toastmsg('Remove doc and capture image', 'long');
+                                      if (q_doc != '') {
+                                        await ctrl.toastmsg(
+                                            'Remove doc and capture image',
+                                            'long');
                                         return;
                                       }
                                       if (q_camera == '') {
                                         List<Media> res =
                                             await ImagesPicker.openCamera(
                                           pickType: PickType.image,
-                                          quality: 0.5,
+                                          quality: 0.1,
                                         );
                                         if (res != null) {
                                           print(res[0].path);
@@ -891,7 +994,9 @@ class _LessonScreenState extends State<LessonScreen>
                                           var extension =
                                               p.extension(res[0].path);
                                           mystate(() {
-                                            q_camera_extension = extension.replaceAll('.', '');
+                                            q_camera_preview = file.path;
+                                            q_camera_extension =
+                                                extension.replaceAll('.', '');
                                             q_camera =
                                                 'data:image/${extension.replaceAll('.', '')};base64,' +
                                                     img_path;
@@ -920,33 +1025,49 @@ class _LessonScreenState extends State<LessonScreen>
                                   ),
                                   InkWell(
                                     onTap: () async {
-                                      if(q_camera != ''){
-                                        await ctrl.toastmsg('Remove image taken from camera', 'long');
+                                      if (q_camera != '') {
+                                        await ctrl.toastmsg(
+                                            'Remove image taken from camera',
+                                            'long');
                                         return;
                                       }
-                                      if(q_doc != ''){
-                                        await ctrl.toastmsg('Remove doc and add image', 'long');
+                                      if (q_doc != '') {
+                                        await ctrl.toastmsg(
+                                            'Remove doc and add image', 'long');
                                         return;
                                       }
                                       if (q_gallery == '') {
                                         FilePickerResult result =
                                             await FilePicker.platform.pickFiles(
                                                 type: FileType.custom,
-                                                allowedExtensions: ['jpg','png','jpeg']);
+                                                allowedExtensions: [
+                                              'jpg',
+                                              'png',
+                                              'jpeg'
+                                            ]);
                                         if (result != null) {
-                                          if(result.files.first.extension == 'png' || result.files.first.extension == 'jpeg' || result.files.first.extension == 'jpg'){
+                                          if (result.files.first.extension ==
+                                                  'png' ||
+                                              result.files.first.extension ==
+                                                  'jpeg' ||
+                                              result.files.first.extension ==
+                                                  'jpg') {
                                             File file =
-                                            File(result.files.first.path);
+                                                File(result.files.first.path);
                                             var img_path = base64Encode(
                                                 file.readAsBytesSync());
                                             mystate(() {
-                                              q_gallery_extension = result.files.first.extension;
+                                              q_camera_preview = file.path;
+                                              q_gallery_extension =
+                                                  result.files.first.extension;
                                               q_gallery =
                                                   'data:image/${result.files.first.extension};base64,' +
                                                       img_path;
                                             });
-                                          }else{
-                                            await ctrl.toastmsg('Only png,jpg,jpeg allowed', 'long');
+                                          } else {
+                                            await ctrl.toastmsg(
+                                                'Only png,jpg,jpeg allowed',
+                                                'long');
                                             setState(() {
                                               q_gallery = '';
                                             });
@@ -980,34 +1101,51 @@ class _LessonScreenState extends State<LessonScreen>
                                   ),
                                   InkWell(
                                     onTap: () async {
-                                      if(q_gallery != ''){
-                                        await ctrl.toastmsg('Remove image and add document', 'long');
+                                      if (q_gallery != '') {
+                                        await ctrl.toastmsg(
+                                            'Remove image and add document',
+                                            'long');
                                         return;
                                       }
-                                      if(q_camera != ''){
-                                        await ctrl.toastmsg('Remove image and add document', 'long');
+                                      if (q_camera != '') {
+                                        await ctrl.toastmsg(
+                                            'Remove image and add document',
+                                            'long');
                                         return;
                                       }
                                       if (q_doc == '') {
                                         FilePickerResult result =
                                             await FilePicker.platform.pickFiles(
-                                            type: FileType.custom,
-                                            allowedExtensions: ['pdf','docx']);
+                                                type: FileType.custom,
+                                                allowedExtensions: [
+                                                  'pdf',
+                                                  'docx',
+                                                  'doc'
+                                            ]);
                                         if (result != null) {
-                                          if(result.files.first.extension == 'pdf' || result.files.first.extension == 'docx'){
+                                          if (result.files.first.extension ==
+                                                  'pdf' ||
+                                              result.files.first.extension ==
+                                                  'docx' ||
+                                              result.files.first.extension ==
+                                                  'doc') {
                                             File file =
-                                            File(result.files.first.path);
+                                                File(result.files.first.path);
                                             var img_path = base64Encode(
                                                 file.readAsBytesSync());
                                             mystate(() {
-                                              q_doc_extension = result.files.first.extension;
+                                              q_doc_preview = file.path;
+                                              q_doc_extension =
+                                                  result.files.first.extension;
                                               print(q_doc);
                                               q_doc =
                                                   'data:application/${result.files.first.extension};base64,' +
                                                       img_path;
                                             });
-                                          }else{
-                                            await ctrl.toastmsg('Only pdf,docx allowed', 'long');
+                                          } else {
+                                            await ctrl.toastmsg(
+                                                'Only pdf,docx,doc allowed',
+                                                'long');
                                             setState(() {
                                               q_doc = '';
                                             });
@@ -1039,115 +1177,139 @@ class _LessonScreenState extends State<LessonScreen>
                                           EdgeInsets.symmetric(horizontal: 10),
                                     ),
                                   ),
-                                  q_voice == ''?XGestureDetector(
-                                    onLongPress: (v){
-                                      mystate(() {
-                                        recording = true;
-                                      });
-                                      _mRecorder
-                                          .startRecorder(
-                                        toFile: _mPath,
-                                        audioSource: theSource,
-                                      )
-                                          .then((value) {
-                                        setState(() {});
-                                      });
-                                    },
-                                    onLongPressEnd: () async {
-                                      mystate(() {
-                                        recording = false;
-                                      });
-                                      await _mRecorder.stopRecorder().then((value) {
-                                        _mRecorder.getRecordURL(path: _mPath).then((value){
-                                          File file = File(value);
-                                          var img_path = base64Encode(
-                                              file
-                                                  .readAsBytesSync());
-                                          mystate(() {
-                                            q_voice = 'data:audio/wav;base64,'+img_path.toString();
-                                            q_voice_extension = 'wav';
-                                          });
-                                          //log(img_path);
-                                        });
-                                      });
-                                    },
-                                    child: Container(
-                                      child: Column(
-                                        children: [
-                                          Image(
-                                            width: 50,
-                                              height: 50,
-                                              image: AssetImage(!recording ?
-                                              record_audio
-                                                  : recorder)),
-//                                          Image(
-//                                              image: AssetImage(q_voice == ''
-//                                                  ? record_audio
-//                                                  : close)),
-                                          SizedBox(height: 5),
-                                          Text('Voice'),
-                                        ],
-                                      ),
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                    ),
-                                  ):InkWell(
-                                    onTap: () {
-                                      return showDialog(
-                                        context: context,
-                                        builder: (ctx) => AlertDialog(
-                                          title: Text(""),
-                                          content: Text(
-                                            "Are you sure you want to delete this audio?",
-                                            style: button2TextStyle().copyWith(color: konDarkColorD3),
-                                          ),
-                                          actions: <Widget>[
-                                            FlatButton(
-                                              onPressed: () {
-                                                Navigator.of(ctx).pop();
-                                              },
-                                              child: Text(
-                                                "CANCEL",
-                                                style: buttonTextStyle().copyWith(color: konPrimaryColor1),
-                                              ),
-                                            ),
-                                            FlatButton(
-                                              onPressed: () {
+                                  q_voice == ''
+                                      ? GestureDetector(
+                                          onLongPressStart: (v) {
+                                            mystate(() {
+                                              recording = true;
+                                            });
+                                            openTheRecorder().then((value) {
+                                              _mRecorder
+                                                  .startRecorder(
+                                                toFile: _mPath,
+                                                audioSource: theSource,
+                                              )
+                                                  .then((value) {
+                                                setState(() {});
+                                              });
+                                            });
+                                          },
+                                          onLongPressEnd: (v) async {
+                                            mystate(() {
+                                              recording = false;
+                                            });
+                                            await _mRecorder
+                                                .stopRecorder()
+                                                .then((value) {
+                                              _mRecorder
+                                                  .getRecordURL(path: _mPath)
+                                                  .then((value) {
+                                                File file = File(value);
+                                                var img_path = base64Encode(
+                                                    file.readAsBytesSync());
                                                 mystate(() {
-                                                  q_voice_extension = '';
-                                                  q_voice = '';
+                                                  q_voice =
+                                                      'data:audio/wav;base64,' +
+                                                          img_path.toString();
+                                                  q_voice_extension = 'wav';
                                                 });
-                                                Get.back();
-                                              },
-                                              child: Text(
-                                                "DELETE",
-                                                style: buttonTextStyle().copyWith(color: konPrimaryColor1),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      child: Column(
-                                        children: [
-                                          Image(
-                                              image: AssetImage(close)),
+                                                //log(img_path);
+                                              });
+                                            });
+                                          },
+                                          child: Container(
+                                            child: Column(
+                                              children: [
+                                                Image(
+                                                    width: 50,
+                                                    height: 50,
+                                                    image: AssetImage(!recording
+                                                        ? record_audio
+                                                        : recorder)),
 //                                          Image(
 //                                              image: AssetImage(q_voice == ''
 //                                                  ? record_audio
 //                                                  : close)),
-                                          SizedBox(height: 5),
-                                          Text('Voice'),
-                                        ],
-                                      ),
-                                      margin:
-                                      EdgeInsets.symmetric(horizontal: 10),
-                                    ),
-                                  ),
+                                                SizedBox(height: 5),
+                                                Text('Voice'),
+                                              ],
+                                            ),
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                          ),
+                                        )
+                                      : InkWell(
+                                          onTap: () {
+                                            return showDialog(
+                                              context: context,
+                                              builder: (ctx) => AlertDialog(
+                                                title: Text(""),
+                                                content: Text(
+                                                  "Are you sure you want to delete this audio?",
+                                                  style: button2TextStyle()
+                                                      .copyWith(
+                                                          color:
+                                                              konDarkColorD3),
+                                                ),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.of(ctx).pop();
+                                                    },
+                                                    child: Text(
+                                                      "CANCEL",
+                                                      style: buttonTextStyle()
+                                                          .copyWith(
+                                                              color:
+                                                                  konPrimaryColor1),
+                                                    ),
+                                                  ),
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      mystate(() {
+                                                        q_voice_extension = '';
+                                                        q_voice = '';
+                                                      });
+                                                      Get.back();
+                                                    },
+                                                    child: Text(
+                                                      "DELETE",
+                                                      style: buttonTextStyle()
+                                                          .copyWith(
+                                                              color:
+                                                                  konPrimaryColor1),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            child: Column(
+                                              children: [
+                                                Image(image: AssetImage(close)),
+//                                          Image(
+//                                              image: AssetImage(q_voice == ''
+//                                                  ? record_audio
+//                                                  : close)),
+                                                SizedBox(height: 5),
+                                                Text('Voice'),
+                                              ],
+                                            ),
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                          ),
+                                        ),
                                 ],
                               ),
                             ),
+                            q_camera !='' || q_gallery != ''?Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                              child: Image.file(File(q_camera_preview),fit: BoxFit.cover,
+                                width: 100,height: 100,)
+                            ):SizedBox(),
+
                             Container(
                               child: TextFormField(
                                 decoration: InputDecoration(
@@ -1168,9 +1330,157 @@ class _LessonScreenState extends State<LessonScreen>
           child: Icon(Icons.add),
         );
       case 3:
+//        return FloatingActionButton(
+//          backgroundColor: konTextInputBorderActiveColor,
+//          onPressed: () async {
+//            showModalBottomSheet(
+//                context: context,
+//                shape: RoundedRectangleBorder(
+//                  borderRadius: BorderRadius.vertical(
+//                    top: Radius.circular(20),
+//                  ),
+//                ),
+//                isScrollControlled: true,
+//                builder: (context) {
+//                  return StatefulBuilder(
+//                      builder: (BuildContext context, StateSetter mystate) {
+//                    return Padding(
+//                      padding: EdgeInsets.only(
+//                          bottom: MediaQuery.of(context).viewInsets.bottom),
+//                      child: Container(
+//                        margin:
+//                            EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+//                        child: Column(
+//                          mainAxisAlignment: MainAxisAlignment.start,
+//                          crossAxisAlignment: CrossAxisAlignment.start,
+//                          mainAxisSize: MainAxisSize.min,
+//                          children: [
+//                            Container(
+//                              margin: EdgeInsets.symmetric(
+//                                  horizontal: 20, vertical: 10),
+//                              child: Row(
+//                                children: [
+//                                  InkWell(
+//                                      onTap: () {
+//                                        Get.back();
+//                                      },
+//                                      child: Icon(Icons.cancel)),
+//                                  Spacer(),
+//                                  task_file == ''
+//                                      ? InkWell(
+//                                          onTap: () async {
+//                                            //var result = await FilePicker.platform.pickFiles(allowedExtensions: ['.pdf'], type: FileType.custom);
+//                                            FilePickerResult result =
+//                                                await FilePicker.platform
+//                                                    .pickFiles(
+//                                                        type: FileType.custom,
+//                                                        allowedExtensions: [
+//                                                  'pdf'
+//                                                ]);
+//                                            if (result != null) {
+//                                              if (result
+//                                                      .files.first.extension ==
+//                                                  'pdf') {
+//                                                File file = File(
+//                                                    result.files.first.path);
+//                                                var img_path = base64Encode(
+//                                                    file.readAsBytesSync());
+//                                                mystate(() {
+//                                                  task_file =
+//                                                      'data:application/pdf;base64,' +
+//                                                          img_path;
+//                                                });
+//                                                //final base64String = file.readAsBytes();
+////                                        print(base64.encode(file.bytes).toString());
+////                                        print('yesss');
+////                                        print(file.name);
+////                                        print(file.bytes);
+////                                        print(file.size);
+////                                        print(file.extension);
+////                                        print(file.path.readAsByteSync());
+//                                              } else {
+//                                                await ctrl.toastmsg(
+//                                                    'Only pdf allowed', 'long');
+//                                                setState(() {
+//                                                  task_file = '';
+//                                                });
+//                                              }
+//                                            } else {
+//                                              print('cancelled');
+//                                              setState(() {
+//                                                task_file = '';
+//                                              });
+//                                            }
+//                                          },
+//                                          child: Icon(
+//                                            Icons.file_upload,
+//                                            color: Colors.green,
+//                                          ))
+//                                      : InkWell(
+//                                          onTap: () async {
+//                                            mystate(() {
+//                                              task_file = '';
+//                                            });
+//                                          },
+//                                          child: Icon(
+//                                            Icons.remove_circle,
+//                                            color: Colors.red,
+//                                          ),
+//                                        ),
+//                                  Spacer(),
+//                                  InkWell(
+//                                    onTap: () async {
+//                                      if (_taskctrl.text == '') {
+//                                        await ctrl.toastmsg(
+//                                            'Answer required', 'short');
+//                                        return;
+//                                      }
+//                                      if (!mounted) return;
+//                                      mystate(() {
+//                                        load_notes = true;
+//                                      });
+//                                      if (!mounted) return;
+//                                      setState(() {
+//                                        load_notes = true;
+//                                      });
+//                                      Get.back();
+//                                      _savetask();
+//                                    },
+//                                    child: Text(
+//                                      'Upload',
+//                                      style: smallTextStyle().copyWith(
+//                                          color: konTextInputBorderActiveColor,
+//                                          fontSize: 16),
+//                                    ),
+//                                  ),
+//                                ],
+//                              ),
+//                            ),
+//                            Container(
+//                              child: TextFormField(
+//                                controller: _taskctrl,
+//                                // expands: true,
+//                                //autofocus: true,
+//                                maxLines: null,
+//                              ),
+//                            )
+//                          ],
+//                        ),
+//                      ),
+//                    );
+//                  });
+//                });
+//          },
+//          child: Icon(Icons.add),
+//        );
         return FloatingActionButton(
           backgroundColor: konTextInputBorderActiveColor,
           onPressed: () async {
+            var s = await checkpermission();
+            if(s == 'false'){
+              await ctrl.toastmsg('Permission cancelled', 'short');
+              return;
+            }
             showModalBottomSheet(
                 context: context,
                 shape: RoundedRectangleBorder(
@@ -1182,130 +1492,423 @@ class _LessonScreenState extends State<LessonScreen>
                 builder: (context) {
                   return StatefulBuilder(
                       builder: (BuildContext context, StateSetter mystate) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                      child: Container(
-                        margin:
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom),
+                          child: Container(
+                            margin:
                             EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 10),
-                              child: Row(
-                                children: [
-                                  InkWell(
-                                      onTap: () {
-                                        Get.back();
-                                      },
-                                      child: Icon(Icons.cancel)),
-                                  Spacer(),
-                                  task_file == ''
-                                      ? InkWell(
-                                          onTap: () async {
-                                            //var result = await FilePicker.platform.pickFiles(allowedExtensions: ['.pdf'], type: FileType.custom);
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                  child: Row(
+                                    children: [
+                                      InkWell(
+                                          onTap: () {
+                                            Get.back();
+                                          },
+                                          child: Icon(Icons.cancel)),
+                                      Spacer(),
+                                      InkWell(
+                                        onTap: () async {
+                                          if (_taskctrl.text == '') {
+                                            await ctrl.toastmsg(
+                                                'Answer required', 'short');
+                                            return;
+                                          }
+                                          if (!mounted) return;
+                                          mystate(() {
+                                            load_task = true;
+                                          });
+                                          if (!mounted) return;
+                                          setState(() {
+                                            load_task = true;
+                                          });
+                                          Get.back();
+                                          _savetask();
+                                        },
+                                        child: Text(
+                                          'Upload',
+                                          style: smallTextStyle().copyWith(
+                                              color: konTextInputBorderActiveColor,
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  color: konLightColor4,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 20, horizontal: 15),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      InkWell(
+                                        onTap: () async {
+                                          if (t_gallery != '') {
+                                            await ctrl.toastmsg(
+                                                'Remove gallery image', 'long');
+                                            return;
+                                          }
+                                          if (t_doc != '') {
+                                            await ctrl.toastmsg(
+                                                'Remove doc and capture image',
+                                                'long');
+                                            return;
+                                          }
+                                          if (t_camera == '') {
+                                            List<Media> res =
+                                            await ImagesPicker.openCamera(
+                                              pickType: PickType.image,
+                                              quality: 0.1,
+                                            );
+                                            if (res != null) {
+                                              print(res[0].path);
+                                              File file = File(res[0].path);
+                                              var img_path = base64Encode(
+                                                  file.readAsBytesSync());
+                                              var extension =
+                                              p.extension(res[0].path);
+                                              mystate(() {
+                                                t_camera_preview = file.path;
+                                                t_camera_extension =
+                                                    extension.replaceAll('.', '');
+                                                t_camera =
+                                                    'data:image/${extension.replaceAll('.', '')};base64,' +
+                                                        img_path;
+                                              });
+                                            }
+                                          } else {
+                                            mystate(() {
+                                              t_camera = '';
+                                            });
+                                          }
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            children: [
+                                              Image(
+                                                  image: AssetImage(t_camera == ''
+                                                      ? camera
+                                                      : close)),
+                                              SizedBox(height: 5),
+                                              Text('Camera'),
+                                            ],
+                                          ),
+                                          margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () async {
+                                          if (t_camera != '') {
+                                            await ctrl.toastmsg(
+                                                'Remove image taken from camera',
+                                                'long');
+                                            return;
+                                          }
+                                          if (t_doc != '') {
+                                            await ctrl.toastmsg(
+                                                'Remove doc and add image', 'long');
+                                            return;
+                                          }
+                                          if (t_gallery == '') {
                                             FilePickerResult result =
-                                                await FilePicker.platform
-                                                    .pickFiles(
-                                                        type: FileType.custom,
-                                                        allowedExtensions: [
-                                                  'pdf'
+                                            await FilePicker.platform.pickFiles(
+                                                type: FileType.custom,
+                                                allowedExtensions: [
+                                                  'jpg',
+                                                  'png',
+                                                  'jpeg'
                                                 ]);
                                             if (result != null) {
-                                                    if(result.files.first.extension == 'pdf') {
-                                                      File file =
-                                                      File(result.files.first
-                                                          .path);
-                                                      var img_path = base64Encode(
-                                                          file
-                                                              .readAsBytesSync());
-                                                      mystate(() {
-                                                        task_file =
-                                                            'data:application/pdf;base64,' +
-                                                                img_path;
-                                                      });
-                                                      //final base64String = file.readAsBytes();
-//                                        print(base64.encode(file.bytes).toString());
-//                                        print('yesss');
-//                                        print(file.name);
-//                                        print(file.bytes);
-//                                        print(file.size);
-//                                        print(file.extension);
-//                                        print(file.path.readAsByteSync());
-                                                    }else{
-                                                      await ctrl.toastmsg('Only pdf allowed', 'long');
-                                                      setState(() {
-                                                        task_file = '';
-                                                      });
-                                                    }
+                                              if (result.files.first.extension ==
+                                                  'png' ||
+                                                  result.files.first.extension ==
+                                                      'jpeg' ||
+                                                  result.files.first.extension ==
+                                                      'jpg') {
+                                                File file =
+                                                File(result.files.first.path);
+                                                var img_path = base64Encode(
+                                                    file.readAsBytesSync());
+                                                mystate(() {
+                                                  t_camera_preview = file.path;
+                                                  t_gallery_extension =
+                                                      result.files.first.extension;
+                                                  t_gallery =
+                                                      'data:image/${result.files.first.extension};base64,' +
+                                                          img_path;
+                                                });
+                                              } else {
+                                                await ctrl.toastmsg(
+                                                    'Only png,jpg,jpeg allowed',
+                                                    'long');
+                                                setState(() {
+                                                  t_gallery = '';
+                                                });
+                                              }
                                             } else {
                                               print('cancelled');
                                               setState(() {
-                                                task_file = '';
+                                                t_gallery = '';
                                               });
                                             }
-                                          },
-                                          child: Icon(
-                                            Icons.file_upload,
-                                            color: Colors.green,
-                                          ))
-                                      : InkWell(
-                                          onTap: () async {
+                                          } else {
                                             mystate(() {
-                                              task_file = '';
+                                              t_gallery = '';
                                             });
-                                          },
-                                          child: Icon(
-                                            Icons.remove_circle,
-                                            color: Colors.red,
+                                          }
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            children: [
+                                              Image(
+                                                  image: AssetImage(t_gallery == ''
+                                                      ? gallery
+                                                      : close)),
+                                              SizedBox(height: 5),
+                                              Text('Gallery'),
+                                            ],
                                           ),
+                                          margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
                                         ),
-                                  Spacer(),
-                                  InkWell(
-                                    onTap: () async {
-                                      if (_taskctrl.text == '') {
-                                        await ctrl.toastmsg(
-                                            'Answer required', 'short');
-                                        return;
-                                      }
-                                      if (!mounted) return;
-                                      mystate(() {
-                                        load_notes = true;
-                                      });
-                                      if (!mounted) return;
-                                      setState(() {
-                                        load_notes = true;
-                                      });
-                                      Get.back();
-                                      _savetask();
-                                    },
-                                    child: Text(
-                                      'Upload',
-                                      style: smallTextStyle().copyWith(
-                                          color: konTextInputBorderActiveColor,
-                                          fontSize: 16),
-                                    ),
+                                      ),
+                                      InkWell(
+                                        onTap: () async {
+                                          if (t_gallery != '') {
+                                            await ctrl.toastmsg(
+                                                'Remove image and add document',
+                                                'long');
+                                            return;
+                                          }
+                                          if (t_camera != '') {
+                                            await ctrl.toastmsg(
+                                                'Remove image and add document',
+                                                'long');
+                                            return;
+                                          }
+                                          if (t_doc == '') {
+                                            FilePickerResult result =
+                                            await FilePicker.platform.pickFiles(
+                                                type: FileType.custom,
+                                                allowedExtensions: [
+                                                  'pdf',
+                                                  'docx',
+                                                  'doc'
+                                                ]);
+                                            if (result != null) {
+                                              if (result.files.first.extension ==
+                                                  'pdf' ||
+                                                  result.files.first.extension ==
+                                                      'docx' ||
+                                                  result.files.first.extension ==
+                                                      'doc') {
+                                                File file =
+                                                File(result.files.first.path);
+                                                var img_path = base64Encode(
+                                                    file.readAsBytesSync());
+                                                mystate(() {
+                                                  t_doc_preview = file.path;
+                                                  t_doc_extension =
+                                                      result.files.first.extension;
+                                                  print(t_doc);
+                                                  t_doc =
+                                                      'data:application/${result.files.first.extension};base64,' +
+                                                          img_path;
+                                                });
+                                              } else {
+                                                await ctrl.toastmsg(
+                                                    'Only pdf,docx,doc allowed',
+                                                    'long');
+                                                setState(() {
+                                                  t_doc = '';
+                                                });
+                                              }
+                                            } else {
+                                              print('cancelled');
+                                              setState(() {
+                                                t_doc = '';
+                                              });
+                                            }
+                                          } else {
+                                            mystate(() {
+                                              t_doc = '';
+                                            });
+                                          }
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            children: [
+                                              Image(
+                                                  image: AssetImage(t_doc == ''
+                                                      ? document
+                                                      : close)),
+                                              SizedBox(height: 5),
+                                              Text('Document'),
+                                            ],
+                                          ),
+                                          margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                        ),
+                                      ),
+                                      t_voice == ''
+                                          ? GestureDetector(
+                                        onLongPressStart: (v) {
+                                          mystate(() {
+                                            recording = true;
+                                          });
+                                          openTheRecorder().then((value) {
+                                            _mRecorder
+                                                .startRecorder(
+                                              toFile: _mPath,
+                                              audioSource: theSource,
+                                            )
+                                                .then((value) {
+                                              setState(() {});
+                                            });
+                                          });
+                                        },
+                                        onLongPressEnd: (v) async {
+                                          mystate(() {
+                                            recording = false;
+                                          });
+                                          await _mRecorder
+                                              .stopRecorder()
+                                              .then((value) {
+                                            _mRecorder
+                                                .getRecordURL(path: _mPath)
+                                                .then((value) {
+                                              File file = File(value);
+                                              var img_path = base64Encode(
+                                                  file.readAsBytesSync());
+                                              mystate(() {
+                                                t_voice =
+                                                    'data:audio/wav;base64,' +
+                                                        img_path.toString();
+                                                t_voice_extension = 'wav';
+                                              });
+                                              //log(img_path);
+                                            });
+                                          });
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            children: [
+                                              Image(
+                                                  width: 50,
+                                                  height: 50,
+                                                  image: AssetImage(!recording
+                                                      ? record_audio
+                                                      : recorder)),
+//                                          Image(
+//                                              image: AssetImage(t_voice == ''
+//                                                  ? record_audio
+//                                                  : close)),
+                                              SizedBox(height: 5),
+                                              Text('Voice'),
+                                            ],
+                                          ),
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                        ),
+                                      )
+                                          : InkWell(
+                                        onTap: () {
+                                          return showDialog(
+                                            context: context,
+                                            builder: (ctx) => AlertDialog(
+                                              title: Text(""),
+                                              content: Text(
+                                                "Are you sure you want to delete this audio?",
+                                                style: button2TextStyle()
+                                                    .copyWith(
+                                                    color:
+                                                    konDarkColorD3),
+                                              ),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                  onPressed: () {
+                                                    Navigator.of(ctx).pop();
+                                                  },
+                                                  child: Text(
+                                                    "CANCEL",
+                                                    style: buttonTextStyle()
+                                                        .copyWith(
+                                                        color:
+                                                        konPrimaryColor1),
+                                                  ),
+                                                ),
+                                                FlatButton(
+                                                  onPressed: () {
+                                                    mystate(() {
+                                                      t_voice_extension = '';
+                                                      t_voice = '';
+                                                    });
+                                                    Get.back();
+                                                  },
+                                                  child: Text(
+                                                    "DELETE",
+                                                    style: buttonTextStyle()
+                                                        .copyWith(
+                                                        color:
+                                                        konPrimaryColor1),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            children: [
+                                              Image(image: AssetImage(close)),
+//                                          Image(
+//                                              image: AssetImage(t_voice == ''
+//                                                  ? record_audio
+//                                                  : close)),
+                                              SizedBox(height: 5),
+                                              Text('Voice'),
+                                            ],
+                                          ),
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                                t_camera !='' || t_gallery != ''?Container(
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                                    child: Image.file(File(t_camera_preview),fit: BoxFit.cover,
+                                      width: 100,height: 100,)
+                                ):SizedBox(),
+
+                                Container(
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                        hintText: "Write your answer here"),
+                                    controller: _taskctrl,
+                                    // expands: true,
+                                    //autofocus: true,
+                                    maxLines: null,
+                                  ),
+                                )
+                              ],
                             ),
-                            Container(
-                              child: TextFormField(
-                                controller: _taskctrl,
-                                // expands: true,
-                                //autofocus: true,
-                                maxLines: null,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  });
+                          ),
+                        );
+                      });
                 });
           },
           child: Icon(Icons.add),
@@ -1325,7 +1928,7 @@ class _LessonScreenState extends State<LessonScreen>
           appBar: AppBar(
             leading: InkWell(
                 onTap: () {
-                  Get.offNamed('/', arguments: 2);
+                  Get.offNamed('/', arguments: { 'currentTab': 2,'data':'' });
                 },
                 child: Icon(Icons.arrow_back, color: Colors.black)),
             elevation: 0,
@@ -1339,21 +1942,44 @@ class _LessonScreenState extends State<LessonScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _dataSourceList.length != 0
-                        ? Container(
-                            margin: EdgeInsets.all(0),
-                            width: double.infinity,
-                            height: 220,
-                            child: AspectRatio(
-                              child: BetterPlayerPlaylist(
-                                key: _betterPlayerPlaylistStateKey,
-                                betterPlayerConfiguration:
-                                    _betterPlayerConfiguration,
-                                betterPlayerPlaylistConfiguration:
-                                    _betterPlayerPlaylistConfiguration,
-                                betterPlayerDataSourceList: _dataSourceList,
+                        ? Stack(
+                            children: <Widget>[
+                              Container(
+                                width: double.infinity,
+                                margin: EdgeInsets.all(0),
+                                height: 220,
+                                child: AspectRatio(
+                                  child: BetterPlayerPlaylist(
+                                    key: _betterPlayerPlaylistStateKey,
+                                    betterPlayerConfiguration:
+                                        _betterPlayerConfiguration,
+                                    betterPlayerPlaylistConfiguration:
+                                        _betterPlayerPlaylistConfiguration,
+                                    betterPlayerDataSourceList: _dataSourceList,
+                                  ),
+                                  aspectRatio: 1,
+                                ),
                               ),
-                              aspectRatio: 1,
-                            ),
+                              pauseIcon
+                                  ? InkWell(
+                                      onTap: () {
+                                        _betterPlayerPlaylistController
+                                            .betterPlayerController
+                                            .videoPlayerController
+                                            .play();
+                                      },
+                                      child: Container(
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 70),
+                                          alignment: Alignment.topCenter,
+                                          child: Icon(
+                                            Icons.play_arrow_rounded,
+                                            color: konLightColor2,
+                                            size: 80,
+                                          )),
+                                    )
+                                  : Container(),
+                            ],
                           )
                         : Container(),
                     SizedBox(height: 10),
@@ -1390,9 +2016,17 @@ class _LessonScreenState extends State<LessonScreen>
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                       padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        'By ' + author_name.toString(),
-                        style: smallTextStyle().copyWith(color: konDarkColorD3),
+                      child: InkWell(
+                        onTap: () {
+//                          Duration duration = Duration(milliseconds: 100000);
+//                          _betterPlayerPlaylistController
+//                              .betterPlayerController.videoPlayerController.seekTo(duration);
+                        },
+                        child: Text(
+                          'By ' + author_name.toString(),
+                          style:
+                              smallTextStyle().copyWith(color: konDarkColorD3),
+                        ),
                       ),
                     ),
                     Container(
@@ -1499,7 +2133,9 @@ class _LessonScreenState extends State<LessonScreen>
                                           itemBuilder: (BuildContext context,
                                               int index) {
                                             return MessagesWidget(
-                                              isAuthor: false, qanda: _qanda[index],callbackfunc: _qandacallback,
+                                              isAuthor: false,
+                                              qanda: _qanda[index],
+                                              callbackfunc: _qandacallback,
                                             );
                                           },
                                         ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/src/model/qanda.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MessagesWidget extends StatefulWidget {
   final bool isAuthor;
@@ -17,6 +19,11 @@ class MessagesWidget extends StatefulWidget {
 }
 
 class _MessagesWidgetState extends State<MessagesWidget> {
+  bool playing = false;
+  FlutterSoundPlayer _mPlayer = FlutterSoundPlayer();
+
+  void _launchURL(_url) async =>
+      await canLaunch(_url) ? await launch(_url) : throw 'Could not launch $_url';
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +43,7 @@ class _MessagesWidgetState extends State<MessagesWidget> {
               ),
               SizedBox(width: 10),
               Text(
-                'user',
+                widget.qanda.first_name.toString() +' '+widget.qanda.last_name.toString(),
                 style: buttonTextStyle()
                     .copyWith(fontSize: 12, color: Colors.black),
               ),
@@ -61,7 +68,7 @@ class _MessagesWidgetState extends State<MessagesWidget> {
                     .copyWith(fontSize: 10, color: konDarkColorD3),
               ),
               Spacer(),
-              InkWell(
+              widget.qanda.is_owner == 'true'?InkWell(
                 onTap: () {
                   Map data = {
                     'qanda_id': widget.qanda.id,
@@ -72,39 +79,74 @@ class _MessagesWidgetState extends State<MessagesWidget> {
                 child: Icon(
                   Icons.delete_outline_outlined,
                 ),
-              ),
+              ):SizedBox(),
             ],
           ),
-          widget.qanda.attachment_type == 'jpeg' || widget.qanda.attachment_type == 'jpg' || widget.qanda.attachment_type == 'png'?Container (
-            margin: EdgeInsets.only(left: 50, bottom: 10),
-            width: 150,
-            child: Image(
-              image: NetworkImage(widget.qanda.attachment_url.toString()),
+          widget.qanda.attachment_type == 'jpeg' || widget.qanda.attachment_type == 'jpg' || widget.qanda.attachment_type == 'png'?InkWell(
+            onTap: () async {
+              //final _result = await OpenFile.open(widget.qanda.attachment_url.toString());
+              Get.toNamed('/viewimage', arguments: widget.qanda.attachment_url.toString());
+            },
+            child: Container (
+              margin: EdgeInsets.only(left: 50, bottom: 10),
+              width: 150,
+              child: Image(
+                image: NetworkImage(widget.qanda.attachment_url.toString()),
+              ),
             ),
           ):SizedBox(),
 
-          widget.qanda.attachment_type == 'pdf' || widget.qanda.attachment_type == 'doc' || widget.qanda.attachment_type == 'docx'?Container (
-            margin: EdgeInsets.only(left: 50, bottom: 10),
-            width: 50,
-            child: Image(
-              image: AssetImage(document),
-            ),
-          ):SizedBox(),
-
-          widget.qanda.audio_attachment != '' && widget.qanda.audio_attachment != 'null' && widget.qanda.audio_attachment != null?InkWell(
-            onTap: () {
-              Map data = {
-                'url': widget.qanda.audio_attachment,
-                'action_type':'audio',
-              };
-              widget.callbackfunc(data);
+          widget.qanda.attachment_type == 'pdf' || widget.qanda.attachment_type == 'doc' || widget.qanda.attachment_type == 'docx'?InkWell(
+            onTap: (){
+              _launchURL(widget.qanda.attachment_url);
             },
             child: Container (
               margin: EdgeInsets.only(left: 50, bottom: 10),
               width: 50,
               child: Image(
-                image: AssetImage(record_audio),
+                image: AssetImage(document),
               ),
+            ),
+          ):SizedBox(),
+
+          widget.qanda.audio_attachment != '' && widget.qanda.audio_attachment != 'null' && widget.qanda.audio_attachment != null?InkWell(
+            onTap: () {
+              _mPlayer.openAudioSession().then((value) {
+                if (!_mPlayer.isPlaying == true) {
+                  setState(() {
+                    playing = true;
+                  });
+                  _mPlayer
+                      .startPlayer(
+                      fromURI: widget.qanda.audio_attachment,
+                      //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
+                      whenFinished: () async {
+                        setState(() {
+                          playing = false;
+                        });
+                      })
+                      .then((value) {});
+                } else {
+                  _mPlayer.stopPlayer();
+                  setState(() {
+                    playing = false;
+                  });
+                }
+              });
+//              Map data = {
+//                'url': widget.qanda.audio_attachment,
+//                'action_type':'audio',
+//              };
+//              widget.callbackfunc(data);
+
+            },
+            child: Container (
+              margin: EdgeInsets.only(left: 50, bottom: 10),
+              width: 50,
+              child: Icon(!playing?Icons.play_circle_filled:Icons.pause_circle_filled),
+//              child: Image(
+//                image: AssetImage(!playing?record_audio:recorder),
+//              ),
             ),
           ):SizedBox(),
 
@@ -138,7 +180,9 @@ class _MessagesWidgetState extends State<MessagesWidget> {
                 InkWell(
                   onTap: () {
                     Map data = {
-                      'reply': widget.qanda.reply
+                      //'reply': widget.qanda.reply,
+                      'question_id': widget.qanda.id,
+                      'is_owner': widget.qanda.is_owner
                     };
                     Get.toNamed('/qandareply', arguments: data);
                   },
@@ -150,7 +194,7 @@ class _MessagesWidgetState extends State<MessagesWidget> {
                 ),
                 SizedBox(width: 5),
                 Text(
-                  '(${widget.qanda.reply.length.toString()})',
+                  '(${widget.qanda.reply_count.toString()})',
                   style: mediumTextStyle()
                       .copyWith(fontSize: 10, color: konDarkColorB1),
                 ),

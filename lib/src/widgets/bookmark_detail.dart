@@ -30,21 +30,25 @@ class _BookMarkDetailState extends State<BookMarkDetail> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '@',
-                style: largeTextStyle().copyWith(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: konTextInputBorderActiveColor),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0),
+              InkWell(
+                onTap: (){
+                   Map data = {
+                    'note_id': widget.note.id,
+                    'lesson_id': widget.lesson_id,
+                     'duration': int.parse(widget.note.duration),
+                    'action_type': 'position'
+                  };
+                  widget.callbackfunc(data);
+                },
                 child: Text(
-                    widget.note.duration != 'null' && widget.note.duration != null?ctrl.getTimeString(int.parse(widget.note.duration)):'',
-                  style: largeTextStyle().copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: konTextInputBorderActiveColor),
+                  widget.note.note.toString(),
+                  style: mediumTextStyle().copyWith(
+                    fontSize: 16,
+                    color: konTextInputBorderActiveColor,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 5,
+                  softWrap: true,
                 ),
               ),
               Spacer(),
@@ -90,25 +94,33 @@ class _BookMarkDetailState extends State<BookMarkDetail> {
                 Text(
                   '',
                   style: largeTextStyle().copyWith(
-                      fontSize: 14,
+                      fontSize: 5,
                       fontWeight: FontWeight.bold,
                       color: konDarkColorB1),
                 ),
               ],
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 7),
-            width: double.infinity,
-            child: Text(
-              widget.note.note.toString(),
-              style: mediumTextStyle().copyWith(
-                fontSize: 14,
-                color: konDarkColorD3,
+          InkWell(
+            onTap: (){
+              Map data = {
+                'note_id': widget.note.id,
+                'lesson_id': widget.lesson_id,
+                'duration': int.parse(widget.note.duration),
+                'action_type': 'position'
+              };
+              widget.callbackfunc(data);
+            },
+            child: Container(
+              margin: EdgeInsets.only(top: 7),
+              width: double.infinity,
+              child: Text(
+                widget.note.duration != 'null' && widget.note.duration != null?'@ '+ ctrl.getTimeString(int.parse(widget.note.duration)):'',
+                style: largeTextStyle().copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    color: konDarkColorD3),
               ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 5,
-              softWrap: true,
             ),
           ),
           Container(

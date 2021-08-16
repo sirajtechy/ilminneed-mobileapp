@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CartBloc with ChangeNotifier {
   Map<int, int> _cart = {};
   int _cartcount = 0;
+  String _user_image = '';
 
   Map<int, int> get cart => _cart;
 
@@ -25,6 +26,17 @@ class CartBloc with ChangeNotifier {
 
   int getcount() {
     return _cartcount;
+  }
+
+  String getuserimage() {
+    return _user_image;
+  }
+
+  void updateUserImage(image) async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    _prefs.setString('user_image', image);
+    _user_image = image;
+    notifyListeners();
   }
 
   void totalCount(count) async {

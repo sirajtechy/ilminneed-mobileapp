@@ -14,6 +14,13 @@ import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
 
 class MyCourses extends StatefulWidget {
+  String data = '0';
+
+  MyCourses({
+    Key key,
+    this.data,
+  }) : super(key: key);
+
   @override
   _MyCoursesState createState() => _MyCoursesState();
 }
@@ -60,15 +67,21 @@ class _MyCoursesState extends State<MyCourses>
         });
         List<dynamic> data = res['my_courses'];
         for (int i = 0; i < data.length; i++) {
+          //print(data[i]['in_progress']);
+          //print(data[i]['completion']);
           //print(data[i]);
           if (!mounted) return;
           setState(() {
-            if (data[i]['completion'] == 0) {
+            if (data[i]['in_progress'] == true && data[i]['completion'] == 0) {
+              _progress.add(Course.fromJson(data[i]));
+            }else if (data[i]['in_progress'] != true && data[i]['completion'] == 0) {
               _saved.add(Course.fromJson(data[i]));
             } else if (data[i]['completion'] == 100) {
               _completed.add(Course.fromJson(data[i]));
-            } else {
+            }else if (data[i]['completion'] != 0 && data[i]['completion'] != 100) {
               _progress.add(Course.fromJson(data[i]));
+            }else{
+              _saved.add(Course.fromJson(data[i]));
             }
           });
         }
@@ -95,7 +108,7 @@ class _MyCoursesState extends State<MyCourses>
     if (res != null && res != 'null' && res.length != 0) {
       List<dynamic> data = res;
       for (int i = 0; i < data.length; i++) {
-        print(data[i]);
+       // print(data[i]);
         if (!mounted) return;
         setState(() {
           _lessonnote.add(LessonNote.fromJson(data[i]));
@@ -106,6 +119,12 @@ class _MyCoursesState extends State<MyCourses>
 
   checkifloggedin() async {
     if (await ctrl.LoggedIn() == true) {
+      if(widget.data != ''){
+        setState(() {
+          _tabIndex = int.parse(widget.data);
+        });
+      }
+
       _tabController =
           TabController(length: 4, initialIndex: _tabIndex, vsync: this);
       _tabController.addListener(_handleTabSelection);
@@ -272,7 +291,7 @@ class _MyCoursesState extends State<MyCourses>
       appBar: AppBar(
         leading: InkWell(
             onTap: () {
-              Get.offNamed('/', arguments: 0);
+              Get.offNamed('/', arguments: { 'currentTab': 0,'data':'' });
             },
             child: Icon(Icons.arrow_back, color: Colors.black)),
         elevation: 0,
@@ -291,386 +310,359 @@ class _MyCoursesState extends State<MyCourses>
         color: Colors.white,
         isLoading: _loading,
         child: !_firsttime && !empty
-            ? Container(
-                color: Colors.white,
-                child: CustomScrollView(slivers: <Widget>[
-                  SliverAppBar(
-                    snap: true,
-                    floating: true,
-                    pinned: true,
-                    automaticallyImplyLeading: false,
-                    expandedHeight: 250,
-                    flexibleSpace: FlexibleSpaceBar(
-                      collapseMode: CollapseMode.pin,
-                      background: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 0, left: 15, right: 15),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.only(
-                                  top: 0, bottom: 0, left: 15, right: 15),
-                              decoration: BoxDecoration(
-                                color: konLightColor4,
-                                borderRadius: BorderRadius.circular(8),
+            ? CustomScrollView(slivers: <Widget>[
+              SliverAppBar(
+                snap: true,
+                floating: true,
+                pinned: true,
+                automaticallyImplyLeading: false,
+                expandedHeight: 250,
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
+                  background: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 15, bottom: 0, left: 15, right: 15),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.only(
+                              top: 0, bottom: 0, left: 15, right: 15),
+                          decoration: BoxDecoration(
+                            color: konLightColor4,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            childAspectRatio: (itemWidth / itemHeight),
+                            crossAxisSpacing: 0,
+                            mainAxisSpacing: 0,
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    right: BorderSide(
+                                        color:
+                                            Colors.grey.withOpacity(0.2)),
+                                    bottom: BorderSide(
+                                        color:
+                                            Colors.grey.withOpacity(0.3)),
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 10),
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Image(image: AssetImage(hat)),
+                                    SizedBox(width: 10),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(total_course,
+                                            style: largeTextStyle()),
+                                        Text('My Courses',
+                                            style: buttonTextStyle())
+                                      ],
+                                    )
+                                  ],
+                                ),
                               ),
-                              child: GridView.count(
-                                crossAxisCount: 2,
-                                shrinkWrap: true,
-                                childAspectRatio: (itemWidth / itemHeight),
-                                crossAxisSpacing: 0,
-                                mainAxisSpacing: 0,
-                                children: <Widget>[
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        right: BorderSide(
-                                            color:
-                                                Colors.grey.withOpacity(0.2)),
-                                        bottom: BorderSide(
-                                            color:
-                                                Colors.grey.withOpacity(0.3)),
-                                      ),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 10),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image(image: AssetImage(hat)),
-                                        SizedBox(width: 10),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(total_course,
-                                                style: largeTextStyle()),
-                                            Text('My Courses',
-                                                style: buttonTextStyle())
-                                          ],
-                                        )
-                                      ],
-                                    ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    left: BorderSide(
+                                        color:
+                                            Colors.grey.withOpacity(0.2)),
+                                    bottom: BorderSide(
+                                        color:
+                                            Colors.grey.withOpacity(0.3)),
                                   ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        left: BorderSide(
-                                            color:
-                                                Colors.grey.withOpacity(0.2)),
-                                        bottom: BorderSide(
-                                            color:
-                                                Colors.grey.withOpacity(0.3)),
-                                      ),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 10),
-                                    child: Row(
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 10),
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Image(image: AssetImage(clock)),
+                                    SizedBox(width: 10),
+                                    Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Image(image: AssetImage(clock)),
-                                        SizedBox(width: 10),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(learned_time,
-                                                style: largeTextStyle()),
-                                            Text('Learned time',
-                                                style: buttonTextStyle())
-                                          ],
-                                        )
+                                        Text(learned_time,
+                                            style: largeTextStyle()),
+                                        Text('Learned time',
+                                            style: buttonTextStyle())
                                       ],
-                                    ),
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        right: BorderSide(
-                                            color:
-                                                Colors.grey.withOpacity(0.2)),
-                                      ),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 10),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image(image: AssetImage(quiz)),
-                                        SizedBox(width: 10),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(quiz_attended,
-                                                style: largeTextStyle()),
-                                            Text('Quiz Attended',
-                                                style: buttonTextStyle())
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        left: BorderSide(
-                                            color:
-                                                Colors.grey.withOpacity(0.2)),
-                                      ),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 15, horizontal: 10),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image(image: AssetImage(certificate)),
-                                        SizedBox(width: 10),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(total_certificate.toString(),
-                                                style: largeTextStyle()),
-                                            Text('Certificates',
-                                                style: buttonTextStyle())
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                ],
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    right: BorderSide(
+                                        color:
+                                            Colors.grey.withOpacity(0.2)),
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 10),
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Image(image: AssetImage(quiz)),
+                                    SizedBox(width: 10),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(quiz_attended,
+                                            style: largeTextStyle()),
+                                        Text('Quiz Attended',
+                                            style: buttonTextStyle())
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    left: BorderSide(
+                                        color:
+                                            Colors.grey.withOpacity(0.2)),
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 10),
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Image(image: AssetImage(certificate)),
+                                    SizedBox(width: 10),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(total_certificate.toString(),
+                                            style: largeTextStyle()),
+                                        Text('Certificates',
+                                            style: buttonTextStyle())
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                    bottom: TabBar(
-                      controller: _tabController,
-                      isScrollable: false,
-                      labelColor: konLightColor1,
-                      unselectedLabelColor: konBlackColor,
-                      labelPadding:
-                          EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-                      indicator: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(0), // Creates border
-                          color: konPrimaryColor2),
-                      tabs: [
-                        Tab(text: 'In Progress'),
-                        Tab(text: 'Saved'),
-                        Tab(text: 'Completed'),
-                        Tab(text: 'Notes'),
                       ],
                     ),
                   ),
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      _progress.length != 0
-                          ? Offstage(
-                              offstage: 0 != _tabIndex,
-                              child: Column(
-                                children: <Widget>[
-                                  ListView.separated(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 20),
-                                    shrinkWrap: true,
-                                    primary: false,
-                                    itemCount: _progress.length,
-                                    separatorBuilder: (context, index) {
-                                      return SizedBox(height: 10);
-                                    },
-                                    itemBuilder: (context, index) {
-                                      return SavedCourseWidget(
-                                          status: 'progress',
-                                          course: _progress[index]);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Offstage(
-                              offstage: 0 != _tabIndex,
-                              child: Center(
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      children: [
-                                        Image(
-                                          width: 50,
-                                          height: 50,
-                                          image: AssetImage(mycourse_empty),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Text(
-                                          'No progress course',
-                                          style: largeTextStyle().copyWith(
-                                              fontSize: 15, color: konDarkColorD3),
-                                        ),
-                                        SizedBox(height: 5),
-                                      ],
-                                    )),
-                              ),
-                            ),
-                      _saved.length != 0
-                          ? Offstage(
-                              offstage: 1 != _tabIndex,
-                              child: Column(
-                                children: <Widget>[
-                                  ListView.separated(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 20),
-                                    shrinkWrap: true,
-                                    primary: false,
-                                    itemCount: _saved.length,
-                                    separatorBuilder: (context, index) {
-                                      return SizedBox(height: 10);
-                                    },
-                                    itemBuilder: (context, index) {
-                                      return SavedCourseWidget(
-                                          status: 'saved',
-                                          course: _saved[index]);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Offstage(
-                              offstage: 1 != _tabIndex,
-                              child: Center(
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      children: [
-                                        Image(
-                                          width: 50,
-                                          height: 50,
-                                          image: AssetImage(mycourse_empty),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Text(
-                                          'No saved course',
-                                          style: largeTextStyle().copyWith(
-                                              fontSize: 15, color: konDarkColorD3),
-                                        ),
-                                        SizedBox(height: 5),
-                                      ],
-                                    )),
-                              ),
-                            ),
-                      _completed.length != 0
-                          ? Offstage(
-                              offstage: 2 != _tabIndex,
-                              child: Column(
-                                children: <Widget>[
-                                  ListView.separated(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 20),
-                                    shrinkWrap: true,
-                                    primary: false,
-                                    itemCount: _completed.length,
-                                    separatorBuilder: (context, index) {
-                                      return SizedBox(height: 10);
-                                    },
-                                    itemBuilder: (context, index) {
-                                      return SavedCourseWidget(
-                                          status: 'completed',
-                                          course: _completed[index]);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Offstage(
-                              offstage: 2 != _tabIndex,
-                              child: Center(
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: Column(
-                                      children: [
-                                        Image(
-                                          width: 50,
-                                          height: 50,
-                                          image: AssetImage(mycourse_empty),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Text(
-                                          'No completed course',
-                                          style: largeTextStyle().copyWith(
-                                              fontSize: 15, color: konDarkColorD3),
-                                        ),
-                                        SizedBox(height: 5),
-                                      ],
-                                    )),
-                              ),
-                            ),
-                      _lessonnote.length != 0 && !load_note
-                          ? Offstage(
-                              offstage: 3 != _tabIndex,
-                              child: Column(
-                                children: <Widget>[
-                                  ListView.separated(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 20, horizontal: 10),
-                                    shrinkWrap: true,
-                                    primary: false,
-                                    itemCount: _lessonnote.length,
-                                    separatorBuilder: (context, index) {
-                                      return Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 10),
-                                        child: Divider(color: Colors.grey),
-                                      );
-                                    },
-                                    itemBuilder: (context, index) {
-                                      return NotesCourseWidget(
-                                          lessonnote: _lessonnote[index],
-                                          callbackfunc: _callbackfunc);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
-                          : _lessonnote.length == 0 && !load_note
-                              ? Offstage(
-                                  offstage: 3 != _tabIndex,
-                                  child: Container(
-                                    child: Align(
-                                        alignment: Alignment.center,
-                                        child: Column(
-                                          children: [
-                                            Image(
-                                              image: AssetImage(
-                                                  lesson_empty_notes),
-                                            ),
-                                            SizedBox(height: 5),
-                                            Text(
-                                              'Notes not found',
-                                              style: mediumTextStyle().copyWith(
-                                                  fontSize: 15,
-                                                  color: konDarkColorD3),
-                                            ),
-                                          ],
-                                        )),
-                                  ),
-                                )
-                              : Offstage(
-                                  offstage: 3 != _tabIndex,
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
-                    ]),
+                ),
+                bottom: TabBar(
+                  controller: _tabController,
+                  isScrollable: false,
+                  labelColor: konLightColor1,
+                  unselectedLabelColor: konBlackColor,
+                  labelPadding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                  indicator: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.circular(0), // Creates border
+                      color: konPrimaryColor2),
+                  tabs: [
+                    Tab(text: 'Saved'),
+                    Tab(text: 'In Progress'),
+                    Tab(text: 'Completed'),
+                    Tab(text: 'Notes'),
+                  ],
+                ),
+              ),
+              SliverFillRemaining(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: <Widget>[
+                  _saved.length != 0
+                      ? Container(
+                          child: ListView.separated(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 20),
+                            shrinkWrap: true,
+                            primary: false,
+                            itemCount: _saved.length,
+                            separatorBuilder: (context, index) {
+                              return SizedBox(height: 10);
+                            },
+                            itemBuilder: (context, index) {
+                              return SavedCourseWidget(
+                                  status: 'saved',
+                                  course: _saved[index]);
+                            },
+                          )
+                        )
+                      : Container(
+                          child: Center(
+                            child: Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  children: [
+                                    Image(
+                                      width: 50,
+                                      height: 50,
+                                      image: AssetImage(mycourse_empty),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'No saved course',
+                                      style: largeTextStyle().copyWith(
+                                          fontSize: 15, color: konDarkColorD3),
+                                    ),
+                                    SizedBox(height: 5),
+                                  ],
+                                )),
+                          ),
+                        ),
+                  _progress.length != 0
+                      ? Container(
+                    child: ListView.separated(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 20),
+                      shrinkWrap: true,
+                      primary: false,
+                      itemCount: _progress.length,
+                      separatorBuilder: (context, index) {
+                        return SizedBox(height: 10);
+                      },
+                      itemBuilder: (context, index) {
+                        return SavedCourseWidget(
+                            status: 'progress',
+                            course: _progress[index]);
+                      },
+                    ),
                   )
-                ]),
-              )
+                      : Container(
+                    child: Center(
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              Image(
+                                width: 50,
+                                height: 50,
+                                image: AssetImage(mycourse_empty),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'No progress course',
+                                style: largeTextStyle().copyWith(
+                                    fontSize: 15, color: konDarkColorD3),
+                              ),
+                              SizedBox(height: 5),
+                            ],
+                          )),
+                    ),
+                  ),
+                  _completed.length != 0
+                      ? Container(
+                          child: ListView.separated(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 20),
+                            shrinkWrap: true,
+                            primary: false,
+                            itemCount: _completed.length,
+                            separatorBuilder: (context, index) {
+                              return SizedBox(height: 10);
+                            },
+                            itemBuilder: (context, index) {
+                              return SavedCourseWidget(
+                                  status: 'completed',
+                                  course: _completed[index]);
+                            },
+                          ),
+                        )
+                      : Container(
+                          child: Center(
+                            child: Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  children: [
+                                    Image(
+                                      width: 50,
+                                      height: 50,
+                                      image: AssetImage(mycourse_empty),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      'No completed course',
+                                      style: largeTextStyle().copyWith(
+                                          fontSize: 15, color: konDarkColorD3),
+                                    ),
+                                    SizedBox(height: 5),
+                                  ],
+                                )),
+                          ),
+                        ),
+                  _lessonnote.length != 0 && !load_note
+                      ? Container(
+                          child: ListView.separated(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 20, horizontal: 10),
+                            shrinkWrap: true,
+                            primary: false,
+                            itemCount: _lessonnote.length,
+                            separatorBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 10),
+                                child: Divider(color: Colors.grey),
+                              );
+                            },
+                            itemBuilder: (context, index) {
+                              return NotesCourseWidget(
+                                  lessonnote: _lessonnote[index],
+                                  callbackfunc: _callbackfunc);
+                            },
+                          ),
+                        )
+                      : _lessonnote.length == 0 && !load_note
+                          ? Container(
+                              child: Align(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: [
+                                      Image(
+                                        image: AssetImage(
+                                            lesson_empty_notes),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        'Notes not found',
+                                        style: mediumTextStyle().copyWith(
+                                            fontSize: 15,
+                                            color: konDarkColorD3),
+                                      ),
+                                    ],
+                                  )),
+                            )
+                          : Container(
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                  ],
+                ),
+              ),
+            ])
             : !_firsttime && empty
                 ? Container(
                     child: Align(

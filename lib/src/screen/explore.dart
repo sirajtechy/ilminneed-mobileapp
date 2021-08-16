@@ -14,6 +14,7 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/recent_items.dart';
 import 'package:ilminneed/src/widgets/shopping_cart.dart';
+import 'package:ilminneed/src/widgets/video_custom_theme_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -186,7 +187,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   children: [
                     Container(
                       margin:
-                      EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -197,12 +198,23 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               image: AssetImage(favicon_logo),
                             ),
                           ),
-                          Text(
-                            'Explore',
-                            style: buttonTextStyle()
-                                .copyWith(fontSize: 18, color: konDarkColorB1),
+                          InkWell(
+                            onTap: (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ChangePlayerThemePage()),
+                              );
+                            },
+                            child: Text(
+                              'Explore',
+                              style: buttonTextStyle()
+                                  .copyWith(fontSize: 18, color: konDarkColorB1),
+                            ),
                           ),
-                          ShoppingCartButtonWidget(),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0, right: 0),
+                            child: ShoppingCartButtonWidget(),
+                          )
                         ],
                       ),
                     ),
@@ -276,7 +288,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           ),
                           InkWell(
                             onTap: () {
-                              Get.toNamed('/', arguments: 1);
+                              Get.toNamed('/', arguments: { 'currentTab': 1,'data':'' });
                             },
                             child: Text(
                               VIEW_ALL,
@@ -366,7 +378,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 ),
                                 InkWell(
                                   onTap: (){
-                                    Get.toNamed('/', arguments: 2);
+                                    Get.toNamed('/', arguments: { 'currentTab': 2,'data':'' });
                                   },
                                   child: Text(
                                     MY_COURSES,

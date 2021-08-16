@@ -217,6 +217,11 @@ class _CartScreenState extends State<CartScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
+        leading: InkWell(
+            onTap: () {
+              Get.offNamed('/', arguments: { 'currentTab': 0,'data':'' });
+            },
+            child: Icon(Icons.arrow_back, color: Colors.black)),
         titleSpacing: 0,
         backgroundColor: Colors.white,
         title: Text(

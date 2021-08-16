@@ -5,6 +5,8 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:get/get.dart';
 import 'package:ilminneed/src/widgets/shopping_cart.dart';
+import 'package:ilminneed/cart_bloc.dart';
+import 'package:provider/provider.dart';
 
 class MyAccountScreen extends StatefulWidget {
   const MyAccountScreen({Key key}) : super(key: key);
@@ -46,6 +48,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var bloc = Provider.of<CartBloc>(context, listen: false);
     return Scaffold(
       backgroundColor: konLightColor1,
       appBar: AppBar(
@@ -58,9 +61,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.only(top: 15.0, right: 10),
             child: ShoppingCartButtonWidget(),
-          ),
+          )
         ],
       ),
       body: SingleChildScrollView(
@@ -75,22 +78,24 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      child: Icon(Icons.person),
+                       child: bloc.getuserimage() !=null && bloc.getuserimage() != ''?Image(
+              image: NetworkImage(bloc.getuserimage()),
+        ):Icon(Icons.person),
                     ),
-                    Positioned(
-                      right: 0,
-                      bottom: 5,
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: konTextInputBorderActiveColor,
-                            shape: BoxShape.circle),
-                        child: Icon(
-                          Icons.add_a_photo_outlined,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+//                    Positioned(
+//                      right: 0,
+//                      bottom: 5,
+//                      child: Container(
+//                        padding: EdgeInsets.all(8),
+//                        decoration: BoxDecoration(
+//                            color: konTextInputBorderActiveColor,
+//                            shape: BoxShape.circle),
+//                        child: Icon(
+//                          Icons.add_a_photo_outlined,
+//                          color: Colors.white,
+//                        ),
+//                      ),
+//                    ),
                   ],
                 ),
               ),
@@ -115,60 +120,187 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                     .copyWith(fontSize: 12, color: konLightColor),
               ),
               SizedBox(height: 5),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Account Security',
-                      style: smallTextStyle()
-                          .copyWith(fontSize: 16, color: konDarkColorB1),
-                    ),
-                    Spacer(),
-                    Icon(Icons.chevron_right_outlined, color: konLightColor),
-                  ],
+              InkWell(
+                onTap: () async {
+                  if(!loggedIn){
+                    await ctrl.toastmsg('Sign In to continue', 'short');
+                    return;
+                  }
+                  Get.toNamed('/myprofile', arguments: 2);
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'My Profile',
+                        style: smallTextStyle()
+                            .copyWith(fontSize: 16, color: konDarkColorB1),
+                      ),
+                      Spacer(),
+                      Icon(Icons.chevron_right_outlined, color: konLightColor),
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Email notification preferences',
-                      style: smallTextStyle()
-                          .copyWith(fontSize: 16, color: konDarkColorB1),
-                    ),
-                    Spacer(),
-                    Icon(Icons.chevron_right_outlined, color: konLightColor),
-                  ],
+              InkWell(
+                onTap: () async {
+                  if(!loggedIn){
+                    await ctrl.toastmsg('Sign In to continue', 'short');
+                    return;
+                  }
+                  Get.toNamed('/changepassword');
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Change Password',
+                        style: smallTextStyle()
+                            .copyWith(fontSize: 16, color: konDarkColorB1),
+                      ),
+                      Spacer(),
+                      Icon(Icons.chevron_right_outlined, color: konLightColor),
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Learning reminders',
-                      style: smallTextStyle()
-                          .copyWith(fontSize: 16, color: konDarkColorB1),
-                    ),
-                    Spacer(),
-                    Icon(Icons.chevron_right_outlined, color: konLightColor),
-                  ],
+              InkWell(
+                onTap: () async {
+                  if(!loggedIn){
+                    await ctrl.toastmsg('Sign In to continue', 'short');
+                    return;
+                  }
+                  Get.toNamed('/', arguments: { 'currentTab': 2,'data':'0' });
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'My Courses',
+                        style: smallTextStyle()
+                            .copyWith(fontSize: 16, color: konDarkColorB1),
+                      ),
+                      Spacer(),
+                      Icon(Icons.chevron_right_outlined, color: konLightColor),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: 15),
-              Text(
-                'Support',
-                style: smallTextStyle()
-                    .copyWith(fontSize: 12, color: konLightColor),
+              InkWell(
+                onTap: () async {
+                  if(!loggedIn){
+                    await ctrl.toastmsg('Sign In to continue', 'short');
+                    return;
+                  }
+                  Get.toNamed('/', arguments: { 'currentTab': 2,'data':'3' });
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Notes',
+                        style: smallTextStyle()
+                            .copyWith(fontSize: 16, color: konDarkColorB1),
+                      ),
+                      Spacer(),
+                      Icon(Icons.chevron_right_outlined, color: konLightColor),
+                    ],
+                  ),
+                ),
               ),
+              InkWell(
+                onTap: () async {
+                  if(!loggedIn){
+                    await ctrl.toastmsg('Sign In to continue', 'short');
+                    return;
+                  }
+                  Get.toNamed('/wishlist');
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Wishlist',
+                        style: smallTextStyle()
+                            .copyWith(fontSize: 16, color: konDarkColorB1),
+                      ),
+                      Spacer(),
+                      Icon(Icons.chevron_right_outlined, color: konLightColor),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () async {
+                  if(!loggedIn){
+                    await ctrl.toastmsg('Sign In to continue', 'short');
+                    return;
+                  }
+                  Get.toNamed('/', arguments: { 'currentTab': 2,'data':'2' });
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Completed Courses',
+                        style: smallTextStyle()
+                            .copyWith(fontSize: 16, color: konDarkColorB1),
+                      ),
+                      Spacer(),
+                      Icon(Icons.chevron_right_outlined, color: konLightColor),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () async {
+                  if(!loggedIn){
+                    await ctrl.toastmsg('Sign In to continue', 'short');
+                    return;
+                  }
+                  Get.toNamed('/meetings');
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Meetings',
+                        style: smallTextStyle()
+                            .copyWith(fontSize: 16, color: konDarkColorB1),
+                      ),
+                      Spacer(),
+                      Icon(Icons.chevron_right_outlined, color: konLightColor),
+                    ],
+                  ),
+                ),
+              ),
+//              SizedBox(height: 15),
+//              Text(
+//                'Support',
+//                style: smallTextStyle()
+//                    .copyWith(fontSize: 12, color: konLightColor),
+//              ),
               SizedBox(height: 5),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
@@ -177,7 +309,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'About Ilmineed',
+                      'Messages',
                       style: smallTextStyle()
                           .copyWith(fontSize: 16, color: konDarkColorB1),
                     ),
@@ -186,6 +318,12 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   ],
                 ),
               ),
+              Text(
+                'Support',
+                style: smallTextStyle()
+                    .copyWith(fontSize: 12, color: konLightColor),
+              ),
+              SizedBox(height: 5),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
@@ -202,28 +340,28 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                   ],
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Report a bug',
-                      style: smallTextStyle()
-                          .copyWith(fontSize: 16, color: konDarkColorB1),
-                    ),
-                    Spacer(),
-                    Icon(Icons.chevron_right_outlined, color: konLightColor),
-                  ],
-                ),
-              ),
-              SizedBox(height: 15),
-              Text(
-                'Legal',
-                style: smallTextStyle()
-                    .copyWith(fontSize: 12, color: konLightColor),
-              ),
+//              Container(
+//                margin: EdgeInsets.symmetric(vertical: 10),
+//                child: Row(
+//                  mainAxisAlignment: MainAxisAlignment.start,
+//                  crossAxisAlignment: CrossAxisAlignment.start,
+//                  children: [
+//                    Text(
+//                      'Report a bug',
+//                      style: smallTextStyle()
+//                          .copyWith(fontSize: 16, color: konDarkColorB1),
+//                    ),
+//                    Spacer(),
+//                    Icon(Icons.chevron_right_outlined, color: konLightColor),
+//                  ],
+//                ),
+//              ),
+//              SizedBox(height: 15),
+//              Text(
+//                'Legal',
+//                style: smallTextStyle()
+//                    .copyWith(fontSize: 12, color: konLightColor),
+//              ),
               SizedBox(height: 5),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10),
