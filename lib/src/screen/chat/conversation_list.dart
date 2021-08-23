@@ -1,86 +1,75 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
+import 'package:ilminneed/src/screen/chat/messages.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
-class Conversation {
-  Conversation({
-    this.name,
-    this.imageUrl,
-    this.count,
-    this.lastMessage,
-    this.isRead,
-    this.time,
-  });
+class ChatMessage {
+  ChatMessage({this.id, this.email, this.firstName, this.lastName, this.image, this.time, this.message});
 
-  final String name;
-  final String imageUrl;
-  final String count;
-  final String lastMessage;
-  final bool isRead;
-  final String time;
+  final String id;
+  final String email;
+  final String firstName;
+  final String lastName;
+  final String image, time, message;
 
-  factory Conversation.fromJson(Map<String, dynamic> json) => Conversation(
-        name: json["name"] == null ? null : json["name"],
-        imageUrl: json["imageUrl"] == null ? null : json["imageUrl"],
-        count: json["count"] == null ? null : json["count"],
-        lastMessage: json["lastMessage"] == null ? null : json["lastMessage"],
-        isRead: json["isRead"] == null ? null : json["isRead"],
+  factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
+        id: json["id"] == null ? null : json["id"],
+        email: json["email"] == null ? null : json["email"],
+        firstName: json["first_name"] == null ? null : json["first_name"],
+        lastName: json["last_name"] == null ? null : json["last_name"],
+        image: json["image"] == null ? null : json["image"],
         time: json["time"] == null ? null : json["time"],
+        message: json["message"] == null ? "" : json["message"],
       );
 
   Map<String, dynamic> toJson() => {
-        "name": name == null ? null : name,
-        "imageUrl": imageUrl == null ? null : imageUrl,
-        "count": count == null ? null : count,
-        "lastMessage": lastMessage == null ? null : lastMessage,
-        "isRead": isRead == null ? null : isRead,
-        "time": time == null ? null : time,
+        "id": id == null ? null : id,
+        "email": email == null ? null : email,
+        "first_name": firstName == null ? null : firstName,
+        "last_name": lastName == null ? null : lastName,
+        "image": image == null ? null : image,
       };
 }
 
-class ConversationListScreen extends StatelessWidget {
+class ConversationListScreen extends StatefulWidget {
   const ConversationListScreen({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    List<Conversation> conversationList = [
-      Conversation(
-          name: 'Liam Davies',
-          count: "5",
-          imageUrl: "https://randomuser.me/api/portraits/med/men/26.jpg",
-          time: "4.15 PM",
-          isRead: true,
-          lastMessage: "Nice pic"),
-      Conversation(
-          name: 'Sara Anderson',
-          count: "5",
-          imageUrl: "https://randomuser.me/api/portraits/women/58.jpg",
-          time: "4.15 AM",
-          isRead: false,
-          lastMessage: "Handsome pic!!!"),
-      Conversation(
-          name: 'Roberto Vega',
-          count: "1",
-          imageUrl: "https://randomuser.me/api/portraits/med/men/25.jpg",
-          time: "4.23 AM",
-          isRead: false,
-          lastMessage: "10785 berlin"),
-      Conversation(
-          name: 'Rudi Droste',
-          count: "3",
-          imageUrl: "https://randomuser.me/api/portraits/med/men/83.jpg",
-          time: "5.15 AM",
-          isRead: true,
-          lastMessage: "Cooling off in the fountain white and black short"),
-      Conversation(
-          name: 'Kent Brewer',
-          count: "3",
-          imageUrl: "https://randomuser.me/api/portraits/med/men/52.jpg",
-          time: "9.15 AM",
-          isRead: true,
-          lastMessage: "Winter sunsets brown and black dog sitting near be"),
-    ];
+  _ConversationListScreenState createState() => _ConversationListScreenState();
+}
 
+class _ConversationListScreenState extends State<ConversationListScreen> {
+  List<ChatMessage> _chatMessage = [];
+  bool _isLoading = true;
+
+  _fetchMessageList() async {
+    var res = await ctrl.getrequestwithheader('user_chat_messages');
+    setState(() {
+      _isLoading = false;
+    });
+    if (res != null) {
+      setState(() {
+        _chatMessage.clear();
+      });
+      List<dynamic> data = res;
+      debugPrint('the res is $res');
+      List.from(data).forEach((element) {
+        _chatMessage.add(ChatMessage.fromJson(element));
+      });
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    _fetchMessageList();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -90,84 +79,105 @@ class ConversationListScreen extends StatelessWidget {
           style: ctaTextStyle().copyWith(color: konDarkColorB1, fontSize: 18),
         ),
       ),
-      body: Container(
-        margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-        child: ListView.separated(
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(conversationList[index].imageUrl),
-                    ),
-                    Expanded(
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+              child: ListView.separated(
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () async {
+                        await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+                          return ChatMessagesScreen(
+                            id: _chatMessage[index].id,
+                            name: '${_chatMessage[index].firstName} ${_chatMessage[index].lastName}',
+                            imageUrl: _chatMessage[index].image,
+                          );
+                        })).then((value) {
+                          debugPrint('the value is $value');
+                          if (value) {
+                            _fetchMessageList();
+                          }
+                        });
+                      },
                       child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        child: Column(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              conversationList[index].name,
-                              style: ctaTextStyle().copyWith(color: konDarkColorB1, fontSize: 14),
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: NetworkImage(_chatMessage[index].image),
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              conversationList[index].lastMessage ?? "",
-                              overflow: TextOverflow.ellipsis,
-                              style: mediumTextStyle().copyWith(color: konDarkColorD3),
+                            Expanded(
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${_chatMessage[index].firstName} ${_chatMessage[index].lastName}',
+                                      style: ctaTextStyle().copyWith(color: konDarkColorB1, fontSize: 14),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      _chatMessage[index].message ?? "",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: mediumTextStyle().copyWith(color: konDarkColorD3),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Text(
+                                      '${index + 1}',
+                                      style: mediumTextStyle()
+                                          .copyWith(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                                    ),
+                                    decoration: BoxDecoration(shape: BoxShape.circle, color: konPrimaryColor2),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 6, right: 3),
+                                        child: Icon(
+                                          Icons.done_all_outlined,
+                                          size: 15,
+                                          color: konPrimaryColor2,
+                                        ),
+                                      ),
+                                      Text(
+                                        _chatMessage[index].time ?? "",
+                                        style: mediumTextStyle().copyWith(color: Color(0xff7A7A7A)),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
                             )
                           ],
                         ),
                       ),
-                    ),
-                    Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(5),
-                            child: Text(
-                              conversationList[index].count,
-                              style: mediumTextStyle()
-                                  .copyWith(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
-                            ),
-                            decoration: BoxDecoration(shape: BoxShape.circle, color: konPrimaryColor2),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 6, right: 3),
-                                child: Icon(
-                                  Icons.done_all_outlined,
-                                  size: 15,
-                                  color: konPrimaryColor2,
-                                ),
-                              ),
-                              Text(
-                                conversationList[index].time,
-                                style: mediumTextStyle().copyWith(color: Color(0xff7A7A7A)),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return Padding(padding: const EdgeInsets.only(left: 55), child: Divider(thickness: 1));
-            },
-            itemCount: conversationList.length),
-      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return Padding(padding: const EdgeInsets.only(left: 55), child: Divider(thickness: 1));
+                  },
+                  itemCount: _chatMessage == null ? 0 : _chatMessage.length),
+            ),
     );
   }
 }
