@@ -39,7 +39,7 @@ class _CartScreenState extends State<CartScreen> {
     });
     var bloc = Provider.of<CartBloc>(context, listen: false);
     if (res != null && res != 'null' && res.containsKey('courses')) {
-      if(res['courses'].length != 0){
+      if (res['courses'].length != 0) {
         List<dynamic> data = res['courses'];
         for (int i = 0; i < data.length; i++) {
           if (!mounted) return;
@@ -48,7 +48,7 @@ class _CartScreenState extends State<CartScreen> {
           });
         }
         bloc.totalCount(data.length);
-        if(data.length != 0){
+        if (data.length != 0) {
           if (!mounted) return;
           setState(() {
             base_price = res['total_course_price'].toString();
@@ -60,7 +60,7 @@ class _CartScreenState extends State<CartScreen> {
         setState(() {
           _loading = false;
         });
-      }else{
+      } else {
         if (!mounted) return;
         setState(() {
           _loading = false;
@@ -68,7 +68,7 @@ class _CartScreenState extends State<CartScreen> {
         bloc.totalCount(0);
         _course.clear();
       }
-    }else{
+    } else {
       bloc.totalCount(0);
       _course.clear();
     }
@@ -81,17 +81,17 @@ class _CartScreenState extends State<CartScreen> {
       _wishlist.clear();
     });
     if (res != null) {
-        List<dynamic> data = res;
-        for (int i = 0; i < data.length; i++) {
-          if (!mounted) return;
-          setState(() {
-            _wishlist.add(Course.fromJson(data[i]));
-          });
-        }
+      List<dynamic> data = res;
+      for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
         setState(() {
-          _loading = false;
+          _wishlist.add(Course.fromJson(data[i]));
         });
+      }
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -103,12 +103,12 @@ class _CartScreenState extends State<CartScreen> {
       _loading = false;
     });
     if (res != null && res != 'null') {
-      if(res['is_payment'] == false){
+      if (res['is_payment'] == false) {
         var bloc = Provider.of<CartBloc>(context, listen: false);
         bloc.totalCount(0);
         Get.offNamed('/thankyou');
         return;
-      }else{
+      } else {
         setState(() {
           order_id = res['response']['order_id'].toString();
           paid_amt = res['response']['amount'].toString();
@@ -128,12 +128,9 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   _userLoggedIn() async {
-    if(await ctrl.LoggedIn() != true){
-      Get.offNamed('/signIn', arguments: {
-        'name': '/cart',
-        'arg': ''
-      });
-    }else{
+    if (await ctrl.LoggedIn() != true) {
+      Get.offNamed('/signIn', arguments: {'name': '/cart', 'arg': ''});
+    } else {
       await _fetchcourse();
     }
   }
@@ -144,16 +141,16 @@ class _CartScreenState extends State<CartScreen> {
     });
     Map data = {
       'razorpay_payment_id': response.paymentId,
-      'razorpay_order_id' : order_id.toString(),
+      'razorpay_order_id': order_id.toString(),
       'razorpay_signature': response.signature,
-      'razorpay_amount':paid_amt
+      'razorpay_amount': paid_amt
     };
-    var res = await ctrl.requestwithheader(data,'razorpay_payment');
+    var res = await ctrl.requestwithheader(data, 'razorpay_payment');
     setState(() {
       _loading = true;
     });
-    if(res != null && res != 'null'){
-      if(res['response']['status'] == true) {
+    if (res != null && res != 'null') {
+      if (res['response']['status'] == true) {
         var bloc = Provider.of<CartBloc>(context, listen: false);
         bloc.totalCount(0);
         Get.offNamed('/thankyou');
@@ -219,7 +216,7 @@ class _CartScreenState extends State<CartScreen> {
         elevation: 0,
         leading: InkWell(
             onTap: () {
-              Get.offNamed('/', arguments: { 'currentTab': 0,'data':'' });
+              Get.offNamed('/', arguments: {'currentTab': 0, 'data': ''});
             },
             child: Icon(Icons.arrow_back, color: Colors.black)),
         titleSpacing: 0,
@@ -237,76 +234,83 @@ class _CartScreenState extends State<CartScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _course.length != 0?Container(
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: _course.length,
-                  primary: false,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          LatestCourse(
-                              isRating: false,
-                              course: _course[index]),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(Icons.delete_outlined),
-                              SizedBox(width: 10),
-                              InkWell(
-                                onTap: () async {
-                                  setState(() {
-                                    _loading = true;
-                                  });
-                                  var res = await ctrl.addtocart(_course[index].id,this.context);
-                                  if(res){
-                                    _fetchcourse();
-                                  }
-                                },
-                                child: Text(
-                                  'Remove',
-                                  style: mediumTextStyle()
-                                      .copyWith(color: konPrimaryColor1),
-                                ),
-                              ),
-                              SizedBox(width: 30),
-                              Icon(Icons.favorite_border_outlined),
-                              SizedBox(width: 10),
-                              _course[index].is_wishlisted.toString() == 'false'?InkWell(
-                                onTap: () async {
-                                  setState(() {
-                                    _loading = true;
-                                  });
-                                  await ctrl.addtowishlist(_course[index].id);
-                                  _fetchcourse();
-                                  _mywishlist();
-                                },
-                                child: Text(
-                                  'Move to wishlist',
-                                  style: mediumTextStyle()
-                                      .copyWith(color: konPrimaryColor1),
-                                ),
-                              ):SizedBox()
-                            ],
-                          )
-                        ],
+              _course.length != 0
+                  ? Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: _course.length,
+                        primary: false,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                LatestCourse(
+                                    isRating: false, course: _course[index]),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.delete_outlined),
+                                    SizedBox(width: 10),
+                                    InkWell(
+                                      onTap: () async {
+                                        setState(() {
+                                          _loading = true;
+                                        });
+                                        var res = await ctrl.addtocart(
+                                            _course[index].id, this.context);
+                                        if (res) {
+                                          _fetchcourse();
+                                        }
+                                      },
+                                      child: Text(
+                                        'Remove',
+                                        style: mediumTextStyle()
+                                            .copyWith(color: konPrimaryColor1),
+                                      ),
+                                    ),
+                                    SizedBox(width: 30),
+                                    Icon(Icons.favorite_border_outlined),
+                                    SizedBox(width: 10),
+                                    _course[index].is_wishlisted.toString() ==
+                                            'false'
+                                        ? InkWell(
+                                            onTap: () async {
+                                              setState(() {
+                                                _loading = true;
+                                              });
+                                              await ctrl.addtowishlist(
+                                                  _course[index].id);
+                                              _fetchcourse();
+                                              _mywishlist();
+                                            },
+                                            child: Text(
+                                              'Move to wishlist',
+                                              style: mediumTextStyle().copyWith(
+                                                  color: konPrimaryColor1),
+                                            ),
+                                          )
+                                        : SizedBox()
+                                  ],
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return Divider(
+                            color: konDarkColorB4,
+                            thickness: 1,
+                          );
+                        },
                       ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider(
-                      color: konDarkColorB4,
-                      thickness: 1,
-                    );
-                  },
-                ),
-              ):Container(),
-              _course.length == 0 && !_loading?Container(
+                    )
+                  : Container(),
+              _course.length == 0 && !_loading
+                  ? Container(
                       margin:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 25),
                       child: Column(
@@ -317,6 +321,7 @@ class _CartScreenState extends State<CartScreen> {
                             child: Align(
                                 alignment: Alignment.center,
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image(
                                       image: AssetImage(empty_cart),
@@ -328,13 +333,13 @@ class _CartScreenState extends State<CartScreen> {
                                           fontSize: 32,
                                           color: konDarkBlackColor),
                                     ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      'Add courses to find here',
-                                      style: mediumTextStyle().copyWith(
-                                          fontSize: 15, color: konDarkColorD3),
-                                    ),
-                                  ],
+                              SizedBox(height: 5),
+                              Text(
+                                'Add courses to find here',
+                                style: mediumTextStyle().copyWith(
+                                    fontSize: 15, color: konDarkColorD3),
+                              ),
+                            ],
                                 )),
                           ),
                         ],
@@ -356,241 +361,278 @@ class _CartScreenState extends State<CartScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        '%',
-                        style: largeTextStyle()
-                            .copyWith(fontSize: 16, color: konDarkColorB2),
+                          children: [
+                            Text(
+                              '%',
+                              style: largeTextStyle().copyWith(
+                                  fontSize: 16, color: konDarkColorB2),
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Apply coupon',
+                              style: largeTextStyle().copyWith(
+                                  fontSize: 16, color: konDarkColorB2),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 15,
+                            )
+                          ],
+                        ),
                       ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Apply coupon',
-                        style: largeTextStyle()
-                            .copyWith(fontSize: 16, color: konDarkColorB2),
+                    )
+                  : Container(),
+              _course.length != 0
+                  ? Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      child: Text('Price details',
+                          style: largeTextStyle()
+                              .copyWith(fontSize: 16, color: konDarkColorB2)),
+                    )
+                  : Container(),
+              _course.length != 0
+                  ? Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                      child: ListView(
+                        shrinkWrap: true,
+                        primary: false,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 5),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Total Course',
+                                  style: mediumTextStyle().copyWith(
+                                      fontSize: 16, color: konDarkBlackColor),
+                                ),
+                                Spacer(),
+                                Text('₹ ' + base_price.toString(),
+                                    style: mediumTextStyle().copyWith(
+                                        fontSize: 14, color: konDarkColorB1))
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 5),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Discount',
+                                  style: mediumTextStyle().copyWith(
+                                      fontSize: 16, color: konDarkBlackColor),
+                                ),
+                                Spacer(),
+                                Text('₹ ' + discount_price.toString(),
+                                    style: mediumTextStyle().copyWith(
+                                        fontSize: 14, color: konDarkColorB1))
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 15,
-                      )
-                    ],
-                  ),
-                ),
-              ):Container(),
-              _course.length != 0?Container(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Text('Price details',
-                    style: largeTextStyle()
-                        .copyWith(fontSize: 16, color: konDarkColorB2)),
-              ):Container(),
-              _course.length != 0?Container(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                child: ListView(
-                  shrinkWrap: true,
-                  primary: false,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
+                    )
+                  : Container(),
+              _course.length != 0
+                  ? Divider(color: konDarkColorB4, thickness: 1)
+                  : SizedBox(),
+              _course.length != 0
+                  ? Container(
+                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            'Total Course',
-                            style: mediumTextStyle()
-                                .copyWith(fontSize: 16, color: konDarkBlackColor),
+                            'Amount to pay',
+                            style: mediumTextStyle().copyWith(
+                                fontSize: 16, color: konDarkBlackColor),
                           ),
                           Spacer(),
-                          Text('₹ '+base_price.toString(),
-                              style: mediumTextStyle()
-                                  .copyWith(fontSize: 14, color: konDarkColorB1))
+                          Text('₹ ' + total_price,
+                              style: mediumTextStyle().copyWith(
+                                  fontSize: 14, color: konDarkColorB1))
                         ],
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Discount',
-                            style: mediumTextStyle()
-                                .copyWith(fontSize: 16, color: konDarkBlackColor),
-                          ),
-                          Spacer(),
-                          Text('₹ '+discount_price.toString(),
-                              style: mediumTextStyle()
-                                  .copyWith(fontSize: 14, color: konDarkColorB1))
-                        ],
+                    )
+                  : Container(),
+              _course.length != 0
+                  ? Divider(color: konDarkColorB4, thickness: 1)
+                  : SizedBox(),
+              _wishlist.length != 0
+                  ? Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      child: Text('My wishlist',
+                          style: largeTextStyle()
+                              .copyWith(fontSize: 16, color: konDarkColorB2)),
+                    )
+                  : SizedBox(),
+              _wishlist.length != 0
+                  ? Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: _wishlist.length,
+                        primary: false,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                LatestCourse(
+                                    isRating: false, course: _wishlist[index]),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.delete_outlined),
+                                    SizedBox(width: 10),
+                                    InkWell(
+                                      onTap: () async {
+                                        setState(() {
+                                          _loading = true;
+                                        });
+                                        await ctrl
+                                            .addtowishlist(_wishlist[index].id);
+                                        _fetchcourse();
+                                        _mywishlist();
+                                      },
+                                      child: Text(
+                                        'Remove',
+                                        style: mediumTextStyle()
+                                            .copyWith(color: konPrimaryColor1),
+                                      ),
+                                    ),
+                                    SizedBox(width: 30),
+                                    Icon(Icons.shopping_cart),
+                                    SizedBox(width: 10),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (_wishlist[index].is_carted ==
+                                            'false') {
+                                          setState(() {
+                                            _loading = true;
+                                          });
+                                          await ctrl.addtocart(
+                                              _wishlist[index].id, context);
+                                          _fetchcourse();
+                                          _mywishlist();
+                                        }
+                                      },
+                                      child: Text(
+                                        _wishlist[index].is_carted == 'false'
+                                            ? 'Move to cart'
+                                            : 'Added to cart',
+                                        style: mediumTextStyle()
+                                            .copyWith(color: konPrimaryColor1),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return Divider(
+                            color: konDarkColorB4,
+                            thickness: 1,
+                          );
+                        },
                       ),
-                    ),
-                  ],
-                ),
-              ):Container(),
-              _course.length != 0?Divider(color: konDarkColorB4, thickness: 1):SizedBox(),
-              _course.length != 0?Container(
-                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Amount to pay',
-                      style: mediumTextStyle()
-                          .copyWith(fontSize: 16, color: konDarkBlackColor),
-                    ),
-                    Spacer(),
-                    Text('₹ '+total_price,
-                        style: mediumTextStyle()
-                            .copyWith(fontSize: 14, color: konDarkColorB1))
-                  ],
-                ),
-              ):Container(),
-              _course.length != 0?Divider(color: konDarkColorB4, thickness: 1):SizedBox(),
-              _wishlist.length != 0?Container(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Text('My wishlist',
-                    style: largeTextStyle()
-                        .copyWith(fontSize: 16, color: konDarkColorB2)),
-              ):SizedBox(),
-              _wishlist.length != 0?Container(
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: _wishlist.length,
-                  primary: false,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          LatestCourse(
-                              isRating: false,
-                              course: _wishlist[index]),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(Icons.delete_outlined),
-                              SizedBox(width: 10),
-                              InkWell(
-                                onTap: () async {
-                                    setState(() {
-                                      _loading = true;
-                                    });
-                                    await ctrl.addtowishlist(_wishlist[index].id);
-                                    _fetchcourse();
-                                    _mywishlist();
-                                },
-                                child: Text(
-                                  'Remove',
-                                  style: mediumTextStyle()
-                                      .copyWith(color: konPrimaryColor1),
-                                ),
-                              ),
-                              SizedBox(width: 30),
-                              Icon(Icons.shopping_cart),
-                              SizedBox(width: 10),
-                              InkWell(
-                                onTap: () async {
-                                  if( _wishlist[index].is_carted == 'false'){
-                                    setState(() {
-                                      _loading = true;
-                                    });
-                                    await ctrl.addtocart(_wishlist[index].id, context);
-                                    _fetchcourse();
-                                    _mywishlist();
-                                  }
-                                },
-                                child: Text(
-                                  _wishlist[index].is_carted == 'false'?'Move to cart':'Added to cart',
-                                  style: mediumTextStyle()
-                                      .copyWith(color: konPrimaryColor1),
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider(
-                      color: konDarkColorB4,
-                      thickness: 1,
-                    );
-                  },
-                ),
-              ):SizedBox(),
+                    )
+                  : SizedBox(),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: _course.length != 0?Padding(
-        padding: EdgeInsets.all(0),
-        child: !_loading?GestureDetector(
-          onTap: () {},
-          child: Container(
-            height: 80,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            decoration: BoxDecoration(
-                color: konLightColor1,
-                borderRadius: BorderRadius.only(topRight: Radius.circular(0), topLeft: Radius.circular(0)),
-                boxShadow: [
-                  BoxShadow(
-                      color: Theme.of(context).focusColor.withOpacity(0.15), offset: Offset(0, -2), blurRadius: 5.0)
-                ]),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Row (
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text (
-                      'Total ₹ '+total_price.toString(),
-                        style: buttonTextStyle().copyWith(color: konDarkColorB1),
-                    ),
-                    SizedBox(width: 10),
-                    Text (
-                      'View Detail',
-                      style: mediumTextStyle().copyWith(color: konPrimaryColor),
-                    )
-                  ],
-                ),
-                Stack(
-                  fit: StackFit.loose,
-                  alignment: AlignmentDirectional.centerEnd,
-                  children: <Widget>[
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 40,
-                      child: FlatButton(
-                        onPressed: () async {
+      bottomNavigationBar: _course.length != 0
+          ? Padding(
+              padding: EdgeInsets.all(0),
+              child: !_loading
+                  ? GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        height: 80,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: konLightColor1,
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(0),
+                                topLeft: Radius.circular(0)),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Theme.of(context)
+                                      .focusColor
+                                      .withOpacity(0.15),
+                                  offset: Offset(0, -2),
+                                  blurRadius: 5.0)
+                            ]),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Total ₹ ' + total_price.toString(),
+                                  style: buttonTextStyle()
+                                      .copyWith(color: konDarkColorB1),
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'View Detail',
+                                  style: mediumTextStyle()
+                                      .copyWith(color: konPrimaryColor),
+                                )
+                              ],
+                            ),
+                            Stack(
+                              fit: StackFit.loose,
+                              alignment: AlignmentDirectional.centerEnd,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width - 40,
+                                  child: FlatButton(
+                                    onPressed: () async {
                                       setState(() {
                                         _loading = true;
                                       });
                                       _checkout();
                                     },
-                        shape: StadiumBorder(),
-                        padding: EdgeInsets.symmetric(vertical: 5),
-                        color: konPrimaryColor,
-                        child: Text(
-                          'Checkout',
-                          textAlign: TextAlign.left,
-                          style: ctaTextStyle().copyWith(color: konLightColor1, fontWeight: FontWeight.w400),
+                                    shape: StadiumBorder(),
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    color: konPrimaryColor,
+                                    child: Text(
+                                      'Checkout',
+                                      textAlign: TextAlign.left,
+                                      style: ctaTextStyle().copyWith(
+                                          color: konLightColor1,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ):SizedBox(),
-      ):SizedBox(),
+                    )
+                  : SizedBox(),
+            )
+          : SizedBox(),
     );
   }
 }
