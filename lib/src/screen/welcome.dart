@@ -27,13 +27,15 @@ class WelcomeScreen extends StatelessWidget {
             ),
             Text(
               'Start learning Anything anywhere',
-              style: largeTextStyle().copyWith(fontSize: 32, color: konDarkBlackColor),
+              style: largeTextStyle()
+                  .copyWith(fontSize: 32, color: konDarkBlackColor),
             ),
             InkWell(
               onTap: () async {
-                if(await ctrl.LoggedIn() == true){
-                  Get.offAllNamed('/', arguments: { 'currentTab': 0,'data':'' });
-                }else{
+                if (await ctrl.LoggedIn() == true) {
+                  Get.offAllNamed('/',
+                      arguments: {'currentTab': 0, 'data': ''});
+                } else {
                   Get.offAllNamed('/signUp');
                 }
               },
@@ -46,15 +48,16 @@ class WelcomeScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () async {
-                Get.offAllNamed('/', arguments: { 'currentTab': 0,'data':'' });
+                Get.offAllNamed('/', arguments: {'currentTab': 0, 'data': ''});
               },
               child: Container(
                   margin: EdgeInsets.symmetric(vertical: 10),
                   child: Center(
                       child: Text(
-                'Continue as guest',
-                style: largeTextStyle().copyWith(fontSize: 14, fontWeight: FontWeight.bold),
-              ))),
+                    'Continue as guest',
+                    style: largeTextStyle()
+                        .copyWith(fontSize: 14, fontWeight: FontWeight.bold),
+                  ))),
             )
           ],
         ),

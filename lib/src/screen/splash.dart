@@ -25,7 +25,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   startTime() async {
     //return navigationPage();
     var _duration = new Duration(seconds: 2);
@@ -33,9 +32,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigationPage() async {
-    if(await ctrl.LoggedIn() == true){
-      Get.offAllNamed('/', arguments: { 'currentTab': 0,'data':'' });
-    }else{
+    if (await ctrl.LoggedIn() == true) {
+      Get.offAllNamed('/', arguments: {'currentTab': 0, 'data': ''});
+    } else {
       Get.offAllNamed('/welcome');
     }
   }
@@ -49,12 +48,14 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SvgPicture.asset(
-          startScreen,
-          height: 350,
-          width: 350,
-        ),
+      body: Column(
+        children: [
+          SvgPicture.asset(
+            startScreen,
+            height: 350,
+            width: 350,
+          ),
+        ],
       ),
     );
   }
