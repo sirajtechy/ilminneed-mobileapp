@@ -1,11 +1,17 @@
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:ilminneed/route_generator.dart';
-import 'package:flutter/material.dart';
-import 'package:global_configuration/global_configuration.dart';
-import 'package:get/get.dart';
-import 'package:ilminneed/cart_bloc.dart';
-import 'package:provider/provider.dart';
+import 'dart:async';
+
 import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_portal/flutter_portal.dart';
+import 'package:get/get.dart';
+import 'package:global_configuration/global_configuration.dart';
+import 'package:ilminneed/cart_bloc.dart';
+import 'package:ilminneed/route_generator.dart';
+import 'package:provider/provider.dart';
+
+import 'helper/GetXNetworkManager.dart';
+import 'helper/NetworkBinding.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,21 +26,61 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final GetXNetworkManager _networkManager =
+      Get.put<GetXNetworkManager>(GetXNetworkManager());
+
+  bool isNotConnected = false, isDialogActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _networkManager.addListener(() {
+      debugPrint("the listener value is ${_networkManager.connectionType}");
+      if (_networkManager.connectionType == 0) {
+        _showDialog();
+      } else {
+        if (isDialogActive) {
+          Get.back();
+          setState(() {
+            isDialogActive = false;
+          });
+        }
+      }
+    });
+  }
+
+  void _showDialog() =>
+      {
+        setState(() {
+          isDialogActive = true;
+        }),
+        Future.delayed(
+            Duration.zero,
+            () => Get.defaultDialog(
+                title: "Offline",
+                barrierDismissible: false,
+                middleText: "Your device has no internet connection",
+                textCancel: "Cancel"))
+      };
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<CartBloc>(
-      create: (context) => CartBloc(),
-      child: GetMaterialApp(
-        builder: BotToastInit(),
-        initialRoute: '/splash',
-        onGenerateRoute: RouteGenerator.generateRoute,
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: 'Barlow',
-          primaryColor: Colors.white,
-          brightness: Brightness.light,
-          textTheme: TextTheme(
-            button: TextStyle(color: Colors.white),
+    return Portal(
+      child: ChangeNotifierProvider<CartBloc>(
+        create: (context) => CartBloc(),
+        child: GetMaterialApp(
+          initialBinding: NetworkBinding(),
+          builder: BotToastInit(),
+          initialRoute: '/splash',
+          onGenerateRoute: RouteGenerator.generateRoute,
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            fontFamily: 'Barlow',
+            primaryColor: Colors.white,
+            brightness: Brightness.light,
+            textTheme: TextTheme(
+              button: TextStyle(color: Colors.white),
+            ),
           ),
         ),
       ),
