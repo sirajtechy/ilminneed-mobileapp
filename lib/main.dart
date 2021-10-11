@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
   final GetXNetworkManager _networkManager =
       Get.put<GetXNetworkManager>(GetXNetworkManager());
 
-  bool isNotConnected = false;
+  bool isNotConnected = false, isDialogActive = false;
 
   @override
   void initState() {
@@ -38,13 +38,29 @@ class _MyAppState extends State<MyApp> {
       debugPrint("the listener value is ${_networkManager.connectionType}");
       if (_networkManager.connectionType == 0) {
         _showDialog();
+      } else {
+        if (isDialogActive) {
+          Get.back();
+          setState(() {
+            isDialogActive = false;
+          });
+        }
       }
     });
   }
 
-  void _showDialog() => {
-        debugPrint("dialog called"),
-        Future.delayed(Duration.zero, () => Get.defaultDialog(title: "Alert"))
+  void _showDialog() =>
+      {
+        setState(() {
+          isDialogActive = true;
+        }),
+        Future.delayed(
+            Duration.zero,
+            () => Get.defaultDialog(
+                title: "Offline",
+                barrierDismissible: false,
+                middleText: "Your device has no internet connection",
+                textCancel: "Cancel"))
       };
 
   @override
