@@ -14,7 +14,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'courses/latest_course.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({Key key}) : super(key: key);
+  const CartScreen({Key? key}) : super(key: key);
 
   @override
   _CartScreenState createState() => _CartScreenState();
@@ -22,20 +22,20 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   bool _loading = true;
-  List<Course> _course = new List<Course>();
-  List<Course> _wishlist = new List<Course>();
-  String base_price = '';
-  String discount_price = '';
-  String total_price = '';
-  Razorpay _razorpay;
-  String order_id = '';
-  String paid_amt;
+  List<Course>? _course = <Course>[];
+  List<Course>? _wishlist = <Course>[];
+  String? base_price = '';
+  String? discount_price = '';
+  String? total_price = '';
+  late Razorpay _razorpay;
+  String? order_id = '';
+  String? paid_amt;
 
   _fetchcourse() async {
     var res = await ctrl.getrequestwithheader('my_cart');
     if (!mounted) return;
     setState(() {
-      _course.clear();
+      _course?.clear();
     });
     var bloc = Provider.of<CartBloc>(context, listen: false);
     if (res != null && res != 'null' && res.containsKey('courses')) {
@@ -44,7 +44,7 @@ class _CartScreenState extends State<CartScreen> {
         for (int i = 0; i < data.length; i++) {
           if (!mounted) return;
           setState(() {
-            _course.add(Course.fromJson(data[i]));
+            _course?.add(Course.fromJson(data[i]));
           });
         }
         bloc.totalCount(data.length);
@@ -66,11 +66,11 @@ class _CartScreenState extends State<CartScreen> {
           _loading = false;
         });
         bloc.totalCount(0);
-        _course.clear();
+        _course?.clear();
       }
     } else {
       bloc.totalCount(0);
-      _course.clear();
+      _course?.clear();
     }
   }
 
@@ -78,14 +78,14 @@ class _CartScreenState extends State<CartScreen> {
     var res = await ctrl.getrequestwithheader('my_wishlist');
     setState(() {
       _loading = false;
-      _wishlist.clear();
+      _wishlist?.clear();
     });
     if (res != null) {
       List<dynamic> data = res;
       for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
         setState(() {
-          _wishlist.add(Course.fromJson(data[i]));
+          _wishlist?.add(Course.fromJson(data[i]));
         });
       }
       if (!mounted) return;
@@ -234,12 +234,12 @@ class _CartScreenState extends State<CartScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _course.length != 0
+              _course != null && _course?.length != 0
                   ? Container(
                       margin: EdgeInsets.symmetric(horizontal: 10),
                       child: ListView.separated(
                         shrinkWrap: true,
-                        itemCount: _course.length,
+                        itemCount: _course?.length ?? 0,
                         primary: false,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
@@ -248,7 +248,7 @@ class _CartScreenState extends State<CartScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 LatestCourse(
-                                    isRating: false, course: _course[index]),
+                                    isRating: false, course: _course?[index]),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -261,7 +261,7 @@ class _CartScreenState extends State<CartScreen> {
                                           _loading = true;
                                         });
                                         var res = await ctrl.addtocart(
-                                            _course[index].id, this.context);
+                                            _course?[index].id, this.context);
                                         if (res) {
                                           _fetchcourse();
                                         }
@@ -275,7 +275,7 @@ class _CartScreenState extends State<CartScreen> {
                                     SizedBox(width: 30),
                                     Icon(Icons.favorite_border_outlined),
                                     SizedBox(width: 10),
-                                    _course[index].is_wishlisted.toString() ==
+                                    _course?[index].is_wishlisted.toString() ==
                                             'false'
                                         ? InkWell(
                                             onTap: () async {
@@ -283,7 +283,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 _loading = true;
                                               });
                                               await ctrl.addtowishlist(
-                                                  _course[index].id);
+                                                  _course?[index].id);
                                               _fetchcourse();
                                               _mywishlist();
                                             },
@@ -309,7 +309,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     )
                   : Container(),
-              _course.length == 0 && !_loading
+              _course?.length == 0 && !_loading
                   ? Container(
                       margin:
                           EdgeInsets.symmetric(horizontal: 15, vertical: 25),
@@ -333,23 +333,23 @@ class _CartScreenState extends State<CartScreen> {
                                           fontSize: 32,
                                           color: konDarkBlackColor),
                                     ),
-                              SizedBox(height: 5),
-                              Text(
-                                'Add courses to find here',
-                                style: mediumTextStyle().copyWith(
-                                    fontSize: 15, color: konDarkColorD3),
-                              ),
-                            ],
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'Add courses to find here',
+                                      style: mediumTextStyle().copyWith(
+                                          fontSize: 15, color: konDarkColorD3),
+                                    ),
+                                  ],
                                 )),
                           ),
                         ],
                       ),
                     )
                   : Container(),
-              _course.length == 0 && _wishlist.length != 0
+              _course?.length == 0 && _wishlist?.length != 0
                   ? Divider(color: konDarkColorB4, thickness: 1)
                   : SizedBox(),
-              _course.length != 0
+              _course?.length != 0
                   ? GestureDetector(
                       onTap: () {
                         Get.toNamed('/coupon');
@@ -383,7 +383,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     )
                   : Container(),
-              _course.length != 0
+              _course?.length != 0
                   ? Container(
                       margin:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -392,7 +392,7 @@ class _CartScreenState extends State<CartScreen> {
                               .copyWith(fontSize: 16, color: konDarkColorB2)),
                     )
                   : Container(),
-              _course.length != 0
+              _course?.length != 0
                   ? Container(
                       margin:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 15),
@@ -440,10 +440,10 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     )
                   : Container(),
-              _course.length != 0
+              _course?.length != 0
                   ? Divider(color: konDarkColorB4, thickness: 1)
                   : SizedBox(),
-              _course.length != 0
+              _course?.length != 0
                   ? Container(
                       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       child: Row(
@@ -456,17 +456,17 @@ class _CartScreenState extends State<CartScreen> {
                                 fontSize: 16, color: konDarkBlackColor),
                           ),
                           Spacer(),
-                          Text('₹ ' + total_price,
+                          Text('₹ ' + total_price!,
                               style: mediumTextStyle().copyWith(
                                   fontSize: 14, color: konDarkColorB1))
                         ],
                       ),
                     )
                   : Container(),
-              _course.length != 0
+              _course?.length != 0
                   ? Divider(color: konDarkColorB4, thickness: 1)
                   : SizedBox(),
-              _wishlist.length != 0
+              _wishlist?.length != 0
                   ? Container(
                       margin:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -475,12 +475,12 @@ class _CartScreenState extends State<CartScreen> {
                               .copyWith(fontSize: 16, color: konDarkColorB2)),
                     )
                   : SizedBox(),
-              _wishlist.length != 0
+              _wishlist?.length != 0
                   ? Container(
                       margin: EdgeInsets.symmetric(horizontal: 10),
                       child: ListView.separated(
                         shrinkWrap: true,
-                        itemCount: _wishlist.length,
+                        itemCount: _wishlist?.length ?? 0,
                         primary: false,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
@@ -489,7 +489,7 @@ class _CartScreenState extends State<CartScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 LatestCourse(
-                                    isRating: false, course: _wishlist[index]),
+                                    isRating: false, course: _wishlist?[index]),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -501,8 +501,8 @@ class _CartScreenState extends State<CartScreen> {
                                         setState(() {
                                           _loading = true;
                                         });
-                                        await ctrl
-                                            .addtowishlist(_wishlist[index].id);
+                                        await ctrl.addtowishlist(
+                                            _wishlist?[index].id);
                                         _fetchcourse();
                                         _mywishlist();
                                       },
@@ -517,19 +517,19 @@ class _CartScreenState extends State<CartScreen> {
                                     SizedBox(width: 10),
                                     InkWell(
                                       onTap: () async {
-                                        if (_wishlist[index].is_carted ==
+                                        if (_wishlist?[index].is_carted ==
                                             'false') {
                                           setState(() {
                                             _loading = true;
                                           });
                                           await ctrl.addtocart(
-                                              _wishlist[index].id, context);
+                                              _wishlist?[index].id, context);
                                           _fetchcourse();
                                           _mywishlist();
                                         }
                                       },
                                       child: Text(
-                                        _wishlist[index].is_carted == 'false'
+                                        _wishlist?[index].is_carted == 'false'
                                             ? 'Move to cart'
                                             : 'Added to cart',
                                         style: mediumTextStyle()
@@ -555,7 +555,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: _course.length != 0
+      bottomNavigationBar: _course?.length != 0
           ? Padding(
               padding: EdgeInsets.all(0),
               child: !_loading

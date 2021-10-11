@@ -4,7 +4,7 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class AccountScreen extends StatelessWidget {
-  const AccountScreen({Key key}) : super(key: key);
+  const AccountScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

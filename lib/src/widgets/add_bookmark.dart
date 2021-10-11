@@ -3,7 +3,7 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class AddBookmark extends StatefulWidget {
-  const AddBookmark({Key key}) : super(key: key);
+  const AddBookmark({Key? key}) : super(key: key);
 
   @override
   _AddBookmarkState createState() => _AddBookmarkState();

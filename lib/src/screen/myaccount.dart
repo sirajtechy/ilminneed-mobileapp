@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ilminneed/cart_bloc.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
-import 'package:get/get.dart';
 import 'package:ilminneed/src/widgets/shopping_cart.dart';
-import 'package:ilminneed/cart_bloc.dart';
 import 'package:provider/provider.dart';
 
 class MyAccountScreen extends StatefulWidget {
-  const MyAccountScreen({Key key}) : super(key: key);
+  const MyAccountScreen({Key? key}) : super(key: key);
 
   @override
   _MyAccountScreenState createState() => _MyAccountScreenState();

@@ -6,11 +6,12 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class RecentItems extends StatelessWidget {
-  final List value;
-  final String label;
-  final String type;
+  final List? value;
+  final String? label;
+  final String? type;
 
-  const RecentItems({Key key, this.value, this.label,this.type = ''}) : super(key: key);
+  const RecentItems({Key? key, this.value, this.label, this.type = ''})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,28 +36,37 @@ class RecentItems extends StatelessWidget {
                   style: largeTextStyle().copyWith(fontSize: 16, color: konDarkColorB2)),
             ]),
           ):Text(
-            label,
-            style:
-                largeTextStyle().copyWith(fontSize: 16, color: konDarkColorB2),
-          ),
+            label!,
+                  style: largeTextStyle()
+                      .copyWith(fontSize: 16, color: konDarkColorB2),
+                ),
           SizedBox(height: 10),
-          Wrap(
-            runSpacing: 1.0,
-            spacing: 5.0,
-            children: value
-                .map(
-                  (e) => InkWell(
-                    onTap: (){
-                      Get.toNamed('/categoryresult',arguments: { 'id': e.id,'name':e.name.toString() });
-                    },
-                    child: Chip(
-                      backgroundColor: konTextInputBorderActiveColor,
-                      label: Text(e.name.toString(), style: smallTextStyle().copyWith(color: konLightColor1),),
-                    ),
-                  ),
+          value != null
+              ? Wrap(
+                  runSpacing: 1.0,
+                  spacing: 5.0,
+                  children: value!
+                      .map(
+                        (e) => InkWell(
+                          onTap: () {
+                            Get.toNamed('/categoryresult', arguments: {
+                              'id': e.id,
+                              'name': e.name.toString()
+                            });
+                          },
+                          child: Chip(
+                            backgroundColor: konTextInputBorderActiveColor,
+                            label: Text(
+                              e.name.toString(),
+                              style: smallTextStyle()
+                                  .copyWith(color: konLightColor1),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
                 )
-                .toList(),
-          ),
+              : SizedBox(),
         ],
       ),
     );

@@ -13,12 +13,12 @@ class Message {
     this.time,
   });
 
-  final String id;
-  final String sender;
-  final String receiver;
-  final bool isUser;
-  final String message;
-  final String time;
+  final String? id;
+  final String? sender;
+  final String? receiver;
+  final bool? isUser;
+  final String? message;
+  final String? time;
 
   factory Message.fromJson(Map<String, dynamic> json) => Message(
         id: json["id"] == null ? null : json["id"],
@@ -40,9 +40,10 @@ class Message {
 }
 
 class ChatMessagesScreen extends StatefulWidget {
-  final String id, imageUrl, name;
+  final String? id, imageUrl, name;
 
-  const ChatMessagesScreen({Key key, @required this.id, @required this.imageUrl, @required this.name})
+  const ChatMessagesScreen(
+      {Key? key, required this.id, required this.imageUrl, required this.name})
       : super(key: key);
 
   @override
@@ -116,14 +117,15 @@ class _ChatMessagesScreenState extends State<ChatMessagesScreen> {
           children: [
             CircleAvatar(
               radius: 15,
-              backgroundImage: NetworkImage(widget.imageUrl),
+              backgroundImage: NetworkImage(widget.imageUrl!),
             ),
             SizedBox(
               width: 5,
             ),
             Text(
-              widget.name,
-              style: ctaTextStyle().copyWith(color: konDarkColorB1, fontSize: 18),
+              widget.name!,
+              style:
+                  ctaTextStyle().copyWith(color: konDarkColorB1, fontSize: 18),
             )
           ],
         ),
@@ -143,17 +145,20 @@ class _ChatMessagesScreenState extends State<ChatMessagesScreen> {
                       reverse: true,
                       itemCount: _messages != null ? _messages.length : 0,
                       itemBuilder: (BuildContext context, int index) {
-                        final bool _isUser = _messages[index].isUser;
+                        final bool _isUser = _messages[index].isUser!;
                         debugPrint('the is user is $_isUser');
                         return Container(
                           margin: EdgeInsets.only(left: 5, right: 5),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: _isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                            crossAxisAlignment: _isUser
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
                             children: [
                               Container(
-                                child: Text(_messages[index].message,
-                                    style: mediumTextStyle().copyWith(color: konDarkColorB1, fontSize: 14)),
+                                child: Text(_messages[index].message!,
+                                    style: mediumTextStyle().copyWith(
+                                        color: konDarkColorB1, fontSize: 14)),
                                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                 margin: EdgeInsets.all(5),
                                 decoration: BoxDecoration(

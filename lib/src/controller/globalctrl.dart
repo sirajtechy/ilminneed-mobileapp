@@ -1,21 +1,24 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ilminneed/cart_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-Future getrequest(data,module) async {
+Future getrequest(data, module) async {
   //Fluttertoast.cancel();
-  final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
+  final dynamic val = GlobalConfiguration().getValue('api_base_url');
+  final Uri endpoint = val + module;
   final client = new http.Client();
   try {
     final response = await client.get(
       endpoint,
-      headers: await _headerwithouttoken(),
+      headers: await (_headerwithouttoken() as FutureOr<Map<String, String>?>),
     );
     if (response.statusCode == 200) {
       //print(response.body);
@@ -30,14 +33,15 @@ Future getrequest(data,module) async {
   }
 }
 
-Future requestwithoutheader(data,module) async {
+Future requestwithoutheader(data, module) async {
   //Fluttertoast.cancel();
-  final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
+  final String endpoint =
+      '${GlobalConfiguration().getValue('api_base_url')}' + module;
   final client = new http.Client();
   try {
     final response = await client.post(
-      endpoint,
-      headers: await _headerwithouttoken(),
+      endpoint as Uri,
+      headers: await (_headerwithouttoken() as FutureOr<Map<String, String>?>),
       body: json.encode(data),
     );
     if (response.statusCode == 200) {
@@ -55,20 +59,20 @@ Future requestwithoutheader(data,module) async {
 
 String getTimeString(int value) {
   var hour = value / 3600;
-  var  minutes = value / 60%60;
-  var  seconds = value % 60;
+  var minutes = value / 60 % 60;
+  var seconds = value % 60;
   return '${hour.toInt().toString().padLeft(2, "0")}:${minutes.toInt().toString().padLeft(2, "0")}:${seconds.toInt().toString().padLeft(2, "0")}';
 }
 
-
-Future requestwithheader(data,module) async {
+Future requestwithheader(data, module) async {
   //Fluttertoast.cancel();
-  final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
+  final String endpoint =
+      '${GlobalConfiguration().getValue('api_base_url')}' + module;
   final client = new http.Client();
   try {
     final response = await client.post(
-      endpoint,
-      headers: await _headerwithtoken(),
+      endpoint as Uri,
+      headers: await (_headerwithtoken() as FutureOr<Map<String, String>?>),
       body: json.encode(data),
     );
     if (response.statusCode == 200) {
@@ -86,12 +90,13 @@ Future requestwithheader(data,module) async {
 
 Future getrequestwithheader(module) async {
   //Fluttertoast.cancel();
-  final String endpoint = '${GlobalConfiguration().getValue('api_base_url')}'+module;
+  final String endpoint =
+      '${GlobalConfiguration().getValue('api_base_url')}' + module;
   final client = new http.Client();
   try {
     final response = await client.get(
-      endpoint,
-      headers: await _headerwithtoken(),
+      endpoint as Uri,
+      headers: await (_headerwithtoken() as FutureOr<Map<String, String>?>),
     );
     if (response.statusCode == 200) {
       //print(response.body);
@@ -106,13 +111,16 @@ Future getrequestwithheader(module) async {
   }
 }
 
-Future _headerwithtoken() async{
-  String token = await gettoken();
-  return { HttpHeaders.contentTypeHeader: 'application/json', 'X-Auth-Token' : '$token' };
+Future _headerwithtoken() async {
+  String? token = await (gettoken() as FutureOr<String?>);
+  return {
+    HttpHeaders.contentTypeHeader: 'application/json',
+    'X-Auth-Token': '$token'
+  };
 }
 
 Future _headerwithouttoken() async {
-  return { HttpHeaders.contentTypeHeader: 'application/json' };
+  return {HttpHeaders.contentTypeHeader: 'application/json'};
 }
 
 Future gettoken() async {
@@ -146,7 +154,7 @@ Future saveuserdata(data) async {
   _prefs.setString('full_name', data['first_name']);
   _prefs.setString('user_image', data['image'].toString());
   _prefs.setString('role', data['role']);
-  if(data['token'] != '' && data['token'] != null){
+  if (data['token'] != '' && data['token'] != null) {
     _prefs.setString('token', data['token']);
   }
   _prefs.setString('email', data['email']);
@@ -154,7 +162,6 @@ Future saveuserdata(data) async {
   print('saved sharedpreferences');
   return true;
 }
-
 
 Future logout() async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -164,59 +171,70 @@ Future logout() async {
 
 Future<bool> LoggedIn() async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
-  if(_prefs.getString('token') != null){
+  if (_prefs.getString('token') != null) {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
 
-Future<bool> validateEmail(String value) async{
+Future<bool> validateEmail(String value) async {
   Pattern pattern =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-  RegExp regex = new RegExp(pattern);
+  RegExp regex = new RegExp(pattern as String);
   if (!regex.hasMatch(value))
     return true;
   else
     return false;
 }
 
-Future<bool> validateMobile(String value) async{
+Future<bool> validateMobile(String value) async {
   String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
   RegExp regExp = new RegExp(patttern);
   if (value.length == 0) {
     return false;
-  }
-  else if (!regExp.hasMatch(value)) {
+  } else if (!regExp.hasMatch(value)) {
     return false;
   }
   return true;
 }
 
-Future toastmsg(String value,String time) async {
-  if(time == 'long'){
-    BotToast.showSimpleNotification(title: value.toString(),backgroundColor: Colors.black54,crossPage: true, titleStyle: TextStyle(
-        color:Colors.white ),borderRadius: 15,duration: Duration(seconds: 5));
-  }else{
-    BotToast.showSimpleNotification(title: value.toString(),backgroundColor: Colors.black54,crossPage: true, titleStyle: TextStyle(
-        color:Colors.white ),borderRadius: 15,duration: Duration(seconds: 3));
+Future toastmsg(String? value, String time) async {
+  if (time == 'long') {
+    BotToast.showSimpleNotification(
+        title: value.toString(),
+        backgroundColor: Colors.black54,
+        crossPage: true,
+        titleStyle: TextStyle(color: Colors.white),
+        borderRadius: 15,
+        duration: Duration(seconds: 5));
+  } else {
+    BotToast.showSimpleNotification(
+        title: value.toString(),
+        backgroundColor: Colors.black54,
+        crossPage: true,
+        titleStyle: TextStyle(color: Colors.white),
+        borderRadius: 15,
+        duration: Duration(seconds: 3));
   }
 }
 
-Future addtocart(course_id,context) async {
+Future addtocart(course_id, context) async {
   print(course_id);
-  var res = await requestwithheader({'courseId': course_id }, 'toggle_cart');
+  var res = await requestwithheader({'courseId': course_id}, 'toggle_cart');
   print(res);
   var bloc = Provider.of<CartBloc>(context, listen: false);
-  if(res != null && res != 'null' && res['cart']['status'] == 'added'){
+  if (res != null && res != 'null' && res['cart']['status'] == 'added') {
     bloc.totalCount(bloc.getcount() + 1);
-  }else if(res != null && res != 'null' && res['cart']['status'] == 'removed'){
+  } else if (res != null &&
+      res != 'null' &&
+      res['cart']['status'] == 'removed') {
     bloc.totalCount(bloc.getcount() - 1);
   }
   return true;
 }
 
 Future addtowishlist(course_id) async {
-  var res = await requestwithheader({'courseId': course_id }, 'toggle_wishlist');
+  var res = await requestwithheader({'courseId': course_id}, 'toggle_wishlist');
   return true;
 }

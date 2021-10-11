@@ -1,20 +1,16 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
-import 'package:get/get.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:textfield_tags/textfield_tags.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'package:flutter/services.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  const ChangePasswordScreen({Key key}) : super(key: key);
+  const ChangePasswordScreen({Key? key}) : super(key: key);
 
   @override
   _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
@@ -31,15 +27,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   _updatepassword() async {
-    if(!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
-    _formKey.currentState.save();
-    setState(() { _loading = true;});
-    Map data = {'current_password': _currentpassword.text,'new_password': _newpassword.text,'confirm_password': _confirmpassword.text};
-    var res = await ctrl.requestwithheader(data,'profile/password/update');
+    _formKey.currentState!.save();
+    setState(() {
+      _loading = true;
+    });
+    Map data = {
+      'current_password': _currentpassword.text,
+      'new_password': _newpassword.text,
+      'confirm_password': _confirmpassword.text
+    };
+    var res = await ctrl.requestwithheader(data, 'profile/password/update');
     print(res);
-    setState(() { _loading = false; });
+    setState(() {
+      _loading = false;
+    });
     if (res != null && res['status'] == 'success') {
       ctrl.toastmsg('Password changed', 'long');
     } else {
@@ -103,13 +107,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         controller: _currentpassword,
                         obscureText: true,
                         keyboardType: TextInputType.visiblePassword,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Current password is required.';
                           }
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
-                        decoration: textFormFieldInputDecoration('Current Password'),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
+                        decoration:
+                            textFormFieldInputDecoration('Current Password'),
                       ),
                     ),
                     Container(
@@ -118,13 +124,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         controller: _newpassword,
                         obscureText: true,
                         keyboardType: TextInputType.visiblePassword,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'New password is required';
                           }
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
-                        decoration: textFormFieldInputDecoration('New Password'),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
+                        decoration:
+                            textFormFieldInputDecoration('New Password'),
                       ),
                     ),
                     Container(
@@ -133,13 +141,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         controller: _confirmpassword,
                         obscureText: true,
                         keyboardType: TextInputType.visiblePassword,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Confirm password is required';
                           }
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
-                        decoration: textFormFieldInputDecoration('Confirm Password'),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
+                        decoration:
+                            textFormFieldInputDecoration('Confirm Password'),
                       ),
                     ),
                     InkWell(

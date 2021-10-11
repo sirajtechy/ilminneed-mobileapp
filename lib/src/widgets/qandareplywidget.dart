@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/src/model/qandareply.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 
 class QandAReplyWidget extends StatefulWidget {
-final QandAReply answer;
-  const QandAReplyWidget({Key key,this.answer}) : super(key: key);
+  final QandAReply? answer;
+
+  const QandAReplyWidget({Key? key, this.answer}) : super(key: key);
 
   @override
   _QandAReplyWidgetState createState() => _QandAReplyWidgetState();
@@ -40,20 +41,25 @@ class _QandAReplyWidgetState extends State<QandAReplyWidget> {
               ),
               SizedBox(width: 10),
               Text(
-                  widget.answer.first_name.toString()+' '+widget.answer.last_name.toString(),
+                widget.answer!.first_name.toString() +
+                    ' ' +
+                    widget.answer!.last_name.toString(),
                 style: buttonTextStyle()
                     .copyWith(fontSize: 13, color: Colors.black),
-              ),widget.answer.is_instructor == '1'?Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Chip(
-                  backgroundColor: konPrimaryColor1,
-                  label: Text(
-                    'Author',
-                    style: mediumTextStyle()
-                        .copyWith(fontSize: 12, color: Color(0xffFCFCFF)),
-                  ),
-                ),
-              ):SizedBox(),
+              ),
+              widget.answer!.is_instructor == '1'
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Chip(
+                        backgroundColor: konPrimaryColor1,
+                        label: Text(
+                          'Author',
+                          style: mediumTextStyle()
+                              .copyWith(fontSize: 12, color: Color(0xffFCFCFF)),
+                        ),
+                      ),
+                    )
+                  : SizedBox(),
               Text(
                 '',
                 style: buttonTextStyle()
@@ -61,49 +67,60 @@ class _QandAReplyWidgetState extends State<QandAReplyWidget> {
               ),
             ],
           ),
-          widget.answer.attachment_type == 'jpeg' || widget.answer.attachment_type == 'jpg' || widget.answer.attachment_type == 'png'?InkWell(
-            onTap: () async {
-              //final _result = await OpenFile.open(widget.qanda.attachment_url.toString());
-              Get.toNamed('/viewimage', arguments: widget.answer.attachment_url.toString());
-            },
-            child: Container (
-              margin: EdgeInsets.only(left: 50, bottom: 10),
-              width: 150,
-              child: Image(
-                image: NetworkImage(widget.answer.attachment_url.toString()),
-              ),
-            ),
+          widget.answer!.attachment_type == 'jpeg' ||
+                  widget.answer!.attachment_type == 'jpg' ||
+                  widget.answer!.attachment_type == 'png'
+              ? InkWell(
+                  onTap: () async {
+                    //final _result = await OpenFile.open(widget.qanda.attachment_url.toString());
+                    Get.toNamed('/viewimage',
+                        arguments: widget.answer!.attachment_url.toString());
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(left: 50, bottom: 10),
+                    width: 150,
+                    child: Image(
+                      image: NetworkImage(
+                          widget.answer!.attachment_url.toString()),
+                    ),
+                  ),
           ):SizedBox(),
 
-          widget.answer.attachment_type == 'pdf' || widget.answer.attachment_type == 'doc' || widget.answer.attachment_type == 'docx'?InkWell(
-            onTap: () async {
-              _launchURL(widget.answer.attachment_url);
-            },
-            child: Container (
-              margin: EdgeInsets.only(left: 50, bottom: 10),
-              width: 50,
-              child: Image(
-                image: AssetImage(document),
-              ),
-            ),
-          ):SizedBox(),
+          widget.answer!.attachment_type == 'pdf' ||
+                  widget.answer!.attachment_type == 'doc' ||
+                  widget.answer!.attachment_type == 'docx'
+              ? InkWell(
+                  onTap: () async {
+                    _launchURL(widget.answer!.attachment_url);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(left: 50, bottom: 10),
+                    width: 50,
+                    child: Image(
+                      image: AssetImage(document),
+                    ),
+                  ),
+                ):SizedBox(),
 
-          widget.answer.audio_attachment != '' && widget.answer.audio_attachment != 'null' && widget.answer.audio_attachment != null?InkWell(
-            onTap: () {
-              _mPlayer.openAudioSession().then((value) {
-                if (!_mPlayer.isPlaying == true) {
-                  setState(() {
-                    playing = true;
-                  });
-                  _mPlayer
-                      .startPlayer(
-                      fromURI: widget.answer.audio_attachment,
-                      //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
-                      whenFinished: () async {
+          widget.answer!.audio_attachment != '' &&
+                  widget.answer!.audio_attachment != 'null' &&
+                  widget.answer!.audio_attachment != null
+              ? InkWell(
+                  onTap: () {
+                    _mPlayer.openAudioSession().then((value) {
+                      if (!_mPlayer.isPlaying == true) {
                         setState(() {
-                          playing = false;
+                          playing = true;
                         });
-                      })
+                        _mPlayer
+                            .startPlayer(
+                                fromURI: widget.answer!.audio_attachment,
+                                //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
+                                whenFinished: () async {
+                                  setState(() {
+                                    playing = false;
+                                  });
+                                })
                       .then((value) {});
                 } else {
                   _mPlayer.stopPlayer();
@@ -123,7 +140,7 @@ class _QandAReplyWidgetState extends State<QandAReplyWidget> {
           Container(
             margin: EdgeInsets.only(left: 50),
             child: Text(
-              widget.answer.answer.toString(),
+              widget.answer!.answer.toString(),
               style: mediumTextStyle()
                   .copyWith(fontSize: 14, color: konDarkColorB2),
             ),

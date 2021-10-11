@@ -5,11 +5,15 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 class LessonContentDetailsWidget extends StatelessWidget {
   final bool isActive;
   final String value;
-  final List<Widget> children;
+  final List<Widget>? children;
   final bool lock;
 
   const LessonContentDetailsWidget(
-      {Key key, @required this.isActive, @required this.value, this.children,this.lock = false})
+      {Key? key,
+      required this.isActive,
+      required this.value,
+      this.children,
+      this.lock = false})
       : super(key: key);
 
   @override
@@ -36,7 +40,7 @@ class LessonContentDetailsWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: children,
+                children: children!,
               )
             ],
           ),

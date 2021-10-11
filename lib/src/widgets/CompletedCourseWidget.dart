@@ -3,7 +3,7 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class CompletedCourseWidget extends StatefulWidget {
-  CompletedCourseWidget({Key key}) : super(key: key);
+  CompletedCourseWidget({Key? key}) : super(key: key);
 
   @override
   _CompletedCourseWidgetState createState() => _CompletedCourseWidgetState();

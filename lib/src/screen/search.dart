@@ -19,9 +19,9 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchScreen extends StatefulWidget {
-  final String term;
+  final String? term;
 
-  const SearchScreen({Key key, this.term}) : super(key: key);
+  const SearchScreen({Key? key, this.term}) : super(key: key);
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
@@ -30,18 +30,21 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _coursename = TextEditingController();
   bool _loading = false;
-  List<Course> _course = new List<Course>();
-  List<CategoryModel> _category = new List<CategoryModel>();
+  List<Course>? _course;
+
+  List<CategoryModel>? _category;
+
   int filter = 0;
-  List<String> recent_history = [];
-  String _filter_level = '';
+  List<String>? recent_history;
+
+  String? _filter_level = '';
   String _filter_category = '';
-  String _filter_price = '';
+  String? _filter_price = '';
   int pageno = 1;
   bool isLoadingVertical = false;
   bool _current = false;
   bool _loading_product = true;
-  int total_result = 0;
+  int? total_result = 0;
   bool load_more = true;
 
   _fetchcategory() async {
@@ -53,13 +56,13 @@ class _SearchScreenState extends State<SearchScreen> {
     if (res != null) {
       List<dynamic> data = res;
       for (int i = 0; i < data.length; i++) {
-        _category.add(CategoryModel.fromJson(data[i]));
+        _category?.add(CategoryModel.fromJson(data[i]));
       }
     }
   }
 
   _searchcourse(search) async {
-    if (_course.length == total_result && _course.length != 0 && !search) {
+    if (_course?.length == total_result && _course?.length != 0 && !search) {
       await ctrl.toastmsg('No more course found', 'short');
       return;
     }
@@ -70,7 +73,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
     if (search) {
       setState(() {
-        _course.clear();
+        _course?.clear();
         pageno = 1;
       });
     }
@@ -96,7 +99,7 @@ class _SearchScreenState extends State<SearchScreen> {
       if (search) {
         if (!mounted) return;
         setState(() {
-          _course.clear();
+          _course?.clear();
           pageno = 1;
         });
       }
@@ -104,7 +107,7 @@ class _SearchScreenState extends State<SearchScreen> {
       for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
         setState(() {
-          _course.add(Course.fromJson(data[i]));
+          _course?.add(Course.fromJson(data[i]));
         });
       }
       if (_coursename.text != '') {
@@ -113,7 +116,7 @@ class _SearchScreenState extends State<SearchScreen> {
       if (!mounted) return;
       setState(() {
         pageno++;
-        recent_history.clear();
+        recent_history?.clear();
         total_result = res[0]['total_results'];
         print(total_result.toString());
       });
@@ -204,7 +207,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 Container(
                                   child: Row(
                                     children: List.generate(
-                                        _levellist.list.length, (index) {
+                                        _levellist.list!.length, (index) {
                                       return InkWell(
                                         onTap: () {
                                           mystate(() {
@@ -212,7 +215,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                               filter++;
                                             }
                                             _filter_level =
-                                                _levellist.list[index].id;
+                                                _levellist.list![index].id;
                                           });
                                         },
                                         child: Container(
@@ -222,19 +225,19 @@ class _SearchScreenState extends State<SearchScreen> {
                                               horizontal: 10, vertical: 10),
                                           decoration: BoxDecoration(
                                               color: _filter_level ==
-                                                  _levellist.list[index].id
+                                                  _levellist.list![index].id
                                                   ? konPrimaryColor1
                                                   : konLightColor2,
                                               borderRadius:
                                                   BorderRadius.circular(5)),
                                           child: Text(
-                                            _levellist.list[index].name
+                                            _levellist.list![index].name
                                                 .toString(),
                                             style: smallTextStyle().copyWith(
                                                 fontSize: 16,
                                                 color: _filter_level ==
-                                                        _levellist
-                                                            .list[index].id
+                                                    _levellist
+                                                            .list![index].id
                                                     ? konLightColor1
                                                     : konDarkColorD3),
                                           ),
@@ -278,8 +281,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               children: [
                                 Container(
                                   child: Row(
-                                    children: List.generate(_category.length,
-                                        (index) {
+                                    children: List.generate(
+                                        _category?.length ?? 0, (index) {
                                       return InkWell(
                                         onTap: () {
                                           mystate(() {
@@ -287,7 +290,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                               filter++;
                                             }
                                             _filter_category =
-                                                _category[index].id.toString();
+                                                _category![index].id.toString();
                                           });
                                         },
                                         child: Container(
@@ -297,7 +300,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                               horizontal: 10, vertical: 10),
                                           decoration: BoxDecoration(
                                               color: _filter_category ==
-                                                      _category[index]
+                                                  _category![index]
                                                           .id
                                                           .toString()
                                                   ? konPrimaryColor1
@@ -305,11 +308,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(5)),
                                           child: Text(
-                                            _category[index].name.toString(),
+                                            _category![index].name.toString(),
                                             style: smallTextStyle().copyWith(
                                                 fontSize: 16,
                                                 color: _filter_category ==
-                                                        _category[index]
+                                                        _category![index]
                                                             .id
                                                             .toString()
                                                     ? konLightColor1
@@ -356,7 +359,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 Container(
                                   child: Row(
                                     children: List.generate(
-                                        _pricelist.list.length, (index) {
+                                        _pricelist.list!.length, (index) {
                                       return InkWell(
                                         onTap: () {
                                           mystate(() {
@@ -364,7 +367,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                               filter++;
                                             }
                                             _filter_price =
-                                                _pricelist.list[index].id;
+                                                _pricelist.list![index].id;
                                           });
                                         },
                                         child: Container(
@@ -374,20 +377,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                               horizontal: 10, vertical: 10),
                                           decoration: BoxDecoration(
                                               color: _filter_price ==
-                                                      _pricelist.list[index].id
+                                                  _pricelist.list![index].id
                                                           .toString()
                                                   ? konPrimaryColor1
                                                   : konLightColor2,
                                               borderRadius:
                                                   BorderRadius.circular(5)),
                                           child: Text(
-                                            _pricelist.list[index].name
+                                            _pricelist.list![index].name
                                                 .toString(),
                                             style: smallTextStyle().copyWith(
                                                 fontSize: 16,
                                                 color: _filter_price ==
-                                                        _pricelist
-                                                            .list[index].id
+                                                    _pricelist
+                                                            .list![index].id
                                                             .toString()
                                                     ? konLightColor1
                                                     : konDarkColorD3),
@@ -408,7 +411,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   color: konLightColor1,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.greenAccent[200],
+                                      color: Colors.greenAccent[200]!,
                                       offset: const Offset(
                                         5.0,
                                         5.0,
@@ -481,7 +484,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   _removefromhistory(rs) async {
     final pref = await SharedPreferences.getInstance();
-    final allSearches = pref.getStringList("recentSearches");
+    final allSearches = pref.getStringList("recentSearches")!;
     allSearches.removeWhere((element) => element == rs);
     pref.setStringList("recentSearches", allSearches.toList());
     setState(() {
@@ -489,7 +492,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  Future<List<String>> _getRecentSearchesLike(String query) async {
+  Future<List<String>?>? _getRecentSearchesLike(String query) async {
     final pref = await SharedPreferences.getInstance();
     final allSearches = pref.getStringList("recentSearches");
     if (allSearches != null) {
@@ -519,7 +522,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     _fetchcategory();
     if (widget.term != '' && widget.term != 'null' && widget.term != null) {
-      recent_history.clear();
+      recent_history?.clear();
       _coursename.text = widget.term.toString();
       _searchcourse(true);
     }
@@ -594,7 +597,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     ],
                   ),
                 ),
-                recent_history.length != 0
+                recent_history?.length != 0
                     ? Container(
                         width: double.infinity,
                         color: konLightColor1,
@@ -612,12 +615,12 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       )
                     : SizedBox(),
-                recent_history.length != 0
+                recent_history?.length != 0
                     ? ListView.separated(
-                        padding: EdgeInsets.symmetric(vertical: 0),
+                  padding: EdgeInsets.symmetric(vertical: 0),
                         shrinkWrap: true,
                         primary: false,
-                        itemCount: recent_history.length,
+                        itemCount: recent_history?.length ?? 0,
                         separatorBuilder: (context, index) {
                           return SizedBox(height: 0);
                         },
@@ -644,9 +647,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                           onTap: () {
                                             setState(() {
                                               _coursename.text =
-                                                  recent_history[index]
+                                                  recent_history![index]
                                                       .toString();
-                                              recent_history.clear();
+                                              recent_history?.clear();
                                             });
                                             _searchcourse(true);
                                           },
@@ -654,7 +657,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                             text: TextSpan(
                                               children: [
                                                 TextSpan(
-                                                  text: recent_history[index]
+                                                  text: recent_history?[index]
                                                       .toString(),
                                                   style: mediumTextStyle()
                                                       .copyWith(
@@ -671,7 +674,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                     InkWell(
                                         onTap: () {
                                           _removefromhistory(
-                                              recent_history[index].toString());
+                                              recent_history?[index]
+                                                  .toString());
                                         },
                                         child: Icon(Icons.close,
                                             color: Colors.black, size: 15)),
@@ -690,14 +694,14 @@ class _SearchScreenState extends State<SearchScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _course.length != 0
+                      _course?.length != 0
                           ? Text(
                               total_result.toString(),
                               style: mediumTextStyle().copyWith(
                                   fontSize: 16, color: konPrimaryColor),
                             )
                           : SizedBox(),
-                      _course.length != 0
+                      _course?.length != 0
                           ? Text(
                               ' Results found',
                               style: mediumTextStyle().copyWith(
@@ -727,7 +731,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     padding: const EdgeInsets.all(0),
                     child: Column(
                       children: [
-                        !_loading_product && _course.isNotEmpty
+                        !_loading_product && _course!.isNotEmpty
                             ? Expanded(
                                 child: Container(
                                 margin: EdgeInsets.only(top: 8),
@@ -743,16 +747,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                   },
                                   child: ListView.builder(
                                     shrinkWrap: true,
-                                    itemCount: _course.length,
+                                    itemCount: _course?.length ?? 0,
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       return LatestCourse(
-                                          course: _course[index]);
+                                          course: _course?[index]);
                                     },
                                   ),
                                 ),
                               ))
-                            : !_loading_product && _course.isEmpty && !_current
+                            : !_loading_product && _course!.isEmpty && !_current
                                 ? Container(
                                     child: Align(
                                         alignment: Alignment.center,
@@ -787,8 +791,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                     recognizer:
                                                         new TapGestureRecognizer()
                                                           ..onTap = () =>
-                                                              Get.offNamed(
-                                                                  '/',
+                                                              Get.offNamed('/',
                                                                   arguments: 1),
                                                     text: "categories",
                                                     style: TextStyle(

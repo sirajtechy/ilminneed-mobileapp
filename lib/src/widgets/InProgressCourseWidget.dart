@@ -5,7 +5,7 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class InProgressCourseWidget extends StatefulWidget {
-  InProgressCourseWidget({Key key}) : super(key: key);
+  InProgressCourseWidget({Key? key}) : super(key: key);
 
   @override
   _InProgressCourseWidgetState createState() => _InProgressCourseWidgetState();

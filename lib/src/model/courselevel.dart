@@ -1,6 +1,6 @@
 class Courselevel {
-  final String id;
-  final String name;
+  final String? id;
+  final String? name;
 
   Courselevel({this.id, this.name});
 
@@ -10,19 +10,18 @@ class Courselevel {
       name: json['name'],
     );
   }
-
 }
 
 class CourselevelList {
-  List<Courselevel> _list;
+  List<Courselevel>? _list;
 
-  List<Courselevel> get list => _list;
+  List<Courselevel>? get list => _list;
 
   CourselevelList() {
     _list = [
-      new Courselevel(id: 'beginner',name: 'Beginner'),
-      new Courselevel(id: 'intermediate',name: 'Intermediate'),
-      new Courselevel(id: 'advanced',name: 'Advanced'),
+      new Courselevel(id: 'beginner', name: 'Beginner'),
+      new Courselevel(id: 'intermediate', name: 'Intermediate'),
+      new Courselevel(id: 'advanced', name: 'Advanced'),
     ];
   }
 }

@@ -7,9 +7,12 @@ class ButtonWidget extends StatelessWidget {
   final double width;
 
   const ButtonWidget(
-      {Key key, this.value, this.isActive = true, this.width = double.infinity})
+      {Key? key,
+      this.value,
+      this.isActive = true,
+      this.width = double.infinity})
       : super(key: key);
-  final String value;
+  final String? value;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +29,7 @@ class ButtonWidget extends StatelessWidget {
       ),
       child: Center(
           child: Text(
-        value,
+            value!,
         style: buttonTextStyle()
             .copyWith(color: isActive ? konLightColor1 : konDarkColorB1),
       )),

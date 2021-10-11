@@ -24,6 +24,7 @@ import 'package:ilminneed/src/screen/wishlist.dart';
 import 'package:ilminneed/src/widgets/file_reader.dart';
 import 'package:ilminneed/src/widgets/lesson_details.dart';
 import 'package:ilminneed/src/widgets/view_image.dart';
+
 import 'src/screen/home_screen.dart';
 import 'src/screen/splash.dart';
 
@@ -33,20 +34,25 @@ class RouteGenerator {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(
-            builder: (_) => HomeScreen(currentTab: args == null ? { 'currentTab': 0,'data':'' } : args));
+            builder: (_) => HomeScreen(
+                currentTab: args == null
+                    ? {'currentTab': 0, 'data': ''}
+                    : args as Map<dynamic, dynamic>?));
       case '/splash':
         return MaterialPageRoute(builder: (_) => SplashScreen());
       case '/welcome':
         return MaterialPageRoute(builder: (_) => WelcomeScreen());
       case '/signIn':
-        return MaterialPageRoute(builder: (_) => SignInScreen(data: args));
+        return MaterialPageRoute(
+            builder: (_) => SignInScreen(data: args as Map<dynamic, dynamic>?));
 
       case '/signUp':
         return MaterialPageRoute(builder: (_) => SignUpScreen());
       case '/forgotPassword':
         return MaterialPageRoute(builder: (_) => ForgotPassword());
       case '/resetLink':
-        return MaterialPageRoute(builder: (_) => ResetLink(param: args));
+        return MaterialPageRoute(
+            builder: (_) => ResetLink(param: args as Map<dynamic, dynamic>?));
       case '/myAccount':
         return MaterialPageRoute(builder: (_) => MyAccountScreen());
       case '/homeScreen':
@@ -54,13 +60,16 @@ class RouteGenerator {
       case '/category':
         return MaterialPageRoute(builder: (_) => Category());
       case '/search':
-        return MaterialPageRoute(builder: (_) => SearchScreen(term: args));
+        return MaterialPageRoute(
+            builder: (_) => SearchScreen(term: args as String?));
       case '/courseDetail':
-        return MaterialPageRoute(builder: (_) => CourseDetail(id: args));
+        return MaterialPageRoute(
+            builder: (_) => CourseDetail(id: args as String?));
       case '/latestCourse':
         return MaterialPageRoute(builder: (_) => LatestCourse());
       case '/author':
-        return MaterialPageRoute(builder: (_) => AuthorScreen(id: args));
+        return MaterialPageRoute(
+            builder: (_) => AuthorScreen(id: args as String?));
       case '/cart':
         return MaterialPageRoute(builder: (_) => CartScreen());
       case '/coupon':
@@ -69,17 +78,23 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => ThankYou());
       case '/categoryresult':
         return MaterialPageRoute(
-            builder: (_) => CategoryResultScreen(param: args));
+            builder: (_) =>
+                CategoryResultScreen(param: args as Map<dynamic, dynamic>?));
       case '/mycourses':
         return MaterialPageRoute(builder: (_) => MyCourses());
       case '/lesson':
-        return MaterialPageRoute(builder: (_) => LessonScreen(id: args));
+        return MaterialPageRoute(
+            builder: (_) => LessonScreen(id: args as String?));
       case '/lessondetail':
-        return MaterialPageRoute(builder: (_) => CourseLesson(data: args));
+        return MaterialPageRoute(
+            builder: (_) => CourseLesson(data: args as Map<dynamic, dynamic>?));
       case '/qandareply':
-        return MaterialPageRoute(builder: (_) => QandAReplyScreen(data: args));
+        return MaterialPageRoute(
+            builder: (_) =>
+                QandAReplyScreen(data: args as Map<dynamic, dynamic>?));
       case '/viewimage':
-        return MaterialPageRoute(builder: (_) => ViewImage(url: args));
+        return MaterialPageRoute(
+            builder: (_) => ViewImage(url: args as String?));
       case '/wishlist':
         return MaterialPageRoute(builder: (_) => WishlistScreen());
       case '/myprofile':
@@ -89,7 +104,8 @@ class RouteGenerator {
       case '/meetings':
         return MaterialPageRoute(builder: (_) => MeetingScreen());
       case '/file_reader':
-        return MaterialPageRoute(builder: (_) => FileReaderPage(filePath: args));
+        return MaterialPageRoute(
+            builder: (_) => FileReaderPage(filePath: args as String?));
       default:
         return _errorRoute();
     }

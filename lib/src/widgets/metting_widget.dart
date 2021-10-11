@@ -6,9 +6,9 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MeetingWidget extends StatefulWidget {
+  MeetingModel? meeting;
 
-  MeetingModel meeting;
-  MeetingWidget({Key key,this.meeting}) : super(key: key);
+  MeetingWidget({Key? key, this.meeting}) : super(key: key);
 
   @override
   _MeetingWidgetState createState() => _MeetingWidgetState();
@@ -68,11 +68,20 @@ class _MeetingWidgetState extends State<MeetingWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            widget.meeting.name.toString(),
-                            style: buttonTextStyle().copyWith(color: konDarkColorB1),
-                          ),
-                          InkWell(onTap:(){ _launchURL(widget.meeting.link); },child: Text('Join Meeting', style: buttonTextStyle().copyWith(color: konTextInputBorderActiveColor),))
-                        ],
+                            widget.meeting!.name.toString(),
+                              style: buttonTextStyle()
+                                  .copyWith(color: konDarkColorB1),
+                            ),
+                          InkWell(
+                                onTap: () {
+                                  _launchURL(widget.meeting!.link);
+                                },
+                                child: Text(
+                                  'Join Meeting',
+                                  style: buttonTextStyle().copyWith(
+                                      color: konTextInputBorderActiveColor),
+                                ))
+                          ],
                       ),
                       Divider(),
                       Row(
@@ -86,9 +95,10 @@ class _MeetingWidgetState extends State<MeetingWidget> {
                                 'Start Date & Time', style: button2TextStyle().copyWith(color: konDarkColorB2)
                               ),
                               Text(
-                                '${widget.meeting.sdate} ${widget.meeting.stime}',
-                                  style: button2TextStyle().copyWith(color: konDarkColorD3),
-                              ),
+                                '${widget.meeting!.sdate} ${widget.meeting!.stime}',
+                                  style: button2TextStyle()
+                                      .copyWith(color: konDarkColorD3),
+                                ),
                             ],
                           ),
                           Column(
@@ -96,27 +106,40 @@ class _MeetingWidgetState extends State<MeetingWidget> {
                             children: <Widget>[
                               Text(
                                 'End Date & Time',
-                                  style: button2TextStyle().copyWith(color: konDarkColorB2)
-                              ),
-                              Text(
-                                '${widget.meeting.edate} ${widget.meeting.etime}',
-                                style: button2TextStyle().copyWith(color: konDarkColorD3),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      Text("Course: ${widget.meeting.course.toString()}", style: button2TextStyle().copyWith(color: konDarkColorB1),),
-                      Divider(),
-                      Row (
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Password: ${widget.meeting.apassword}", style: button2TextStyle().copyWith(color: konDarkColorB1),),
-                          Text( "Status: ${widget.meeting.status}", style: button2TextStyle().copyWith(color: konDarkColorB1),textAlign: TextAlign.right,),
-                        ],
-                      ),
-                    ],
+                                  style: button2TextStyle().copyWith(color: konDarkColorB2)),
+                                Text(
+                                  '${widget.meeting!.edate} ${widget.meeting!.etime}',
+                                  style: button2TextStyle()
+                                      .copyWith(color: konDarkColorD3),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "Course: ${widget.meeting!.course.toString()}",
+                          style: button2TextStyle()
+                              .copyWith(color: konDarkColorB1),
+                        ),
+                        Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Password: ${widget.meeting!.apassword}",
+                              style: button2TextStyle()
+                                  .copyWith(color: konDarkColorB1),
+                            ),
+                            Text(
+                              "Status: ${widget.meeting!.status}",
+                              style: button2TextStyle()
+                                  .copyWith(color: konDarkColorB1),
+                              textAlign: TextAlign.right,
+                            ),
+                          ],
+                        ),
+                      ],
                   ),
                 ),
               ],

@@ -7,19 +7,19 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class LatestCourse extends StatelessWidget {
-  final Course course;
+  final Course? course;
   final bool isRating;
 
-  const LatestCourse({Key key, this.course, this.isRating = true})
+  const LatestCourse({Key? key, this.course, this.isRating = true})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         //print(this.course.id);
         //return;
-        Get.toNamed('/courseDetail', arguments: this.course.id);
+        Get.toNamed('/courseDetail', arguments: this.course!.id);
       },
       child: Container(
         child: Row(
@@ -36,8 +36,10 @@ class LatestCourse extends StatelessWidget {
                   height: 110,
                   width: 110,
                   placeholder: AssetImage(placeholder),
-                  image: this.course.thumbnail.toString()  == null || this.course.thumbnail.toString()  == 'null' ?
-                  Image.asset(placeholder) : NetworkImage(this.course.thumbnail.toString()),
+                  image: this.course!.thumbnail.toString() == null ||
+                          this.course!.thumbnail.toString() == 'null'
+                      ? Image.asset(placeholder) as ImageProvider<Object>
+                      : NetworkImage(this.course!.thumbnail.toString()),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -55,7 +57,7 @@ class LatestCourse extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      this.course.title.toString(),
+                      this.course!.title.toString(),
                       softWrap: true,
                       style: smallTextStyle()
                           .copyWith(fontSize: 14, color: konDarkColorB1),
@@ -64,12 +66,12 @@ class LatestCourse extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: 4),
                     child: Text(
-                      this.course.instructor_name.toString(),
+                      this.course!.instructor_name.toString(),
                       style: smallTextStyle()
                           .copyWith(fontSize: 12, color: konLightColor3),
                     ),
                   ),
-                  isRating && this.course.rating != 'null'
+                  isRating && this.course!.rating != 'null'
                       ? Container(
                           margin: EdgeInsets.only(top: 4),
                           child: Row(
@@ -79,12 +81,12 @@ class LatestCourse extends StatelessWidget {
                                 height: 15,
                               ),
                               Text(
-                                this.course.rating.toString(),
+                                this.course!.rating.toString(),
                                 style: buttonTextStyle().copyWith(
                                     fontSize: 12, color: konDarkColorD3),
                               ),
                               Text(
-                                ' (${this.course.number_of_ratings.toString()}) ',
+                                ' (${this.course!.number_of_ratings.toString()}) ',
                                 style: mediumTextStyle()
                                     .copyWith(color: konLightColor3),
                               ),
@@ -95,7 +97,7 @@ class LatestCourse extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(top: 8),
                     child: Text(
-                      '\u20B9 ' + this.course.discounted_price.toString(),
+                      '\u20B9 ' + this.course!.discounted_price.toString(),
                       style: mediumTextStyle().copyWith(
                           fontSize: 14,
                           color: konDarkColorB1,

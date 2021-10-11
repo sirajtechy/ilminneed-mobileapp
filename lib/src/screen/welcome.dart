@@ -9,7 +9,7 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({Key key}) : super(key: key);
+  const WelcomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

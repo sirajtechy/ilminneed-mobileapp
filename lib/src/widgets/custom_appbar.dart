@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget {
-  final Widget titleWidget;
-  final List<Widget> actions;
-  final Widget leading;
-  final Function onTap;
-  final String hint;
-  final PreferredSizeWidget bottom;
-  final Color color;
-  final BoxShadow boxShadow;
+  final Widget? titleWidget;
+  final List<Widget>? actions;
+  final Widget? leading;
+  final Function? onTap;
+  final String? hint;
+  final PreferredSizeWidget? bottom;
+  final Color? color;
+  final BoxShadow? boxShadow;
 
   CustomAppBar({
     this.titleWidget,

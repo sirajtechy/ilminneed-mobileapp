@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/model/category.dart';
 import 'package:ilminneed/src/model/course.dart';
@@ -14,8 +12,9 @@ import 'package:ilminneed/src/widgets/thumbnail.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CategoryResultScreen extends StatefulWidget {
-  final Map param;
-  const CategoryResultScreen({Key key, this.param}) : super(key: key);
+  final Map? param;
+
+  const CategoryResultScreen({Key? key, this.param}) : super(key: key);
 
   @override
   _CategoryResultScreenState createState() => _CategoryResultScreenState();
@@ -27,7 +26,8 @@ class _CategoryResultScreenState extends State<CategoryResultScreen> {
   List<CategoryModel> _relatedcategory = <CategoryModel>[];
 
   _fetchcourse() async {
-    var res = await ctrl.getrequest({}, 'course_by_category/'+widget.param['id']);
+    var res =
+        await ctrl.getrequest({}, 'course_by_category/' + widget.param!['id']);
     print(res);
     if (res != null) {
       List<dynamic> spc = res['students_pick'];
@@ -95,7 +95,7 @@ class _CategoryResultScreenState extends State<CategoryResultScreen> {
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 15, vertical: 7),
                 child: Text(
-                  widget.param['name'].toString(),
+                  widget.param!['name'].toString(),
                   style: largeTextStyle()
                       .copyWith(fontSize: 24, color: konDarkColorB1),
                 ),

@@ -1,18 +1,30 @@
 class Task {
-  final String id;
-  final String user_id;
-  final String instructor_id;
-  final String course_id;
-  final String lesson_id;
-  final String answer;
-  final String attachment_type;
-  final String attachment_url;
-  final String audio_attachment;
-  final String status;
-  final String date_added;
-  final String date_modified;
+  final String? id;
+  final String? user_id;
+  final String? instructor_id;
+  final String? course_id;
+  final String? lesson_id;
+  final String? answer;
+  final String? attachment_type;
+  final String? attachment_url;
+  final String? audio_attachment;
+  final String? status;
+  final String? date_added;
+  final String? date_modified;
 
-  Task({this.id, this.user_id, this.instructor_id, this.course_id, this.lesson_id, this.answer, this.attachment_type, this.attachment_url, this.audio_attachment,this.status,this.date_added,this.date_modified});
+  Task(
+      {this.id,
+      this.user_id,
+      this.instructor_id,
+      this.course_id,
+      this.lesson_id,
+      this.answer,
+      this.attachment_type,
+      this.attachment_url,
+      this.audio_attachment,
+      this.status,
+      this.date_added,
+      this.date_modified});
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(

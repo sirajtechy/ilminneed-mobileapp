@@ -20,19 +20,24 @@ import 'package:shimmer/shimmer.dart';
 import '../widgets/thumbnail.dart';
 
 class ExploreScreen extends StatefulWidget {
-  const ExploreScreen({Key key}) : super(key: key);
+  const ExploreScreen({Key? key}) : super(key: key);
 
   @override
   _ExploreScreenState createState() => _ExploreScreenState();
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  List<CategoryModel> _youmaylike = new List<CategoryModel>();
-  List<CategoryModel> _lookingfor = new List<CategoryModel>();
-  List<Course> _popularcourse = new List<Course>();
-  List<Course> _continuelearning = new List<Course>();
-  List<Course> _recent_visit = new List<Course>();
-  List<BannerImg> _slider = new List<BannerImg>();
+  List<CategoryModel>? _youmaylike;
+
+  List<CategoryModel>? _lookingfor;
+
+  List<Course>? _popularcourse;
+
+  List<Course>? _continuelearning;
+  List<Course>? _recent_visit;
+
+  List<BannerImg>? _slider;
+
   final CarouselController _controller = CarouselController();
   int _current = 0;
 
@@ -43,7 +48,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
         setState(() {
-          _youmaylike.add(CategoryModel.fromJson(data[i]));
+          _youmaylike?.add(CategoryModel.fromJson(data[i]));
         });
       }
     }
@@ -57,7 +62,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
         setState(() {
-          _slider.add(BannerImg.fromJson(data[i]));
+          _slider?.add(BannerImg.fromJson(data[i]));
         });
       }
     }
@@ -70,7 +75,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
         setState(() {
-          _lookingfor.add(CategoryModel.fromJson(data[i]));
+          _lookingfor?.add(CategoryModel.fromJson(data[i]));
         });
       }
     }
@@ -85,7 +90,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           for (int i = 0; i < data.length; i++) {
             if (!mounted) return;
             setState(() {
-              _continuelearning.add(Course.fromJson(data[i]));
+              _continuelearning?.add(Course.fromJson(data[i]));
             });
           }
         }
@@ -101,7 +106,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
         setState(() {
-          _recent_visit.add(Course.fromJson(data[i]));
+          _recent_visit?.add(Course.fromJson(data[i]));
         });
       }
     }
@@ -115,7 +120,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
         setState(() {
-          _popularcourse.add(Course.fromJson(data[i]));
+          _popularcourse?.add(Course.fromJson(data[i]));
         });
       }
     }
@@ -232,53 +237,57 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           ],
                         ),
                       ),
-                      Container(
-                        height: 175,
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        alignment: Alignment.center,
-                        child: CarouselSlider(
-                          carouselController: _controller,
-                          options: CarouselOptions(
-                            autoPlay: true,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                _current = index;
-                              });
-                            },
-                          ),
-                          items: _slider
-                              .map((item) => Container(
-                                    child: Center(
-                                        child: Image.network(
-                                      item.banner_image,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                    )),
-                                  ))
-                              .toList(),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: _slider.map((urlOfItem) {
-                          int index = _slider.indexOf(urlOfItem);
-                          return Container(
-                            width: 8.0,
-                            height: 8.0,
-                            margin: EdgeInsets.symmetric(
-                                vertical: 6.0, horizontal: 2.0),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _current == index
-                                  ? Color.fromRGBO(0, 0, 0, 0.8)
-                                  : Color.fromRGBO(0, 0, 0, 0.3),
-                            ),
-                          );
-                        }).toList(),
-                      )
+                      _slider != null
+                          ? Container(
+                              height: 175,
+                              margin: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              alignment: Alignment.center,
+                              child: CarouselSlider(
+                                carouselController: _controller,
+                                options: CarouselOptions(
+                                  autoPlay: true,
+                                  onPageChanged: (index, reason) {
+                                    setState(() {
+                                      _current = index;
+                                    });
+                                  },
+                                ),
+                                items: _slider
+                                    ?.map((item) => Container(
+                                          child: Center(
+                                              child: Image.network(
+                                            item.banner_image!,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                          )),
+                                        ))
+                                    .toList(),
+                              ),
+                            )
+                          : SizedBox(),
+                      _slider != null
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: _slider!.map((urlOfItem) {
+                                int index = _slider!.indexOf(urlOfItem);
+                                return Container(
+                                  width: 8.0,
+                                  height: 8.0,
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 6.0, horizontal: 2.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: _current == index
+                                        ? Color.fromRGBO(0, 0, 0, 0.8)
+                                        : Color.fromRGBO(0, 0, 0, 0.3),
+                                  ),
+                                );
+                              }).toList(),
+                            )
+                          : SizedBox()
                     ],
                   ),
                 ),
@@ -290,10 +299,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _youmaylike.length != 0
+                      _youmaylike != null
                           ? RecentItems(
-                              label: 'Categories you may like',
-                              value: _youmaylike,
+                        label: 'Categories you may like',
+                              value: _youmaylike ?? [],
                               type: 'category',
                             )
                           : SizedBox(),
@@ -323,22 +332,20 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           ],
                         ),
                       ),
-                      _popularcourse.length != 0
+                      _popularcourse?.length != 0
                           ? Container(
                               margin: EdgeInsets.only(
                                   left: 15, right: 15, top: 8, bottom: 2),
                               child: SizedBox(
                                 height: 250,
                                 child: ListView.builder(
-                                  itemCount: _popularcourse.isNotEmpty
-                                      ? _popularcourse.length
-                                      : 0,
+                                  itemCount: _popularcourse?.length ?? 0,
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return ThumbNailWidget(
                                         continueLearing: false,
-                                        course: _popularcourse[index]);
+                                        course: _popularcourse?[index]);
                                   },
                                 ),
                               ),
@@ -389,7 +396,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 ],
                               ),
                             ),
-                      _continuelearning.length != 0
+                      _continuelearning?.length != 0
                           ? Container(
                               margin: EdgeInsets.only(bottom: 10),
                               width: double.infinity,
@@ -435,13 +442,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                     child: SizedBox(
                                       height: 215,
                                       child: ListView.builder(
-                                        itemCount: _continuelearning.length,
+                                        itemCount: _continuelearning?.length,
                                         scrollDirection: Axis.horizontal,
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           return ThumbNailWidget(
                                             continueLearing: true,
-                                            course: _continuelearning[index],
+                                            course: _continuelearning?[index],
                                           );
                                         },
                                       ),
@@ -451,7 +458,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               ),
                             )
                           : Container(),
-                      _recent_visit.length != 0
+                      _recent_visit?.length != 0
                           ? Container(
                               margin: EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 10),
@@ -468,32 +475,32 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               ),
                             )
                           : SizedBox(),
-                      _recent_visit.length != 0
+                      _recent_visit?.length != 0
                           ? Container(
                               margin: EdgeInsets.only(
                                   left: 15, right: 15, top: 8, bottom: 2),
                               child: SizedBox(
                                 height: 250,
                                 child: ListView.builder(
-                                  itemCount: _recent_visit.length,
+                                  itemCount: _recent_visit?.length,
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return ThumbNailWidget(
                                         continueLearing: false,
-                                        course: _recent_visit[index]);
+                                        course: _recent_visit?[index]);
                                   },
                                 ),
                               ),
                             )
                           : Container(),
-                      _lookingfor.length != 0
+                      _lookingfor?.length != 0
                           ? RecentItems(
                               label: 'Are you looking for',
                               value: _lookingfor,
                             )
                           : SizedBox(),
-                      _recent_visit.length != 0
+                      _recent_visit?.length != 0
                           ? Container(
                               margin: EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 10),
@@ -510,20 +517,20 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               ),
                             )
                           : SizedBox(),
-                      _recent_visit.length != 0
+                      _recent_visit?.length != 0
                           ? Container(
                               margin: EdgeInsets.only(
                                   left: 15, right: 15, top: 8, bottom: 2),
                               child: SizedBox(
                                 height: 250,
                                 child: ListView.builder(
-                                  itemCount: _recent_visit.length,
+                                  itemCount: _recent_visit?.length ?? 0,
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return ThumbNailWidget(
                                         continueLearing: false,
-                                        course: _recent_visit[index]);
+                                        course: _recent_visit?[index]);
                                   },
                                 ),
                               ),

@@ -1,23 +1,25 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:ilminneed/cart_bloc.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
+import 'package:provider/provider.dart';
 
 class ShoppingCartButtonWidget extends StatelessWidget {
-  final String c;
-  const ShoppingCartButtonWidget({Key key,this.c}) : super(key: key);
+  final String? c;
+
+  const ShoppingCartButtonWidget({Key? key, this.c}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var bloc = Provider.of<CartBloc>(context);
 
     return InkWell(
-      onTap: () async{
-        if(await ctrl.LoggedIn() == true){
+      onTap: () async {
+        if (await ctrl.LoggedIn() == true) {
           Get.offNamed('/cart');
-        }else{
+        } else {
           ctrl.toastmsg('Login to continue', 'short');
         }
       },
@@ -36,9 +38,9 @@ class ShoppingCartButtonWidget extends StatelessWidget {
             child: Text(
               bloc.getcount().toString(),
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.caption.merge(
-                TextStyle(color: Colors.white, fontSize: 12),
-              ),
+              style: Theme.of(context).textTheme.caption!.merge(
+                          TextStyle(color: Colors.white, fontSize: 12),
+                        ),
             ),
             padding: EdgeInsets.all(0),
             decoration: BoxDecoration(

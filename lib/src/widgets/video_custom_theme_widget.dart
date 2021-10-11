@@ -1,6 +1,6 @@
 import 'package:better_player/better_player.dart';
-import 'package:ilminneed/src/widgets/video_custom_control_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/widgets/video_custom_control_widget.dart';
 
 class ChangePlayerThemePage extends StatefulWidget {
   @override
@@ -8,14 +8,15 @@ class ChangePlayerThemePage extends StatefulWidget {
 }
 
 class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
-   BetterPlayerController _betterPlayerController;
-  BetterPlayerDataSource _dataSource;
+  late BetterPlayerController _betterPlayerController;
+  BetterPlayerDataSource? _dataSource;
   BetterPlayerTheme _playerTheme = BetterPlayerTheme.material;
 
   @override
   void initState() {
     super.initState();
-    String url = 'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4';
+    String url =
+        'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4';
     _dataSource =
         BetterPlayerDataSource(BetterPlayerDataSourceType.network, url);
     _betterPlayerController = new BetterPlayerController(

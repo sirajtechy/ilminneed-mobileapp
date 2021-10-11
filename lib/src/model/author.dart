@@ -1,13 +1,20 @@
 class Author {
-  final String id;
-  final String first_name;
-  final String last_name;
-  final String biography;
-  final String total_course;
-  final String total_students;
-  final String review_count;
+  final String? id;
+  final String? first_name;
+  final String? last_name;
+  final String? biography;
+  final String? total_course;
+  final String? total_students;
+  final String? review_count;
 
-  Author({this.id, this.first_name, this.last_name, this.biography, this.total_course, this.total_students, this.review_count});
+  Author(
+      {this.id,
+      this.first_name,
+      this.last_name,
+      this.biography,
+      this.total_course,
+      this.total_students,
+      this.review_count});
 
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(

@@ -4,13 +4,13 @@ import 'package:get/get.dart';
 import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/widgets/course_lesson_meta.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class CourseLesson extends StatefulWidget {
-  final Map data;
-  const CourseLesson({Key key,this.data}) : super(key: key);
+  final Map? data;
+
+  const CourseLesson({Key? key, this.data}) : super(key: key);
 
   @override
   _CourseLessonState createState() => _CourseLessonState();
@@ -51,11 +51,10 @@ class _CourseLessonState extends State<CourseLesson> {
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                   child: Text(
-                    widget.data['course_name'].toString(),
+                    widget.data!['course_name'].toString(),
                     softWrap: true,
                     style: titleTextStyle().copyWith(
-                        color: konDarkColorB1,
-                        fontWeight: FontWeight.bold),
+                        color: konDarkColorB1, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Container(
@@ -63,12 +62,14 @@ class _CourseLessonState extends State<CourseLesson> {
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     shrinkWrap: true,
                     primary: false,
-                    itemCount: widget.data['sections'].length,
+                    itemCount: widget.data!['sections'].length,
                     separatorBuilder: (context, index) {
                       return Divider(color: Colors.grey.withOpacity(0.5));
                     },
                     itemBuilder: (context, index) {
-                      return CourseLessonMetaWidget(sections: widget.data['sections'][index],index: index);
+                      return CourseLessonMetaWidget(
+                          sections: widget.data!['sections'][index],
+                          index: index);
                     },
                   ),
                 )

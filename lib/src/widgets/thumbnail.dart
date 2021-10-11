@@ -7,20 +7,22 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class ThumbNailWidget extends StatelessWidget {
-  final bool continueLearing;
-  final Course course;
+  final bool? continueLearing;
+  final Course? course;
 
-  const ThumbNailWidget({Key key, this.continueLearing, this.course}) : super(key: key);
+  const ThumbNailWidget({Key? key, this.continueLearing, this.course})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         //print(this.course.id); return;
-        if(this.course.is_purchased == 'true' || this.course.is_purchased == '1'){
-          Get.toNamed('/lesson', arguments: this.course.id);
-        }else{
-          Get.toNamed('/courseDetail', arguments: this.course.id);
+        if (this.course!.is_purchased == 'true' ||
+            this.course!.is_purchased == '1') {
+          Get.toNamed('/lesson', arguments: this.course!.id);
+        } else {
+          Get.toNamed('/courseDetail', arguments: this.course!.id);
         }
       },
       child: Container(
@@ -39,8 +41,10 @@ class ThumbNailWidget extends StatelessWidget {
                   FadeInImage(
                     height: 120,
                     placeholder: AssetImage(placeholder),
-                    image: this.course.thumbnail.toString()  == null || this.course.thumbnail.toString()  == 'null' ?
-                    Image.asset(placeholder) : NetworkImage(this.course.thumbnail.toString()),
+                    image: this.course!.thumbnail.toString() == null ||
+                            this.course!.thumbnail.toString() == 'null'
+                        ? Image.asset(placeholder) as ImageProvider<Object>
+                        : NetworkImage(this.course!.thumbnail.toString()),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -65,7 +69,11 @@ class ThumbNailWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                         color: konDarkColorB2),
                     child: Text(
-                      this.course.course_duration.toString().replaceAll(RegExp('Hours'), ''),
+                      this
+                          .course!
+                          .course_duration
+                          .toString()
+                          .replaceAll(RegExp('Hours'), ''),
                       style: mediumTextStyle().copyWith(color: konLightColor1),
                     ),
                   ),
@@ -75,7 +83,7 @@ class ThumbNailWidget extends StatelessWidget {
             Container(
               margin: EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                this.course.language.toString(),
+                this.course!.language.toString(),
                 style: smallTextStyle()
                     .copyWith(fontSize: 10, color: konLightColor3),
               ),
@@ -83,22 +91,22 @@ class ThumbNailWidget extends StatelessWidget {
             Container(
               margin: EdgeInsets.symmetric(vertical: 4),
               child: Text(
-                this.course.title.toString(),
+                this.course!.title.toString(),
                 style: smallTextStyle()
                     .copyWith(fontSize: 14, color: konDarkColorB1),
               ),
             ),
-            !continueLearing
+            !continueLearing!
                 ? Container(
                     margin: EdgeInsets.only(top: 2),
                     child: Text(
-                      this.course.instructor_name.toString(),
+                      this.course!.instructor_name.toString(),
                       style: smallTextStyle()
                           .copyWith(fontSize: 12, color: konLightColor3),
                     ),
                   )
                 : Container(),
-            !continueLearing && this.course.rating != 'null'
+            !continueLearing! && this.course!.rating != 'null'
                 ? Container(
                     margin: EdgeInsets.only(top: 4),
                     child: Row(
@@ -108,12 +116,12 @@ class ThumbNailWidget extends StatelessWidget {
                           height: 15,
                         ),
                         Text(
-                          this.course.rating.toString(),
+                          this.course!.rating.toString(),
                           style: buttonTextStyle()
                               .copyWith(fontSize: 12, color: konDarkColorD3),
                         ),
                         Text(
-                          '(${this.course.number_of_ratings.toString()})',
+                          '(${this.course!.number_of_ratings.toString()})',
                           style:
                               mediumTextStyle().copyWith(color: konLightColor3),
                         ),

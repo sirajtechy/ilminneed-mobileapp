@@ -4,7 +4,7 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
 
 class QuizScreen extends StatelessWidget {
-  const QuizScreen({Key key}) : super(key: key);
+  const QuizScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

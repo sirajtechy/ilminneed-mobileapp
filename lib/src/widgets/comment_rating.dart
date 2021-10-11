@@ -4,11 +4,11 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class CommentRating extends StatelessWidget {
-  final String name, time, comment;
-  final double rating;
+  final String? name, time, comment;
+  final double? rating;
 
   const CommentRating(
-      {Key key, this.name, this.time, this.comment, this.rating})
+      {Key? key, this.name, this.time, this.comment, this.rating})
       : super(key: key);
 
   @override
@@ -21,7 +21,7 @@ class CommentRating extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              name,
+              name!,
               style: largeTextStyle()
                   .copyWith(fontSize: 14, color: konDarkColorB1),
             ),
@@ -29,7 +29,7 @@ class CommentRating extends StatelessWidget {
             Row(
               children: [
                 RatingBar.builder(
-                  initialRating: rating,
+                  initialRating: rating!,
                   minRating: 1,
                   direction: Axis.horizontal,
                   allowHalfRating: true,
@@ -46,14 +46,14 @@ class CommentRating extends StatelessWidget {
                 ),
                 SizedBox(width: 10),
                 Text(
-                  time,
+                  time!,
                   style: mediumTextStyle().copyWith(color: konDarkColorD3),
                 ),
               ],
             ),
             SizedBox(height: 10),
             Text(
-              comment,
+              comment!,
               style: mediumTextStyle()
                   .copyWith(fontSize: 14, color: konDarkColorB2),
             )
