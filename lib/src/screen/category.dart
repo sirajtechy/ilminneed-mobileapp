@@ -19,9 +19,9 @@ class Category extends StatefulWidget {
 
 class _CategoryState extends State<Category> {
   bool _loading = true;
-  List<CategoryModel>? _category;
+  List<CategoryModel>? _category = [];
 
-  List<SearchHistory>? _recentsearch;
+  List<SearchHistory>? _recentsearch = [];
 
   _fetchpopular() async {
     var res = await ctrl.getrequest({}, 'search_recent_history');
@@ -118,12 +118,12 @@ class _CategoryState extends State<Category> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  child: !_loading && _category?.length != 0
+                  child: !_loading && (_category?.length ?? 0) != 0
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _recentsearch?.length != 0
+                            (_recentsearch?.length ?? 0) != 0
                                 ? SearchHistoryWidget(
                                     label: 'Popular Search',
                                     value: _recentsearch,

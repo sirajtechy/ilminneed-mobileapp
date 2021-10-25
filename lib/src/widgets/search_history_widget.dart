@@ -25,26 +25,30 @@ class SearchHistoryWidget extends StatelessWidget {
                 largeTextStyle().copyWith(fontSize: 16, color: konDarkColorB2),
           ),
           SizedBox(height: 10),
-          Wrap(
-            runSpacing: 1.0,
-            spacing: 5.0,
-            children: value!
-                .map(
-                  (e) => InkWell(
-                    onTap: () {
-                      Get.toNamed('/search', arguments: e.term.toString());
-                    },
-                    child: Chip(
-                      backgroundColor: konTextInputBorderActiveColor,
-                      label: Text(
-                        e.term.toString(),
-                        style: smallTextStyle().copyWith(color: konLightColor1),
-                      ),
-                    ),
-                  ),
+          value != null
+              ? Wrap(
+                  runSpacing: 1.0,
+                  spacing: 5.0,
+                  children: value!
+                      .map(
+                        (e) => InkWell(
+                          onTap: () {
+                            Get.toNamed('/search',
+                                arguments: e.term.toString());
+                          },
+                          child: Chip(
+                            backgroundColor: konTextInputBorderActiveColor,
+                            label: Text(
+                              e.term.toString(),
+                              style: smallTextStyle()
+                                  .copyWith(color: konLightColor1),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
                 )
-                .toList(),
-          ),
+              : SizedBox(),
         ],
       ),
     );

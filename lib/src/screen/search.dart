@@ -30,12 +30,12 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _coursename = TextEditingController();
   bool _loading = false;
-  List<Course>? _course;
+  List<Course>? _course = [];
 
-  List<CategoryModel>? _category;
+  List<CategoryModel>? _category = [];
 
   int filter = 0;
-  List<String>? recent_history;
+  List<String>? recent_history = [];
 
   String? _filter_level = '';
   String _filter_category = '';
@@ -731,7 +731,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     padding: const EdgeInsets.all(0),
                     child: Column(
                       children: [
-                        !_loading_product && _course!.isNotEmpty
+                        !_loading_product && (_course?.length ?? 0) != 0
                             ? Expanded(
                                 child: Container(
                                 margin: EdgeInsets.only(top: 8),

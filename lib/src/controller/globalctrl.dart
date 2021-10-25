@@ -13,12 +13,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future getrequest(data, module) async {
   //Fluttertoast.cancel();
   final dynamic val = GlobalConfiguration().getValue('api_base_url');
-  final Uri endpoint = val + module;
+  final dynamic endpoint = Uri.parse("${val + module}");
   final client = new http.Client();
   try {
     final response = await client.get(
       endpoint,
-      headers: await (_headerwithouttoken() as FutureOr<Map<String, String>?>),
+      headers: await (_headerwithouttoken()),
     );
     if (response.statusCode == 200) {
       //print(response.body);
@@ -35,13 +35,14 @@ Future getrequest(data, module) async {
 
 Future requestwithoutheader(data, module) async {
   //Fluttertoast.cancel();
-  final String endpoint =
-      '${GlobalConfiguration().getValue('api_base_url')}' + module;
+
+  final dynamic val = GlobalConfiguration().getValue('api_base_url');
+  final dynamic endpoint = Uri.parse("${val + module}");
   final client = new http.Client();
   try {
     final response = await client.post(
       endpoint as Uri,
-      headers: await (_headerwithouttoken() as FutureOr<Map<String, String>?>),
+      headers: await (_headerwithouttoken()),
       body: json.encode(data),
     );
     if (response.statusCode == 200) {
@@ -66,13 +67,13 @@ String getTimeString(int value) {
 
 Future requestwithheader(data, module) async {
   //Fluttertoast.cancel();
-  final String endpoint =
-      '${GlobalConfiguration().getValue('api_base_url')}' + module;
+  final dynamic val = GlobalConfiguration().getValue('api_base_url');
+  final dynamic endpoint = Uri.parse("${val + module}");
   final client = new http.Client();
   try {
     final response = await client.post(
       endpoint as Uri,
-      headers: await (_headerwithtoken() as FutureOr<Map<String, String>?>),
+      headers: await (_headerwithtoken()),
       body: json.encode(data),
     );
     if (response.statusCode == 200) {
@@ -90,13 +91,20 @@ Future requestwithheader(data, module) async {
 
 Future getrequestwithheader(module) async {
   //Fluttertoast.cancel();
-  final String endpoint =
-      '${GlobalConfiguration().getValue('api_base_url')}' + module;
+
+  // final dynamic val = GlobalConfiguration().getValue('api_base_url');
+  // final dynamic endpoint = Uri.parse("${val+module}");
+  // final client = new http.Client();
+
+  final dynamic val = GlobalConfiguration().getValue('api_base_url');
+
+  final dynamic endpoint = Uri.parse("${val + module}");
+
   final client = new http.Client();
   try {
     final response = await client.get(
       endpoint as Uri,
-      headers: await (_headerwithtoken() as FutureOr<Map<String, String>?>),
+      headers: await (_headerwithtoken()),
     );
     if (response.statusCode == 200) {
       //print(response.body);
@@ -112,7 +120,7 @@ Future getrequestwithheader(module) async {
 }
 
 Future _headerwithtoken() async {
-  String? token = await (gettoken() as FutureOr<String?>);
+  String? token = await (gettoken());
   return {
     HttpHeaders.contentTypeHeader: 'application/json',
     'X-Auth-Token': '$token'

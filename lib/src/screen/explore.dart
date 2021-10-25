@@ -27,16 +27,11 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  List<CategoryModel>? _youmaylike;
+  List<CategoryModel>? _youmaylike = [], _lookingfor = [];
 
-  List<CategoryModel>? _lookingfor;
+  List<Course>? _popularcourse = [], _continuelearning = [], _recent_visit = [];
 
-  List<Course>? _popularcourse;
-
-  List<Course>? _continuelearning;
-  List<Course>? _recent_visit;
-
-  List<BannerImg>? _slider;
+  List<BannerImg>? _slider = [];
 
   final CarouselController _controller = CarouselController();
   int _current = 0;
@@ -45,8 +40,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
     var res = await ctrl.getrequest({}, 'top_categories');
     if (res != null) {
       List<dynamic> data = res;
+
       for (int i = 0; i < data.length; i++) {
         if (!mounted) return;
+        final CategoryModel categoryModelData = CategoryModel.fromJson(data[i]);
         setState(() {
           _youmaylike?.add(CategoryModel.fromJson(data[i]));
         });
@@ -396,7 +393,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 ],
                               ),
                             ),
-                      _continuelearning?.length != 0
+                      (_continuelearning?.length ?? 0) > 0
                           ? Container(
                               margin: EdgeInsets.only(bottom: 10),
                               width: double.infinity,
@@ -442,7 +439,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                     child: SizedBox(
                                       height: 215,
                                       child: ListView.builder(
-                                        itemCount: _continuelearning?.length,
+                                        itemCount:
+                                            _continuelearning?.length ?? 0,
                                         scrollDirection: Axis.horizontal,
                                         itemBuilder:
                                             (BuildContext context, int index) {
@@ -457,7 +455,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 ],
                               ),
                             )
-                          : Container(),
+                          : SizedBox(),
                       _recent_visit?.length != 0
                           ? Container(
                               margin: EdgeInsets.symmetric(
@@ -475,20 +473,20 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               ),
                             )
                           : SizedBox(),
-                      _recent_visit?.length != 0
+                      _recent_visit != null
                           ? Container(
                               margin: EdgeInsets.only(
                                   left: 15, right: 15, top: 8, bottom: 2),
                               child: SizedBox(
                                 height: 250,
                                 child: ListView.builder(
-                                  itemCount: _recent_visit?.length,
+                                  itemCount: _recent_visit?.length ?? 0,
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return ThumbNailWidget(
                                         continueLearing: false,
-                                        course: _recent_visit?[index]);
+                                        course: _recent_visit![index]);
                                   },
                                 ),
                               ),
