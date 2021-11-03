@@ -1,7 +1,7 @@
 class Notes {
-  final String id;
-  final String duration;
-  final String note;
+  final String? id;
+  final String? duration;
+  final String? note;
 
   Notes({this.id, this.duration, this.note});
 

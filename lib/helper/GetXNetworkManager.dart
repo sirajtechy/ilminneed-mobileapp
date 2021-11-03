@@ -12,7 +12,7 @@ class GetXNetworkManager extends GetxController {
   final Connectivity _connectivity = Connectivity();
 
   //Stream to keep listening to network change state
-  StreamSubscription _streamSubscription;
+  late StreamSubscription _streamSubscription;
 
   @override
   void onInit() {
@@ -34,7 +34,7 @@ class GetXNetworkManager extends GetxController {
 
   // state update, of network, if you are connected to WIFI connectionType will get set to 1,
   // and update the state to the consumer of that variable.
-  _updateState(ConnectivityResult result) {
+  _updateState(ConnectivityResult? result) {
     switch (result) {
       case ConnectivityResult.wifi:
         connectionType = 1;

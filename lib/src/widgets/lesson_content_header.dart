@@ -5,7 +5,7 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 class LessonContentHeaderWidget extends StatelessWidget {
   final String value;
 
-  const LessonContentHeaderWidget({Key key, @required this.value})
+  const LessonContentHeaderWidget({Key? key, required this.value})
       : super(key: key);
 
   @override

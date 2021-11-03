@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SavedCourseWidget extends StatefulWidget {
-  final String status;
-  final Course course;
-  SavedCourseWidget({Key key, this.status, this.course}) : super(key: key);
+  final String? status;
+  final Course? course;
+
+  SavedCourseWidget({Key? key, this.status, this.course}) : super(key: key);
 
   @override
   _SavedCourseWidgetState createState() => _SavedCourseWidgetState();
@@ -28,7 +27,7 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
   _download() async {
     var s = await ctrl.getuserid();
     var res = await ctrl
-        .getrequestwithheader('certificate/${widget.course.id}/${s}/f');
+        .getrequestwithheader('certificate/${widget.course!.id}/${s}/f');
     setState(() {
       d = false;
     });
@@ -60,7 +59,7 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
       children: [
         InkWell(
           onTap: () {
-            Get.toNamed('/lesson', arguments: widget.course.id);
+            Get.toNamed('/lesson', arguments: widget.course!.id);
           },
           child: Stack(
             children: [
@@ -72,9 +71,9 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
                     height: 120,
                     width: 120,
                     placeholder: AssetImage(placeholder),
-                    image: widget.course.thumbnail.toString() == null
-                        ? Image.asset(placeholder)
-                        : NetworkImage(widget.course.thumbnail.toString()),
+                    image: widget.course!.thumbnail.toString() == null
+                        ? Image.asset(placeholder) as ImageProvider<Object>
+                        : NetworkImage(widget.course!.thumbnail.toString()),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -88,7 +87,7 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
                       borderRadius: BorderRadius.circular(5),
                       color: konDarkColorB2),
                   child: Text(
-                    widget.course.course_duration
+                    widget.course!.course_duration
                         .toString()
                         .replaceAll(RegExp('Hours'), ''),
                     style: mediumTextStyle().copyWith(color: konLightColor1),
@@ -111,9 +110,9 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Get.toNamed('/lesson', arguments: widget.course.id);
+                        Get.toNamed('/lesson', arguments: widget.course!.id);
                       },
-                      child: Text(widget.course.title.toString(),
+                      child: Text(widget.course!.title.toString(),
                           softWrap: true,
                           maxLines: 2,
                           style:
@@ -122,10 +121,10 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
                     SizedBox(height: 8),
                     InkWell(
                       onTap: () {
-                        Get.toNamed('/lesson', arguments: widget.course.id);
+                        Get.toNamed('/lesson', arguments: widget.course!.id);
                       },
                       child: Text(
-                        'By ' + widget.course.instructor_name.toString(),
+                        'By ' + widget.course!.instructor_name.toString(),
                         style: smallTextStyle().copyWith(color: konDarkColorD3),
                       ),
                     ),
@@ -133,8 +132,9 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
                     widget.status == 'saved'
                         ? InkWell(
                       onTap: (){
-                        Get.toNamed('/lesson', arguments: widget.course.id);
-                      },
+                        Get.toNamed('/lesson',
+                                  arguments: widget.course!.id);
+                            },
                           child: Text('Start Learning',
                               style: titleTextStyle()
                                   .copyWith(color: konPrimaryColor2)),
@@ -148,7 +148,7 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
                               animation: true,
                               lineHeight: 5.0,
                               animationDuration: 2000,
-                              percent: widget.course.completion / 100,
+                              percent: widget.course!.completion! / 100,
                               linearStrokeCap: LinearStrokeCap.roundAll,
                               progressColor: konPrimaryColor2,
                             ),
@@ -158,7 +158,7 @@ class _SavedCourseWidgetState extends State<SavedCourseWidget> {
                         ? SizedBox(height: 10)
                         : SizedBox(),
                     widget.status == 'progress'
-                        ? Text(widget.course.completion.toString() + '%',
+                        ? Text(widget.course!.completion.toString() + '%',
                             style: titleTextStyle()
                                 .copyWith(color: konDarkColorB1))
                         : SizedBox(),

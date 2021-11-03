@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Flutter-Sound.  If not, see <https://www.gnu.org/licenses/>.
  */
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -59,9 +60,8 @@ class SimpleRecorder extends StatefulWidget {
 }
 
 class _SimpleRecorderState extends State<SimpleRecorder> {
-  FlutterSoundPlayer _mPlayer = FlutterSoundPlayer();
-  FlutterSoundRecorder _mRecorder =
-  FlutterSoundRecorder();
+  FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
+  FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   bool _mPlayerIsInited = false;
   bool _mRecorderIsInited = false;
   bool _mplaybackReady = false;
@@ -69,7 +69,7 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
 
   @override
   void initState() {
-    _mPlayer.openAudioSession().then((value) {
+    _mPlayer!.openAudioSession().then((value) {
       setState(() {
         _mPlayerIsInited = true;
       });
@@ -85,10 +85,10 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
 
   @override
   void dispose() {
-    _mPlayer.closeAudioSession();
+    _mPlayer!.closeAudioSession();
     _mPlayer = null;
 
-    _mRecorder.closeAudioSession();
+    _mRecorder!.closeAudioSession();
     _mRecorder = null;
     super.dispose();
   }
@@ -100,14 +100,14 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
         throw RecordingPermissionException('Microphone permission not granted');
       }
     }
-    await _mRecorder.openAudioSession();
+    await _mRecorder!.openAudioSession();
     _mRecorderIsInited = true;
   }
 
   // ----------------------  Here is the code for recording and playback -------
 
   void record() {
-    _mRecorder
+    _mRecorder!
         .startRecorder(
       toFile: _mPath,
       audioSource: theSource,
@@ -118,14 +118,12 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
   }
 
   void stopRecorder() async {
-    await _mRecorder.stopRecorder().then((value) {
-      _mRecorder.getRecordURL(path: _mPath).then((value){
+    await _mRecorder!.stopRecorder().then((value) {
+      _mRecorder!.getRecordURL(path: _mPath).then((value) {
         print('111111111111111');
         print(value);
-        File file = File(value);
-        var img_path = base64Encode(
-            file
-                .readAsBytesSync());
+        File file = File(value!);
+        var img_path = base64Encode(file.readAsBytesSync());
         log(img_path);
       });
       print('2222222222222222');
@@ -139,23 +137,23 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
   void play() {
     assert(_mPlayerIsInited &&
         _mplaybackReady &&
-        _mRecorder.isStopped &&
-        _mPlayer.isStopped);
-    _mPlayer
+        _mRecorder!.isStopped &&
+        _mPlayer!.isStopped);
+    _mPlayer!
         .startPlayer(
-        fromURI: _mPath,
-        //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
-        whenFinished: () async {
-          print('00000000000000');
-          setState(() {});
-        })
+            fromURI: _mPath,
+            //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
+            whenFinished: () async {
+              print('00000000000000');
+              setState(() {});
+            })
         .then((value) {
       setState(() {});
     });
   }
 
   void stopPlayer() {
-    _mPlayer.stopPlayer().then((value) {
+    _mPlayer!.stopPlayer().then((value) {
       print('mPathhhhhhhhhhhhhhhhh');
       print(_mPath);
       File(_mPath).readAsString().then((String contents) {
@@ -168,18 +166,18 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
 
 // ----------------------------- UI --------------------------------------------
 
-  _Fn getRecorderFn() {
-    if (!_mRecorderIsInited || !_mPlayer.isStopped) {
+  _Fn? getRecorderFn() {
+    if (!_mRecorderIsInited || !_mPlayer!.isStopped) {
       return null;
     }
-    return _mRecorder.isStopped ? record : stopRecorder;
+    return _mRecorder!.isStopped ? record : stopRecorder;
   }
 
-  _Fn getPlaybackFn() {
-    if (!_mPlayerIsInited || !_mplaybackReady || !_mRecorder.isStopped) {
+  _Fn? getPlaybackFn() {
+    if (!_mPlayerIsInited || !_mplaybackReady || !_mRecorder!.isStopped) {
       return null;
     }
-    return _mPlayer.isStopped ? play : stopPlayer;
+    return _mPlayer!.isStopped ? play : stopPlayer;
   }
 
   @override
@@ -205,12 +203,12 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                 onPressed: getRecorderFn(),
                 //color: Colors.white,
                 //disabledColor: Colors.grey,
-                child: Text(_mRecorder.isRecording ? 'Stop' : 'Record'),
+                child: Text(_mRecorder!.isRecording ? 'Stop' : 'Record'),
               ),
               SizedBox(
                 width: 20,
               ),
-              Text(_mRecorder.isRecording
+              Text(_mRecorder!.isRecording
                   ? 'Recording in progress'
                   : 'Recorder is stopped'),
             ]),
@@ -233,12 +231,12 @@ class _SimpleRecorderState extends State<SimpleRecorder> {
                 onPressed: getPlaybackFn(),
                 //color: Colors.white,
                 //disabledColor: Colors.grey,
-                child: Text(_mPlayer.isPlaying ? 'Stop' : 'Play'),
+                child: Text(_mPlayer!.isPlaying ? 'Stop' : 'Play'),
               ),
               SizedBox(
                 width: 20,
               ),
-              Text(_mPlayer.isPlaying
+              Text(_mPlayer!.isPlaying
                   ? 'Playback in progress'
                   : 'Player is stopped'),
             ]),

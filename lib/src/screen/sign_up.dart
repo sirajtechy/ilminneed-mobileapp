@@ -1,22 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/helper/resources/strings.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
 import 'package:ilminneed/src/widgets/header_text.dart';
 import 'package:ilminneed/src/widgets/hint_text.dart';
-import 'package:get/get.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
-import 'package:loading_overlay/loading_overlay.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key key}) : super(key: key);
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
@@ -24,15 +24,15 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
 
-  final GlobalKey<FormState> _formKey  = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool _loading = false;
   bool _obscureText = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  GoogleSignInAuthentication googleAuth;
-  GoogleSignInAccount _currentUser;
+  GoogleSignInAuthentication? googleAuth;
+  GoogleSignInAccount? _currentUser;
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
       'email',
@@ -41,18 +41,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
   );
 
   _register() async {
-    if(!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
-    _formKey.currentState.save();
-    setState(() { _loading = true;});
-    var res = await ctrl.requestwithoutheader({'name': _name.text,'email': _email.text,'password': _password.text}, 'register/user');
-    setState(() { _loading = false; });
+    _formKey.currentState!.save();
+    setState(() {
+      _loading = true;
+    });
+    var res = await ctrl.requestwithoutheader(
+        {'name': _name.text, 'email': _email.text, 'password': _password.text},
+        'register/user');
+    setState(() {
+      _loading = false;
+    });
     if (res != null && res['error'] == null) {
       await ctrl.toastmsg(res['message'], 'long');
       Get.offAllNamed('/signIn');
     } else {
-      setState(() { _loading = false; });
+      setState(() {
+        _loading = false;
+      });
       await ctrl.toastmsg(res['message'], 'long');
     }
   }
@@ -62,19 +70,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       await _googleSignIn.signIn().then((value) {
         print(value);
-        value.authentication.then((valueq) {
-          Map<String, dynamic> decodedToken = JwtDecoder.decode(valueq.idToken);
+        value!.authentication.then((valueq) {
+          Map<String, dynamic> decodedToken =
+              JwtDecoder.decode(valueq.idToken!);
           print(decodedToken.toString());
           print(decodedToken['email'].toString());
           //_showmsg(decodedToken.toString());
-          if(decodedToken['email'].toString() != '' && decodedToken['email'].toString() != null){
+          if (decodedToken['email'].toString() != '' &&
+              decodedToken['email'].toString() != null) {
             setState(() {
               _loading = true;
             });
 //            email_ctrl.text = decodedToken['email'].toString();
 //            name_ctrl.text = decodedToken['name'].toString();
 //            password_ctrl.text = decodedToken['iat'].toString();
-           // _createaccount();
+            // _createaccount();
           }
         });
       });
@@ -153,12 +163,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: TextFormField(
                         controller: _name,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Name is required.';
                           }
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('name'),
                       ),
                     ),
@@ -166,16 +177,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: TextFormField(
                         controller: _email,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Email is required';
                           }
-                          if(!RegExp("^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*").hasMatch(value)){
+                          if (!RegExp(
+                                  "^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*")
+                              .hasMatch(value)) {
                             return 'Enter a valid email address';
                           }
                           return null;
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('email'),
                       ),
                     ),
@@ -185,19 +199,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: _password,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: _obscureText,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Password is required';
                           }
-                          if(value.length <= 6){
+                          if (value.length <= 6) {
                             return 'Password should be minimum 6 characters';
                           }
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('password')
-                            .copyWith(suffixIcon: InkWell(onTap: (){  setState(() {
-                          _obscureText = !_obscureText;
-                        });},child: Icon(_obscureText ? Icons.visibility : Icons.visibility_off))),
+                            .copyWith(
+                                suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _obscureText = !_obscureText;
+                                      });},child: Icon(_obscureText ? Icons.visibility : Icons.visibility_off))),
                       ),
                     ),
                     InkWell(

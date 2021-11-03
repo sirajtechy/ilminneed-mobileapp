@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 
 class AutoFullscreenOrientationPage extends StatefulWidget {
-  final String video_url;
+  final String? video_url;
 
-  const AutoFullscreenOrientationPage({Key key, this.video_url})
+  const AutoFullscreenOrientationPage({Key? key, this.video_url})
       : super(key: key);
 
   @override
@@ -16,8 +16,8 @@ class AutoFullscreenOrientationPage extends StatefulWidget {
 
 class _AutoFullscreenOrientationPageState
     extends State<AutoFullscreenOrientationPage> {
-  BetterPlayerController _betterPlayerController;
-  String url;
+  late BetterPlayerController _betterPlayerController;
+  late String url;
 
   @override
   void initState() {

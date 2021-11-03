@@ -5,10 +5,11 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class SearchHistoryWidget extends StatelessWidget {
-  final List value;
-  final String label;
+  final List? value;
+  final String? label;
 
-  const SearchHistoryWidget({Key key, this.value, this.label}) : super(key: key);
+  const SearchHistoryWidget({Key? key, this.value, this.label})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,28 +20,35 @@ class SearchHistoryWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            label,
+            label!,
             style:
-            largeTextStyle().copyWith(fontSize: 16, color: konDarkColorB2),
+                largeTextStyle().copyWith(fontSize: 16, color: konDarkColorB2),
           ),
           SizedBox(height: 10),
-          Wrap(
-            runSpacing: 1.0,
-            spacing: 5.0,
-            children: value
-                .map(
-                  (e) => InkWell(
-                onTap: (){
-                  Get.toNamed('/search',arguments: e.term.toString());
-                },
-                child: Chip(
-                  backgroundColor: konTextInputBorderActiveColor,
-                  label: Text(e.term.toString(), style: smallTextStyle().copyWith(color: konLightColor1),),
-                ),
-              ),
-            )
-                .toList(),
-          ),
+          value != null
+              ? Wrap(
+                  runSpacing: 1.0,
+                  spacing: 5.0,
+                  children: value!
+                      .map(
+                        (e) => InkWell(
+                          onTap: () {
+                            Get.toNamed('/search',
+                                arguments: e.term.toString());
+                          },
+                          child: Chip(
+                            backgroundColor: konTextInputBorderActiveColor,
+                            label: Text(
+                              e.term.toString(),
+                              style: smallTextStyle()
+                                  .copyWith(color: konLightColor1),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                )
+              : SizedBox(),
         ],
       ),
     );

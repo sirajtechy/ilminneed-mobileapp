@@ -5,7 +5,7 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 class FilterButton extends StatelessWidget {
   final String label;
 
-  const FilterButton({Key key, @required this.label}) : super(key: key);
+  const FilterButton({Key? key, required this.label}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

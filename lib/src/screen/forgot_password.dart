@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/helper/resources/strings.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/textFieldStyle.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
 import 'package:ilminneed/src/widgets/header_text.dart';
 import 'package:ilminneed/src/widgets/hint_text.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:get/get.dart';
 
 class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({Key key}) : super(key: key);
+  const ForgotPassword({Key? key}) : super(key: key);
 
   @override
   _ForgotPasswordState createState() => _ForgotPasswordState();
@@ -27,19 +27,26 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   _sendlink() async {
-    if(!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
-    _formKey.currentState.save();
-    setState(() { _loading = true;});
-    var res = await ctrl.requestwithoutheader({'email': _email.text}, 'forgot/password');
-    setState(() { _loading = false; });
+    _formKey.currentState!.save();
+    setState(() {
+      _loading = true;
+    });
+    var res = await ctrl
+        .requestwithoutheader({'email': _email.text}, 'forgot/password');
+    setState(() {
+      _loading = false;
+    });
     if (res != null && res['error'] == null) {
       await ctrl.toastmsg(res['message'], 'long');
-      Map param = { 'email': _email.text };
-      Get.toNamed('/resetLink',arguments: param);
+      Map param = {'email': _email.text};
+      Get.toNamed('/resetLink', arguments: param);
     } else {
-      setState(() { _loading = false; });
+      setState(() {
+        _loading = false;
+      });
       await ctrl.toastmsg(res['message'], 'long');
     }
   }
@@ -84,16 +91,19 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                       child: TextFormField(
                         controller: _email,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Email is required';
                           }
-                          if(!RegExp("^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*").hasMatch(value)){
+                          if (!RegExp(
+                                  "^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*")
+                              .hasMatch(value)) {
                             return 'Enter a valid email address';
                           }
                           return null;
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('email'),
                       ),
                     ),

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/model/notes.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 
 class BookMarkDetail extends StatefulWidget {
-  final Notes note;
-  final Function(Map data) callbackfunc;
-  final String lesson_id;
-  const BookMarkDetail({Key key,this.note,this.callbackfunc,this.lesson_id}) : super(key: key);
+  final Notes? note;
+  final Function(Map data)? callbackfunc;
+  final String? lesson_id;
+
+  const BookMarkDetail({Key? key, this.note, this.callbackfunc, this.lesson_id})
+      : super(key: key);
 
   @override
   _BookMarkDetailState createState() => _BookMarkDetailState();
@@ -32,16 +34,16 @@ class _BookMarkDetailState extends State<BookMarkDetail> {
             children: [
               InkWell(
                 onTap: (){
-                   Map data = {
-                    'note_id': widget.note.id,
+                  Map data = {
+                    'note_id': widget.note!.id,
                     'lesson_id': widget.lesson_id,
-                     'duration': int.parse(widget.note.duration),
+                    'duration': int.parse(widget.note!.duration!),
                     'action_type': 'position'
                   };
-                  widget.callbackfunc(data);
+                  widget.callbackfunc!(data);
                 },
                 child: Text(
-                  widget.note.note.toString(),
+                  widget.note!.note.toString(),
                   style: mediumTextStyle().copyWith(
                     fontSize: 16,
                     color: konTextInputBorderActiveColor,
@@ -55,11 +57,11 @@ class _BookMarkDetailState extends State<BookMarkDetail> {
               InkWell(
                 onTap:(){
                   Map data = {
-                    'note_id': widget.note.id,
+                    'note_id': widget.note!.id,
                     'lesson_id': widget.lesson_id,
                     'action_type': 'delete'
                   };
-                  widget.callbackfunc(data);
+                  widget.callbackfunc!(data);
                 },
                 child: Icon(
                   Icons.delete,
@@ -72,11 +74,11 @@ class _BookMarkDetailState extends State<BookMarkDetail> {
               InkWell(
                 onTap: (){
                   Map data = {
-                    'note_id': widget.note.id,
+                    'note_id': widget.note!.id,
                     'lesson_id': widget.lesson_id,
                     'action_type': 'edit'
                   };
-                  widget.callbackfunc(data);
+                  widget.callbackfunc!(data);
                 },
                 child: Icon(
                   Icons.edit_outlined,
@@ -104,18 +106,21 @@ class _BookMarkDetailState extends State<BookMarkDetail> {
           InkWell(
             onTap: (){
               Map data = {
-                'note_id': widget.note.id,
+                'note_id': widget.note!.id,
                 'lesson_id': widget.lesson_id,
-                'duration': int.parse(widget.note.duration),
+                'duration': int.parse(widget.note!.duration!),
                 'action_type': 'position'
               };
-              widget.callbackfunc(data);
+              widget.callbackfunc!(data);
             },
             child: Container(
               margin: EdgeInsets.only(top: 7),
               width: double.infinity,
               child: Text(
-                widget.note.duration != 'null' && widget.note.duration != null?'@ '+ ctrl.getTimeString(int.parse(widget.note.duration)):'',
+                widget.note!.duration != 'null' && widget.note!.duration != null
+                    ? '@ ' +
+                        ctrl.getTimeString(int.parse(widget.note!.duration!))
+                    : '',
                 style: largeTextStyle().copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 //import 'package:flutter_filereader/flutter_filereader.dart';
 
 class FileReaderPage extends StatefulWidget {
-  final String filePath;
+  final String? filePath;
 
   FileReaderPage({Key: Key, this.filePath});
 

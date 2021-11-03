@@ -8,12 +8,12 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class HomeScreen extends StatefulWidget {
-  Map currentTab = {'currentTab': 0, 'data': ''};
-  int selectedTab = 0;
+  Map? currentTab = {'currentTab': 0, 'data': ''};
+  int? selectedTab = 0;
   Widget currentPage = ExploreScreen();
 
   HomeScreen({
-    Key key,
+    Key? key,
     this.currentTab,
   }) : super(key: key);
 
@@ -24,12 +24,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int cTap = 0;
+  int? cTap = 0;
 
   Widget chipContainer(String label) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), color: konLightColor2),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25), color: konLightColor2),
       child: Text(
         label,
         style: smallTextStyle().copyWith(color: konBlackColor),
@@ -37,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _onItemTapped(int tabItem) {
+  void _onItemTapped(int? tabItem) {
     setState(() {
       cTap = tabItem;
       widget.selectedTab = tabItem;
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           widget.currentPage = Category();
           break;
         case 2:
-          widget.currentPage = MyCourses(data: widget.currentTab['data']);
+          widget.currentPage = MyCourses(data: widget.currentTab!['data']);
           break;
         case 3:
           widget.currentPage = ConversationListScreen();
@@ -63,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   initState() {
-    _onItemTapped(widget.currentTab['currentTab']);
+    _onItemTapped(widget.currentTab!['currentTab']);
     super.initState();
   }
 
@@ -104,12 +105,14 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Account',
           ),
         ],
-        currentIndex: widget.selectedTab,
+        currentIndex: widget.selectedTab!,
         selectedItemColor: konTextInputBorderActiveColor,
         unselectedItemColor: konDarkColorD3,
         onTap: _onItemTapped,
-        selectedLabelStyle: smallTextStyle().copyWith(fontSize: 10, color: konTextInputBorderActiveColor),
-        unselectedLabelStyle: smallTextStyle().copyWith(fontSize: 10, color: konDarkColorD3),
+        selectedLabelStyle: smallTextStyle()
+            .copyWith(fontSize: 10, color: konTextInputBorderActiveColor),
+        unselectedLabelStyle:
+            smallTextStyle().copyWith(fontSize: 10, color: konDarkColorD3),
       ),
     );
   }

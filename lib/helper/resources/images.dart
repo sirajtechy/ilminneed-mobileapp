@@ -1,4 +1,4 @@
-const String splashScreen = 'assets/images/splash_screen.svg';
+const String /*?*/ /*?*/ /*?*/ splashScreen = 'assets/images/splash_screen.svg';
 const String startScreen = 'assets/images/learning.svg';
 const String signIn = 'assets/images/sign_in.svg';
 const String google = 'assets/images/google.svg';

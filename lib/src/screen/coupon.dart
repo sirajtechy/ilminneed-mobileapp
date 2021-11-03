@@ -5,7 +5,7 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 import 'package:ilminneed/src/widgets/button.dart';
 
 class CouponScreen extends StatelessWidget {
-  const CouponScreen({Key key}) : super(key: key);
+  const CouponScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

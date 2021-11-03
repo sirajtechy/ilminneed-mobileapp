@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/model/course.dart';
 import 'package:ilminneed/src/model/lesson.dart';
 import 'package:ilminneed/src/model/review.dart';
@@ -12,13 +13,13 @@ import 'package:ilminneed/src/widgets/course_feature.dart';
 import 'package:ilminneed/src/widgets/shopping_cart.dart';
 import 'package:ilminneed/src/widgets/testing.dart';
 import 'package:ilminneed/src/widgets/thumbnail.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class CourseDetail extends StatefulWidget {
-  final String id;
-  const CourseDetail({Key key, this.id}) : super(key: key);
+  final String? id;
+
+  const CourseDetail({Key? key, this.id}) : super(key: key);
 
   @override
   _CourseDetailState createState() => _CourseDetailState();
@@ -28,22 +29,24 @@ class _CourseDetailState extends State<CourseDetail> {
   bool _loading = true;
   bool _first = true;
   Course _course = new Course();
-  List<Review> _review = new List<Review>();
-  List<Course> _relatedcourse = new List<Course>();
+  List<Review>? _review;
+
+  List<Course>? _relatedcourse;
+
   var res;
-  int total_lesson;
+  int? total_lesson;
   double star_5 = 0;
   double star_4 = 0;
   double star_3 = 0;
   double star_2 = 0;
   double star_1 = 0;
-  List<Lesson> _lesson = new List<Lesson>();
+  List<Lesson>? _lesson;
 
   _fetchcourse() async {
     if (await ctrl.LoggedIn() == true) {
-      res = await ctrl.getrequestwithheader('course/' + widget.id);
+      res = await ctrl.getrequestwithheader('course/' + widget.id!);
     } else {
-      res = await ctrl.getrequest({}, 'course/' + widget.id);
+      res = await ctrl.getrequest({}, 'course/' + widget.id!);
     }
     if (res != null && res != 'null' && res.containsKey('courses')) {
       setState(() {
@@ -51,39 +54,57 @@ class _CourseDetailState extends State<CourseDetail> {
         _course = _data;
         print(_course.id);
       });
-      List<dynamic> re = res['courses'][0].containsKey('reviews') ? res['courses'][0]['reviews'] : [];
+      List<dynamic> re = res['courses'][0].containsKey('reviews')
+          ? res['courses'][0]['reviews']
+          : [];
       for (int i = 0; i < re.length; i++) {
         if (!mounted) return;
         setState(() {
-          _review.add(Review.fromJson(re[i]));
+          _review?.add(Review.fromJson(re[i]));
         });
       }
-      var rating = res['courses'][0].containsKey('number_of_ratings_basedon') ? res['courses'][0]['number_of_ratings_basedon'] : '';
-      if(rating != ''){
+      var rating = res['courses'][0].containsKey('number_of_ratings_basedon')
+          ? res['courses'][0]['number_of_ratings_basedon']
+          : '';
+      if (rating != '') {
         setState(() {
-          star_5 = double.parse(res['courses'][0]['number_of_ratings_basedon']['5_stars'].toString());
-          star_4 = double.parse(res['courses'][0]['number_of_ratings_basedon']['4_stars'].toString());
-          star_3 = double.parse(res['courses'][0]['number_of_ratings_basedon']['3_stars'].toString());
-          star_2 = double.parse(res['courses'][0]['number_of_ratings_basedon']['2_stars'].toString());
-          star_1 = double.parse(res['courses'][0]['number_of_ratings_basedon']['1_stars'].toString());
+          star_5 = double.parse(res['courses'][0]['number_of_ratings_basedon']
+                  ['5_stars']
+              .toString());
+          star_4 = double.parse(res['courses'][0]['number_of_ratings_basedon']
+                  ['4_stars']
+              .toString());
+          star_3 = double.parse(res['courses'][0]['number_of_ratings_basedon']
+                  ['3_stars']
+              .toString());
+          star_2 = double.parse(res['courses'][0]['number_of_ratings_basedon']
+                  ['2_stars']
+              .toString());
+          star_1 = double.parse(res['courses'][0]['number_of_ratings_basedon']
+                  ['1_stars']
+              .toString());
         });
       }
 
-      var sections = res['courses'][0].containsKey('sections') ? res['courses'][0]['sections'][0].containsKey('lessons') ?'yes':'': '';
-      if(sections != '') {
+      var sections = res['courses'][0].containsKey('sections')
+          ? res['courses'][0]['sections'][0].containsKey('lessons')
+              ? 'yes'
+              : ''
+          : '';
+      if (sections != '') {
         for (int i = 0; i < res['courses'][0]['sections'].length; i++) {
           if (!mounted) return;
           setState(() {
-            _lesson.add(Lesson.fromJson(res['courses'][0]['sections'][i]));
+            _lesson?.add(Lesson.fromJson(res['courses'][0]['sections'][i]));
           });
         }
       }
 
-      if(res.containsKey('related_courses')){
+      if (res.containsKey('related_courses')) {
         for (int i = 0; i < res['related_courses'].length; i++) {
           if (!mounted) return;
           setState(() {
-            _relatedcourse.add(Course.fromJson(res['related_courses'][i]));
+            _relatedcourse?.add(Course.fromJson(res['related_courses'][i]));
           });
         }
       }
@@ -131,10 +152,16 @@ class _CourseDetailState extends State<CourseDetail> {
                 await ctrl.toastmsg('Login to add wishlist', 'short');
               }
             },
-            child: _course.is_purchased != 'true'?Padding(
-              padding: const EdgeInsets.only(left: 15.0),
-              child: _course.is_wishlisted == 'true'?Icon(Icons.favorite, color: Colors.red):Icon(Icons.favorite_border, color: konLightColor1),
-            ):Padding(padding: const EdgeInsets.only(left: 15.0),),
+            child: _course.is_purchased != 'true'
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: _course.is_wishlisted == 'true'
+                        ? Icon(Icons.favorite, color: Colors.red)
+                        : Icon(Icons.favorite_border, color: konLightColor1),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                  ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 8.0),
@@ -166,7 +193,8 @@ class _CourseDetailState extends State<CourseDetail> {
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) =>
-                                    AutoFullscreenOrientationPage(video_url: _course.video_url)));
+                                    AutoFullscreenOrientationPage(
+                                        video_url: _course.video_url)));
                           },
                           child: FlatButton(
                             color: Colors.black.withOpacity(0.5),
@@ -207,7 +235,7 @@ class _CourseDetailState extends State<CourseDetail> {
                         margin:
                             EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: Text(
-                          'Last update ' + _course.last_edited, //16/12/2020
+                          'Last update ' + _course.last_edited!, //16/12/2020
                           style:
                               smallTextStyle().copyWith(color: konDarkColorD3),
                         ),
@@ -230,7 +258,7 @@ class _CourseDetailState extends State<CourseDetail> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    _course.rating,
+                                    _course.rating!,
                                     style: smallTextStyle().copyWith(
                                         fontSize: 12, color: konLightColor1),
                                   ),
@@ -293,7 +321,13 @@ class _CourseDetailState extends State<CourseDetail> {
                             _course.discount_flag.toString() != '' &&
                                     _course.discount_flag.toString() != 'null'
                                 ? Text(
-                              _course.discount_flag.substring(0, _course.discount_flag.indexOf('.')).toString()+'% off',
+                                    _course.discount_flag!
+                                            .substring(
+                                                0,
+                                                _course.discount_flag!
+                                                    .indexOf('.'))
+                                            .toString() +
+                                        '% off',
                                     style: mediumTextStyle().copyWith(
                                         fontSize: 14, color: konGreenColor),
                                   )
@@ -397,35 +431,36 @@ class _CourseDetailState extends State<CourseDetail> {
                         ),
                       ),
                       Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        child: Column (
-                          children: [
-                            CourseFeatureWidget(
-                              iconBGColor: Color(0xffE1F7F9),
-                              iconColor: Color(0xff1BC76F),
-                              value1: 'English',
-                              value2: '', //cc: Tamil, Arabic,
-                              icon: Icons.language,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Map data = {
-                                  'course_id': _course.id,
-                                  'course_name': _course.title,
-                                  'sections': _lesson
-                                };
-                                Get.toNamed('/lessondetail', arguments: data);
-                              },
-                              child: CourseFeatureWidget(
-                                iconBGColor: Color(0xffFFC5FC),
-                                iconColor: Color(0xffBA00EB),
-                                value1: _course.total_lessons.toString() +
-                                    ' video lesson',
-                                value2: 'Total ' + _course.course_duration,
-                                icon: Icons.play_arrow_outlined,
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          child: Column(
+                            children: [
+                              CourseFeatureWidget(
+                                iconBGColor: Color(0xffE1F7F9),
+                                iconColor: Color(0xff1BC76F),
+                                value1: 'English',
+                                value2: '',
+                                //cc: Tamil, Arabic,
+                                icon: Icons.language,
                               ),
-                            ),
+                              InkWell(
+                                onTap: () {
+                                  Map data = {
+                                    'course_id': _course.id,
+                                    'course_name': _course.title,
+                                    'sections': _lesson
+                                  };
+                                  Get.toNamed('/lessondetail', arguments: data);
+                                },
+                                child: CourseFeatureWidget(
+                                  iconBGColor: Color(0xffFFC5FC),
+                                  iconColor: Color(0xffBA00EB),
+                                  value1: _course.total_lessons.toString() +
+                                      ' video lesson',
+                                  value2: 'Total ' + _course.course_duration!,
+                                  icon: Icons.play_arrow_outlined,
+                                ),
+                              ),
 //                      CourseFeatureWidget(
 //                        iconBGColor: Color(0xffFEBED3),
 //                        iconColor: Color(0xffC73967),
@@ -433,32 +468,31 @@ class _CourseDetailState extends State<CourseDetail> {
 //                        value2: 'Article from design leads',
 //                        icon: Icons.description_outlined,
 //                      ),
-                            CourseFeatureWidget(
-                              iconBGColor: Color(0xffFEBED3),
-                              iconColor: Color(0xffC73967),
-                              value1: 'Quiz',
-                              value2: 'With ' +
-                                  _course.total_number_of_quizzes.toString() +
-                                  ' Questions',
-                              icon: Icons.description_outlined,
-                            ),
-                            _course.is_certificate != 'no'
-                                ? CourseFeatureWidget(
-                              iconBGColor: Color(0xffFEBED3),
-                              iconColor: Color(0xffC73967),
-                              value1: 'Certificate',
-                              value2: 'For course completion',
-                              icon: Icons.description_outlined,
-                            )
-                                : SizedBox(),
-                          ],
-                        )
-                      ),
+                              CourseFeatureWidget(
+                                iconBGColor: Color(0xffFEBED3),
+                                iconColor: Color(0xffC73967),
+                                value1: 'Quiz',
+                                value2: 'With ' +
+                                    _course.total_number_of_quizzes.toString() +
+                                    ' Questions',
+                                icon: Icons.description_outlined,
+                              ),
+                              _course.is_certificate != 'no'
+                                  ? CourseFeatureWidget(
+                                      iconBGColor: Color(0xffFEBED3),
+                                      iconColor: Color(0xffC73967),
+                                      value1: 'Certificate',
+                                      value2: 'For course completion',
+                                      icon: Icons.description_outlined,
+                                    )
+                                  : SizedBox(),
+                            ],
+                          )),
 //              RecentItems(
 //                label: 'Skills you will gain',
 //                value: ['UI Design', 'Java', 'Adobe XD', 'Flutter', 'React'],
 //              ),
-                      _relatedcourse.length != 0
+                      _relatedcourse?.length != 0
                           ? Container(
                               margin: EdgeInsets.only(bottom: 10),
                               color: Colors.white,
@@ -481,13 +515,13 @@ class _CourseDetailState extends State<CourseDetail> {
                                     child: SizedBox(
                                       height: 250,
                                       child: ListView.builder(
-                                        itemCount: _relatedcourse.length,
+                                        itemCount: _relatedcourse?.length ?? 0,
                                         scrollDirection: Axis.horizontal,
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           return ThumbNailWidget(
                                             continueLearing: false,
-                                            course: _relatedcourse[index],
+                                            course: _relatedcourse?[index],
                                           );
                                         },
                                       ),
@@ -529,7 +563,8 @@ class _CourseDetailState extends State<CourseDetail> {
                                           fontSize: 45, color: konDarkColorB1),
                                     ),
                                     RatingBar.builder(
-                                      initialRating: double.parse(_course.rating),
+                                      initialRating:
+                                          double.parse(_course.rating!),
                                       minRating: 0,
                                       direction: Axis.horizontal,
                                       allowHalfRating: true,
@@ -541,11 +576,12 @@ class _CourseDetailState extends State<CourseDetail> {
                                         Icons.star,
                                         color: Colors.amber,
                                       ),
-                                      onRatingUpdate: null,
+                                      onRatingUpdate: (double val) => 0,
                                     ),
                                     SizedBox(height: 10),
                                     Text(
-                                      _course.number_of_ratings+' Verified Buyers',
+                                      _course.number_of_ratings! +
+                                          ' Verified Buyers',
                                       style: mediumTextStyle()
                                           .copyWith(color: konDarkColorD3),
                                     ),
@@ -588,16 +624,16 @@ class _CourseDetailState extends State<CourseDetail> {
                         padding: EdgeInsets.symmetric(vertical: 0),
                         shrinkWrap: true,
                         primary: false,
-                        itemCount: _review.length,
+                        itemCount: _review?.length ?? 0,
                         separatorBuilder: (context, index) {
                           return SizedBox(height: 0);
                         },
                         itemBuilder: (context, index) {
                           return CommentRating(
-                              rating: double.parse(_review[index].rating),
-                              name: _review[index].first_name,
-                              time: _review[index].date_added.toString(),
-                              comment: _review[index].review.toString());
+                              rating: double.parse(_review![index].rating!),
+                              name: _review?[index].first_name,
+                              time: _review?[index].date_added.toString(),
+                              comment: _review?[index].review.toString());
                         },
                       ),
                     ],
@@ -636,81 +672,94 @@ class _CourseDetailState extends State<CourseDetail> {
                         children: <Widget>[
                           SizedBox(
                             width: MediaQuery.of(context).size.width - 40,
-                            child: _course.is_purchased != 'true'?FlatButton(
-                              onPressed: () async {
-                                if (await ctrl.LoggedIn() == true) {
-                                  if(_course.is_carted == 'true'){
-                                    //Get.offNamed('/', arguments: 0);
-                                    Get.offNamed('/cart');
-                                  }else{
-                                    setState(() {
-                                      _loading = true;
-                                    });
-                                    var res = await ctrl.addtocart(
-                                        _course.id, this.context);
-                                    if (res) {
-                                      _fetchcourse();
-                                    }
-                                  }
-                                } else {
-                                  Get.offNamed('/signIn', arguments: {
-                                    'name': '/courseDetail',
-                                    'arg': _course.id
-                                  });
-                                }
-                              },
-                              shape: StadiumBorder(),
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              color: konLightColor1,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    _course.is_carted == 'true'
-                                        ? Icons.check_circle
-                                        : Icons.shopping_cart,
-                                    color: konTextInputBorderActiveColor,
-                                    size: 18,
+                            child: _course.is_purchased != 'true'
+                                ? FlatButton(
+                                    onPressed: () async {
+                                      if (await ctrl.LoggedIn() == true) {
+                                        if (_course.is_carted == 'true') {
+                                          //Get.offNamed('/', arguments: 0);
+                                          Get.offNamed('/cart');
+                                        } else {
+                                          setState(() {
+                                            _loading = true;
+                                          });
+                                          var res = await ctrl.addtocart(
+                                              _course.id, this.context);
+                                          if (res) {
+                                            _fetchcourse();
+                                          }
+                                        }
+                                      } else {
+                                        Get.offNamed('/signIn', arguments: {
+                                          'name': '/courseDetail',
+                                          'arg': _course.id
+                                        });
+                                      }
+                                    },
+                                    shape: StadiumBorder(),
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    color: konLightColor1,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          _course.is_carted == 'true'
+                                              ? Icons.check_circle
+                                              : Icons.shopping_cart,
+                                          color: konTextInputBorderActiveColor,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Text(
+                                          _course.is_carted == 'true'
+                                              ? 'View cart'
+                                              : 'Add to cart',
+                                          style: ctaTextStyle().copyWith(
+                                              color:
+                                                  konTextInputBorderActiveColor),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                : FlatButton(
+                                    onPressed: () async {
+                                      Get.toNamed('/lesson',
+                                          arguments: _course.id);
+                                    },
+                                    shape: StadiumBorder(),
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    color: konLightColor1,
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(width: 5),
+                                        Text(
+                                          'Start Learning',
+                                          style: ctaTextStyle().copyWith(
+                                              color:
+                                                  konTextInputBorderActiveColor),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(width: 5),
-                                  Text(
-                                    _course.is_carted == 'true' ? 'View cart' : 'Add to cart',
-                                    style: ctaTextStyle()
-                                        .copyWith(color: konTextInputBorderActiveColor),
-                                  )
-                                ],
-                              ),
-                            ):FlatButton(
-                              onPressed: () async {
-                                Get.toNamed('/lesson', arguments: _course.id);
-                              },
-                              shape: StadiumBorder(),
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              color: konLightColor1,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(width: 5),
-                                  Text(
-                                    'Start Learning',
-                                    style: ctaTextStyle()
-                                        .copyWith(color: konTextInputBorderActiveColor),
-                                  )
-                                ],
-                              ),
-                            ),
                           ),
                         ],
                       ),
-                      _course.is_purchased != 'true'?Text(
-                        'Buy now & Unlock the course',
-                        textAlign: TextAlign.left,
-                        style: buttonTextStyle().copyWith(
-                            color: konLightColor1,
-                            fontWeight: FontWeight.w400),
-                      ):SizedBox()
+                      _course.is_purchased != 'true'
+                          ? Text(
+                              'Buy now & Unlock the course',
+                              textAlign: TextAlign.left,
+                              style: buttonTextStyle().copyWith(
+                                  color: konLightColor1,
+                                  fontWeight: FontWeight.w400),
+                            )
+                          : SizedBox()
                     ],
                   ),
                 ),
@@ -722,27 +771,27 @@ class _CourseDetailState extends State<CourseDetail> {
 }
 
 class CustomSlider extends StatelessWidget {
-  final double percentage;
-  final int width;
-  CustomSlider({
-    this.percentage, this.width
-  });
+  final double? percentage;
+  final int? width;
+
+  CustomSlider({this.percentage, this.width});
+
   @override
   Widget build(BuildContext context) {
-    return Row (
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
-          width: 20,
-            child: Text (this.width.toString(), style: buttonTextStyle())
-        ),
+            width: 20,
+            child: Text(this.width.toString(), style: buttonTextStyle())),
         SizedBox(width: 10),
-        Expanded(child: Stack(
+        Expanded(
+            child: Stack(
           children: [
             new LinearPercentIndicator(
               width: MediaQuery.of(context).size.width / 2.5,
               lineHeight: 8.0,
-              percent: percentage,
+              percent: percentage!,
               progressColor: konPrimaryColor,
             ),
           ],

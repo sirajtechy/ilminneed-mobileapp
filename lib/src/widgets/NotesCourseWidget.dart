@@ -1,14 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 import 'package:ilminneed/src/model/lessonnote.dart';
 import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
-import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
 
 class NotesCourseWidget extends StatefulWidget {
-  LessonNote lessonnote;
-  void Function(Map data) callbackfunc;
-  NotesCourseWidget({Key key,this.lessonnote,this.callbackfunc}) : super(key: key);
+  LessonNote? lessonnote;
+  void Function(Map data)? callbackfunc;
+
+  NotesCourseWidget({Key? key, this.lessonnote, this.callbackfunc})
+      : super(key: key);
 
   @override
   _NotesCourseWidgetState createState() => _NotesCourseWidgetState();
@@ -28,13 +30,13 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.lessonnote.title.toString(),
+                Text(widget.lessonnote!.title.toString(),
                     softWrap: true,
                     maxLines: 2,
                     style: titleTextStyle().copyWith(color: konDarkColorB1)),
                 SizedBox(height: 8),
                 Text(
-                  'By '+widget.lessonnote.instructor_name.toString(),
+                  'By ' + widget.lessonnote!.instructor_name.toString(),
                   style: smallTextStyle().copyWith(color: konDarkColorD3),
                 ),
               ],
@@ -51,26 +53,40 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child:  ListView.separated(
-                      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                       shrinkWrap: true,
                       primary: false,
-                      itemCount: widget.lessonnote.notes.length,
+                      itemCount: widget.lessonnote!.notes!.length,
                       separatorBuilder: (context, index) {
                         return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          padding:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           child: Divider(color: Colors.grey),
                         );
                       },
                       itemBuilder: (context, index) {
-                        return Column (
+                        return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row (
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text (
-                                  '@ '+widget.lessonnote.notes[index].duration != 'null' && widget.lessonnote.notes[index].duration != null?ctrl.getTimeString(int.parse(widget.lessonnote.notes[index].duration)):'',
-                                  style: ctaTextStyle().copyWith(color: konPrimaryColor2),
+                                  '@ ' +
+                                                  widget
+                                                      .lessonnote!
+                                                      .notes![index]
+                                                      .duration! !=
+                                              'null' &&
+                                          widget.lessonnote!.notes![index]
+                                                  .duration !=
+                                              null
+                                      ? ctrl.getTimeString(int.parse(widget
+                                          .lessonnote!.notes![index].duration!))
+                                      : '',
+                                  style: ctaTextStyle()
+                                      .copyWith(color: konPrimaryColor2),
                                 ),
                                 Container(
                                   child: Row (
@@ -78,11 +94,13 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
                                       InkWell(
                                         onTap:(){
                                           Map data = {
-                                            'lesson_id': widget.lessonnote.lesson_id,
-                                            'note_id': widget.lessonnote.notes[index].id,
+                                            'lesson_id':
+                                                widget.lessonnote!.lesson_id,
+                                            'note_id': widget
+                                                .lessonnote!.notes![index].id,
                                             'action_type': 'delete'
                                           };
-                                          widget.callbackfunc(data);
+                                          widget.callbackfunc!(data);
                                         },
                                         child: Icon (
                                           CupertinoIcons.trash, size: 20,
@@ -92,11 +110,13 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
                                       InkWell(
                                         onTap:(){
                                           Map data = {
-                                            'lesson_id': widget.lessonnote.lesson_id,
-                                            'note_id': widget.lessonnote.notes[index].id,
+                                            'lesson_id':
+                                                widget.lessonnote!.lesson_id,
+                                            'note_id': widget
+                                                .lessonnote!.notes![index].id,
                                             'action_type': 'edit'
                                           };
-                                          widget.callbackfunc(data);
+                                          widget.callbackfunc!(data);
                                         },
                                         child: Icon (
                                           Icons.edit, size: 20,
@@ -120,7 +140,7 @@ class _NotesCourseWidgetState extends State<NotesCourseWidget> {
 //                            ),
                             SizedBox(height: 8),
                             Text(
-                              widget.lessonnote.notes[index].note.toString(),
+                              widget.lessonnote!.notes![index].note.toString(),
                               style: descTextStyle(),
                             ),
 //                            SizedBox(height: 8),

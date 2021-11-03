@@ -9,10 +9,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MessagesWidget extends StatefulWidget {
   final bool isAuthor;
-  final QandA qanda;
-  final void Function(Map data) callbackfunc;
+  final QandA? qanda;
+  final void Function(Map data)? callbackfunc;
 
-  const MessagesWidget({Key key, this.isAuthor = false, this.qanda,this.callbackfunc}) : super(key: key);
+  const MessagesWidget(
+      {Key? key, this.isAuthor = false, this.qanda, this.callbackfunc})
+      : super(key: key);
 
   @override
   _MessagesWidgetState createState() => _MessagesWidgetState();
@@ -43,7 +45,9 @@ class _MessagesWidgetState extends State<MessagesWidget> {
               ),
               SizedBox(width: 10),
               Text(
-                widget.qanda.first_name.toString() +' '+widget.qanda.last_name.toString(),
+                widget.qanda!.first_name.toString() +
+                    ' ' +
+                    widget.qanda!.last_name.toString(),
                 style: buttonTextStyle()
                     .copyWith(fontSize: 12, color: Colors.black),
               ),
@@ -68,63 +72,75 @@ class _MessagesWidgetState extends State<MessagesWidget> {
                     .copyWith(fontSize: 10, color: konDarkColorD3),
               ),
               Spacer(),
-              widget.qanda.is_owner == 'true'?InkWell(
-                onTap: () {
-                  Map data = {
-                    'qanda_id': widget.qanda.id,
-                    'action_type':'delete'
-                  };
-                  widget.callbackfunc(data);
-                },
-                child: Icon(
-                  Icons.delete_outline_outlined,
-                ),
-              ):SizedBox(),
+              widget.qanda!.is_owner == 'true'
+                  ? InkWell(
+                      onTap: () {
+                        Map data = {
+                          'qanda_id': widget.qanda!.id,
+                          'action_type': 'delete'
+                        };
+                        widget.callbackfunc!(data);
+                      },
+                      child: Icon(
+                        Icons.delete_outline_outlined,
+                      ),
+                    ):SizedBox(),
             ],
           ),
-          widget.qanda.attachment_type == 'jpeg' || widget.qanda.attachment_type == 'jpg' || widget.qanda.attachment_type == 'png'?InkWell(
-            onTap: () async {
-              //final _result = await OpenFile.open(widget.qanda.attachment_url.toString());
-              Get.toNamed('/viewimage', arguments: widget.qanda.attachment_url.toString());
-            },
-            child: Container (
-              margin: EdgeInsets.only(left: 50, bottom: 10),
-              width: 150,
-              child: Image(
-                image: NetworkImage(widget.qanda.attachment_url.toString()),
-              ),
-            ),
+          widget.qanda!.attachment_type == 'jpeg' ||
+                  widget.qanda!.attachment_type == 'jpg' ||
+                  widget.qanda!.attachment_type == 'png'
+              ? InkWell(
+                  onTap: () async {
+                    //final _result = await OpenFile.open(widget.qanda.attachment_url.toString());
+                    Get.toNamed('/viewimage',
+                        arguments: widget.qanda!.attachment_url.toString());
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(left: 50, bottom: 10),
+                    width: 150,
+                    child: Image(
+                      image:
+                          NetworkImage(widget.qanda!.attachment_url.toString()),
+                    ),
+                  ),
           ):SizedBox(),
 
-          widget.qanda.attachment_type == 'pdf' || widget.qanda.attachment_type == 'doc' || widget.qanda.attachment_type == 'docx'?InkWell(
-            onTap: (){
-              _launchURL(widget.qanda.attachment_url);
-            },
-            child: Container (
-              margin: EdgeInsets.only(left: 50, bottom: 10),
-              width: 50,
-              child: Image(
-                image: AssetImage(document),
-              ),
-            ),
-          ):SizedBox(),
+          widget.qanda!.attachment_type == 'pdf' ||
+                  widget.qanda!.attachment_type == 'doc' ||
+                  widget.qanda!.attachment_type == 'docx'
+              ? InkWell(
+                  onTap: () {
+                    _launchURL(widget.qanda!.attachment_url);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(left: 50, bottom: 10),
+                    width: 50,
+                    child: Image(
+                      image: AssetImage(document),
+                    ),
+                  ),
+                ):SizedBox(),
 
-          widget.qanda.audio_attachment != '' && widget.qanda.audio_attachment != 'null' && widget.qanda.audio_attachment != null?InkWell(
-            onTap: () {
-              _mPlayer.openAudioSession().then((value) {
-                if (!_mPlayer.isPlaying == true) {
-                  setState(() {
-                    playing = true;
-                  });
-                  _mPlayer
-                      .startPlayer(
-                      fromURI: widget.qanda.audio_attachment,
-                      //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
-                      whenFinished: () async {
+          widget.qanda!.audio_attachment != '' &&
+                  widget.qanda!.audio_attachment != 'null' &&
+                  widget.qanda!.audio_attachment != null
+              ? InkWell(
+                  onTap: () {
+                    _mPlayer.openAudioSession().then((value) {
+                      if (!_mPlayer.isPlaying == true) {
                         setState(() {
-                          playing = false;
+                          playing = true;
                         });
-                      })
+                        _mPlayer
+                            .startPlayer(
+                                fromURI: widget.qanda!.audio_attachment,
+                                //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
+                                whenFinished: () async {
+                                  setState(() {
+                                    playing = false;
+                                  });
+                                })
                       .then((value) {});
                 } else {
                   _mPlayer.stopPlayer();
@@ -153,7 +169,7 @@ class _MessagesWidgetState extends State<MessagesWidget> {
           Container(
             margin: EdgeInsets.only(left: 50),
             child: Text(
-              widget.qanda.question.toString(),
+              widget.qanda!.question.toString(),
               style: mediumTextStyle()
                   .copyWith(fontSize: 14, color: konDarkColorB2),
             ),
@@ -181,8 +197,8 @@ class _MessagesWidgetState extends State<MessagesWidget> {
                   onTap: () {
                     Map data = {
                       //'reply': widget.qanda.reply,
-                      'question_id': widget.qanda.id,
-                      'is_owner': widget.qanda.is_owner
+                      'question_id': widget.qanda!.id,
+                      'is_owner': widget.qanda!.is_owner
                     };
                     Get.toNamed('/qandareply', arguments: data);
                   },
@@ -194,7 +210,7 @@ class _MessagesWidgetState extends State<MessagesWidget> {
                 ),
                 SizedBox(width: 5),
                 Text(
-                  '(${widget.qanda.reply_count.toString()})',
+                  '(${widget.qanda!.reply_count.toString()})',
                   style: mediumTextStyle()
                       .copyWith(fontSize: 10, color: konDarkColorB1),
                 ),

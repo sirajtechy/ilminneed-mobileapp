@@ -15,11 +15,11 @@ class ChatMessage {
       this.time,
       this.message});
 
-  final String id;
-  final String email;
-  final String firstName;
-  final String lastName;
-  final String image, time, message;
+  final String? id;
+  final String? email;
+  final String? firstName;
+  final String? lastName;
+  final String? image, time, message;
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
         id: json["id"] == null ? null : json["id"],
@@ -41,7 +41,7 @@ class ChatMessage {
 }
 
 class ConversationListScreen extends StatefulWidget {
-  const ConversationListScreen({Key key}) : super(key: key);
+  const ConversationListScreen({Key? key}) : super(key: key);
 
   @override
   _ConversationListScreenState createState() => _ConversationListScreenState();
@@ -130,7 +130,7 @@ class _ConversationListScreenState extends State<ConversationListScreen> {
                                 CircleAvatar(
                                   radius: 20,
                                   backgroundImage:
-                                      NetworkImage(_chatMessage[index].image),
+                                      NetworkImage(_chatMessage[index].image!),
                                 ),
                                 Expanded(
                                   child: Container(

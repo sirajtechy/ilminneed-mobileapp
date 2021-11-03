@@ -4,12 +4,12 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:ilminneed/src/ui_helper/text_styles.dart';
 
 class CourseFeatureWidget extends StatelessWidget {
-  final Color iconColor, iconBGColor;
-  final IconData icon;
-  final String value1, value2;
+  final Color? iconColor, iconBGColor;
+  final IconData? icon;
+  final String? value1, value2;
 
   const CourseFeatureWidget(
-      {Key key,
+      {Key? key,
       this.iconBGColor,
       this.iconColor,
       this.value1,
@@ -41,12 +41,12 @@ class CourseFeatureWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  value1,
+                  value1!,
                   style: largeTextStyle()
                       .copyWith(fontSize: 16, color: konDarkColorB1),
                 ),
                 Text(
-                  value2,
+                  value2!,
                   style: mediumTextStyle()
                       .copyWith(fontSize: 14, color: konDarkColorD3),
                 ),

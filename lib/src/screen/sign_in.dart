@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:ilminneed/cart_bloc.dart';
 import 'package:ilminneed/helper/resources/images.dart';
 import 'package:ilminneed/helper/resources/strings.dart';
 import 'package:ilminneed/src/controller/globalctrl.dart' as ctrl;
@@ -12,54 +13,60 @@ import 'package:ilminneed/src/widgets/button.dart';
 import 'package:ilminneed/src/widgets/header_text.dart';
 import 'package:ilminneed/src/widgets/hint_text.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:ilminneed/cart_bloc.dart';
 import 'package:provider/provider.dart';
 
 class SignInScreen extends StatefulWidget {
-  final Map data;
-  const SignInScreen({Key key,this.data}) : super(key: key);
+  final Map? data;
+
+  const SignInScreen({Key? key, this.data}) : super(key: key);
 
   @override
   _SignInScreenState createState() => _SignInScreenState();
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> _formKey  = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool _loading = false;
   bool _obscureText = true;
 
   _login() async {
-    if(!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
-    _formKey.currentState.save();
-    setState(() { _loading = true;});
-    var res = await ctrl.requestwithoutheader({'email': _email.text,'password': _password.text}, 'login');
+    _formKey.currentState!.save();
+    setState(() {
+      _loading = true;
+    });
+    var res = await ctrl.requestwithoutheader(
+        {'email': _email.text, 'password': _password.text}, 'login');
     print(res);
-    setState(() { _loading = false; });
+    setState(() {
+      _loading = false;
+    });
     if (res != null && res['validity'] == 1) {
       await ctrl.saveuserdata(res);
-      if(res.containsKey('image')){
+      if (res.containsKey('image')) {
         var bloc = Provider.of<CartBloc>(context, listen: false);
         await bloc.updateUserImage(res['image'].toString());
       }
-      if(widget.data == null){
-        Get.offAllNamed('/', arguments: { 'currentTab': 0,'data':'' });
+      if (widget.data == null) {
+        Get.offAllNamed('/', arguments: {'currentTab': 0, 'data': ''});
         return;
-      }else{
-        Get.offAllNamed('/', arguments: { 'currentTab': 0,'data':'' });
-        if (widget.data['arg'] == '') {
-          Get.toNamed(widget.data['name']);
+      } else {
+        Get.offAllNamed('/', arguments: {'currentTab': 0, 'data': ''});
+        if (widget.data!['arg'] == '') {
+          Get.toNamed(widget.data!['name']);
         } else {
-          Get.toNamed(widget.data['name'], arguments: widget.data['arg']);
+          Get.toNamed(widget.data!['name'], arguments: widget.data!['arg']);
         }
       }
     } else {
-      setState(() { _loading = false; });
+      setState(() {
+        _loading = false;
+      });
       await ctrl.toastmsg('Enter valid credentials', 'long');
     }
   }
@@ -88,7 +95,6 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
     );
   }
-
 
   @override
   void initState() {
@@ -122,38 +128,51 @@ class _SignInScreenState extends State<SignInScreen> {
                     HeaderTextWidget(label: CONTINUE_LEARNING),
                     HintWidget(label: SIGN_IN_HINT),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                       child: TextFormField(
                         controller: _email,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Email is required';
                           }
-                          if(!RegExp("^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*").hasMatch(value)){
+                          if (!RegExp(
+                                  "^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*")
+                              .hasMatch(value)) {
                             return 'Enter a valid email address';
                           }
                           return null;
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('email'),
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                       child: TextFormField(
                         controller: _password,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: _obscureText,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Password is required';
                           }
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('password')
-                            .copyWith(suffixIcon: InkWell(onTap: (){  setState(() {
-                          _obscureText = !_obscureText;
-                        });},child: Icon(_obscureText ? Icons.visibility : Icons.visibility_off))),
+                            .copyWith(
+                                suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _obscureText = !_obscureText;
+                                      });
+                                    },
+                                    child: Icon(_obscureText
+                                        ? Icons.visibility
+                                        : Icons.visibility_off))),
                       ),
                     ),
                     InkWell(
@@ -192,8 +211,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             margin: EdgeInsets.symmetric(horizontal: 8),
                             child: Text(
                               SIGN_IN_OPTION,
-                              style:
-                                  smallTextStyle().copyWith(color: konLightColor3),
+                              style: smallTextStyle()
+                                  .copyWith(color: konLightColor3),
                             ),
                           ),
                           Container(
@@ -209,8 +228,16 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          InkWell(onTap:(){ ctrl.toastmsg('Coming soon', 'short'); }, child: SocialMediaButton(google, GOOGLE)),
-                          InkWell(onTap:(){ ctrl.toastmsg('Coming soon', 'short'); }, child: SocialMediaButton(facebook, FACEBOOK)),
+                          InkWell(
+                              onTap: () {
+                                ctrl.toastmsg('Coming soon', 'short');
+                              },
+                              child: SocialMediaButton(google, GOOGLE)),
+                          InkWell(
+                              onTap: () {
+                                ctrl.toastmsg('Coming soon', 'short');
+                              },
+                              child: SocialMediaButton(facebook, FACEBOOK)),
                         ],
                       ),
                     ),
@@ -225,7 +252,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           children: [
                             Text(
                               NEW_MEMBER,
-                              style: smallTextStyle().copyWith(color: konDarkColorB1),
+                              style: smallTextStyle()
+                                  .copyWith(color: konDarkColorB1),
                             ),
                             Text(
                               CREATE_ACCOUNT,

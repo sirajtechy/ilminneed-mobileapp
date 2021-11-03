@@ -4,7 +4,7 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 class HeaderTextWidget extends StatelessWidget {
   final String label;
 
-  const HeaderTextWidget({Key key, @required this.label}) : super(key: key);
+  const HeaderTextWidget({Key? key, required this.label}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -14,10 +14,10 @@ import 'package:ilminneed/src/widgets/shopping_cart.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class MyCourses extends StatefulWidget {
-  String data = '0';
+  String? data = '0';
 
   MyCourses({
-    Key key,
+    Key? key,
     this.data,
   }) : super(key: key);
 
@@ -27,7 +27,7 @@ class MyCourses extends StatefulWidget {
 
 class _MyCoursesState extends State<MyCourses>
     with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  TabController? _tabController;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int _tabIndex = 0;
   bool _loading = true;
@@ -35,10 +35,14 @@ class _MyCoursesState extends State<MyCourses>
   String learned_time = '';
   String quiz_attended = '0';
   String total_certificate = '0';
-  List<Course> _progress = new List<Course>();
-  List<Course> _saved = new List<Course>();
-  List<Course> _completed = new List<Course>();
-  List<LessonNote> _lessonnote = new List<LessonNote>();
+  List<Course>? _progress;
+
+  List<Course>? _saved;
+
+  List<Course>? _completed;
+
+  List<LessonNote>? _lessonnote;
+
   bool empty = false;
   bool load_note = true;
   bool _firsttime = true;
@@ -52,9 +56,9 @@ class _MyCoursesState extends State<MyCourses>
     setState(() {
       _firsttime = false;
       _loading = false;
-      _progress.clear();
-      _saved.clear();
-      _completed.clear();
+      _progress?.clear();
+      _saved?.clear();
+      _completed?.clear();
     });
     if (res != null && res != 'null' && res.containsKey('my_courses')) {
       if (res['my_courses'].length != 0) {
@@ -75,17 +79,17 @@ class _MyCoursesState extends State<MyCourses>
           if (!mounted) return;
           setState(() {
             if (data[i]['in_progress'] == true && data[i]['completion'] == 0) {
-              _progress.add(Course.fromJson(data[i]));
+              _progress?.add(Course.fromJson(data[i]));
             } else if (data[i]['in_progress'] != true &&
                 data[i]['completion'] == 0) {
-              _saved.add(Course.fromJson(data[i]));
+              _saved?.add(Course.fromJson(data[i]));
             } else if (data[i]['completion'] == 100) {
-              _completed.add(Course.fromJson(data[i]));
+              _completed?.add(Course.fromJson(data[i]));
             } else if (data[i]['completion'] != 0 &&
                 data[i]['completion'] != 100) {
-              _progress.add(Course.fromJson(data[i]));
+              _progress?.add(Course.fromJson(data[i]));
             } else {
-              _saved.add(Course.fromJson(data[i]));
+              _saved?.add(Course.fromJson(data[i]));
             }
           });
         }
@@ -105,7 +109,7 @@ class _MyCoursesState extends State<MyCourses>
     var res = await ctrl.getrequestwithheader('bookmarks_by_user');
     if (!mounted) return;
     setState(() {
-      _lessonnote.clear();
+      _lessonnote?.clear();
       load_note = false;
       _loading = false;
     });
@@ -115,7 +119,7 @@ class _MyCoursesState extends State<MyCourses>
         // print(data[i]);
         if (!mounted) return;
         setState(() {
-          _lessonnote.add(LessonNote.fromJson(data[i]));
+          _lessonnote?.add(LessonNote.fromJson(data[i]));
         });
       }
     }
@@ -128,13 +132,13 @@ class _MyCoursesState extends State<MyCourses>
       });
       if (widget.data != '') {
         setState(() {
-          _tabIndex = int.parse(widget.data);
+          _tabIndex = int.parse(widget.data!);
         });
       }
 
       _tabController =
           TabController(length: 4, initialIndex: _tabIndex, vsync: this);
-      _tabController.addListener(_handleTabSelection);
+      _tabController!.addListener(_handleTabSelection);
       _fetchcourse();
       _fetchlessonnote();
     } else {
@@ -285,15 +289,15 @@ class _MyCoursesState extends State<MyCourses>
 
   void dispose() {
     if (_isLogin) {
-      _tabController.dispose();
+      _tabController!.dispose();
     }
     super.dispose();
   }
 
   _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
+    if (_tabController!.indexIsChanging) {
       setState(() {
-        _tabIndex = _tabController.index;
+        _tabIndex = _tabController!.index;
       });
     }
   }
@@ -505,20 +509,20 @@ class _MyCoursesState extends State<MyCourses>
                   child: TabBarView(
                     controller: _tabController,
                     children: <Widget>[
-                      _saved.length != 0
+                      _saved?.length != 0
                           ? Container(
                               child: ListView.separated(
-                              padding: EdgeInsets.symmetric(
+                                padding: EdgeInsets.symmetric(
                                   vertical: 20, horizontal: 20),
                               shrinkWrap: true,
                               primary: false,
-                              itemCount: _saved.length,
+                              itemCount: _saved?.length ?? 0,
                               separatorBuilder: (context, index) {
                                 return SizedBox(height: 10);
                               },
                               itemBuilder: (context, index) {
                                 return SavedCourseWidget(
-                                    status: 'saved', course: _saved[index]);
+                                    status: 'saved', course: _saved?[index]);
                               },
                             ))
                           : Container(
@@ -546,21 +550,21 @@ class _MyCoursesState extends State<MyCourses>
                                     )),
                               ),
                             ),
-                      _progress.length != 0
+                      _progress?.length != 0
                           ? Container(
                               child: ListView.separated(
                                 padding: EdgeInsets.symmetric(
                                     vertical: 20, horizontal: 20),
                                 shrinkWrap: true,
                                 primary: false,
-                                itemCount: _progress.length,
+                                itemCount: _progress?.length ?? 0,
                                 separatorBuilder: (context, index) {
                                   return SizedBox(height: 10);
                                 },
                                 itemBuilder: (context, index) {
                                   return SavedCourseWidget(
                                       status: 'progress',
-                                      course: _progress[index]);
+                                      course: _progress?[index]);
                                 },
                               ),
                             )
@@ -589,21 +593,21 @@ class _MyCoursesState extends State<MyCourses>
                                     )),
                               ),
                             ),
-                      _completed.length != 0
+                      _completed?.length != 0
                           ? Container(
                               child: ListView.separated(
                                 padding: EdgeInsets.symmetric(
                                     vertical: 20, horizontal: 20),
                                 shrinkWrap: true,
                                 primary: false,
-                                itemCount: _completed.length,
+                                itemCount: _completed?.length ?? 0,
                                 separatorBuilder: (context, index) {
                                   return SizedBox(height: 10);
                                 },
                                 itemBuilder: (context, index) {
                                   return SavedCourseWidget(
                                       status: 'completed',
-                                      course: _completed[index]);
+                                      course: _completed?[index]);
                                 },
                               ),
                             )
@@ -632,14 +636,14 @@ class _MyCoursesState extends State<MyCourses>
                                     )),
                               ),
                             ),
-                      _lessonnote.length != 0 && !load_note
+                      _lessonnote?.length != 0 && !load_note
                           ? Container(
                               child: ListView.separated(
                                 padding: EdgeInsets.symmetric(
                                     vertical: 20, horizontal: 10),
                                 shrinkWrap: true,
                                 primary: false,
-                                itemCount: _lessonnote.length,
+                                itemCount: _lessonnote?.length ?? 0,
                                 separatorBuilder: (context, index) {
                                   return Padding(
                                     padding: EdgeInsets.symmetric(
@@ -649,12 +653,12 @@ class _MyCoursesState extends State<MyCourses>
                                 },
                                 itemBuilder: (context, index) {
                                   return NotesCourseWidget(
-                                      lessonnote: _lessonnote[index],
+                                      lessonnote: _lessonnote?[index],
                                       callbackfunc: _callbackfunc);
                                 },
                               ),
                             )
-                          : _lessonnote.length == 0 && !load_note
+                          : _lessonnote?.length == 0 && !load_note
                               ? Container(
                                   child: Align(
                                       alignment: Alignment.center,

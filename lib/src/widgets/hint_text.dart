@@ -5,7 +5,7 @@ import 'package:ilminneed/src/ui_helper/text_styles.dart';
 class HintWidget extends StatelessWidget {
   final String label;
 
-  const HintWidget({Key key, @required this.label}) : super(key: key);
+  const HintWidget({Key? key, required this.label}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

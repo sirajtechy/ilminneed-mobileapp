@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CartBloc with ChangeNotifier {
-  Map<int, int> _cart = {};
+  Map<int, int>? _cart = {};
   int _cartcount = 0;
   String _user_image = '';
 
-  Map<int, int> get cart => _cart;
+  Map<int, int>? get cart => _cart;
 
   void addToCart(index) {
-    if (_cart.containsKey(index)) {
-      _cart[index] += 1;
+    if (_cart!.containsKey(index)) {
+      _cart![index] = (_cart![index]! + 1);
     } else {
-      _cart[index] = 1;
+      _cart![index] = 1;
     }
     notifyListeners();
   }
 
   void clear(index) {
-    if (_cart.containsKey(index)) {
-      _cart.remove(index);
+    if (cart == null) return;
+    if (_cart!.containsKey(index)) {
+      _cart?.remove(index);
       notifyListeners();
     }
   }
@@ -32,7 +33,7 @@ class CartBloc with ChangeNotifier {
     return _user_image;
   }
 
-  void updateUserImage(image) async {
+  Future<dynamic> updateUserImage(image) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setString('user_image', image);
     _user_image = image;
@@ -45,5 +46,4 @@ class CartBloc with ChangeNotifier {
     _cartcount = count;
     notifyListeners();
   }
-
 }

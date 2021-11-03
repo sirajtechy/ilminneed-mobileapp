@@ -4,8 +4,9 @@ import 'package:ilminneed/src/ui_helper/colors.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ViewImage extends StatefulWidget {
-  final String url;
-  const ViewImage({Key key, this.url}) : super(key: key);
+  final String? url;
+
+  const ViewImage({Key? key, this.url}) : super(key: key);
 
   @override
   _ViewImageState createState() => _ViewImageState();
@@ -22,8 +23,8 @@ class _ViewImageState extends State<ViewImage> {
       body: GestureDetector(
         child: Container(
             child: PhotoView(
-              imageProvider: NetworkImage(widget.url),
-            )
+              imageProvider: NetworkImage(widget.url!),
+        )
         ),
       ),
     );

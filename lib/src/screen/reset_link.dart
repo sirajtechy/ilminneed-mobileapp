@@ -16,9 +16,9 @@ import 'package:loading_overlay/loading_overlay.dart';
 
 
 class ResetLink extends StatefulWidget {
-  final Map param;
+  final Map? param;
 
-  const ResetLink({Key key, this.param}) : super(key: key);
+  const ResetLink({Key? key, this.param}) : super(key: key);
 
   @override
   _ResetLinkState createState() => _ResetLinkState();
@@ -32,16 +32,16 @@ class _ResetLinkState extends State<ResetLink> {
   final TextEditingController _password = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
-  Timer _timer;
+  Timer? _timer;
   int _start = 60;
   bool _resendbtn = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   _changepassword() async {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState!.validate()) {
       return;
     }
-    _formKey.currentState.save();
+    _formKey.currentState!.save();
     setState(() {
       _loading = true;
     });
@@ -113,7 +113,7 @@ class _ResetLinkState extends State<ResetLink> {
   @override
   void initState() {
     setState(() {
-      _email.text = widget.param['email'];
+      _email.text = widget.param!['email'];
     });
     startTimer();
     super.initState();
@@ -157,17 +157,21 @@ class _ResetLinkState extends State<ResetLink> {
                       child: TextFormField(
                         controller: _email,
                         enabled: false,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Email is required';
                           }
-                          if(!RegExp("^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*").hasMatch(value)){
+                          if (!RegExp(
+                                  "^[a-zA-Z0-9.!#%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*")
+                              .hasMatch(value)) {
                             return 'Enter a valid email address';
                           }
                           return null;
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
-                        decoration: textFormFieldInputDecoration('abc@gmail.com'),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
+                        decoration:
+                            textFormFieldInputDecoration('abc@gmail.com'),
                       ),
                     ),
                     Container(
@@ -175,12 +179,13 @@ class _ResetLinkState extends State<ResetLink> {
                       child: TextFormField(
                         controller: _passcode,
                         keyboardType: TextInputType.number,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'passcode is required';
                           }
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('passcode'),
                       ),
                     ),
@@ -190,14 +195,18 @@ class _ResetLinkState extends State<ResetLink> {
                         controller: _password,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: _obscureText,
-                        validator: (String value) {
-                          if(value.isEmpty){
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
                             return 'Password is required';
                           }
                         },
-                        style: mediumTextStyle().copyWith(color: konDarkColorB1),
+                        style:
+                            mediumTextStyle().copyWith(color: konDarkColorB1),
                         decoration: textFormFieldInputDecoration('password')
-                            .copyWith(suffixIcon: InkWell(onTap: (){  setState(() {
+                            .copyWith(
+                                suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
                                         _obscureText = !_obscureText;
                                       });
                                     },

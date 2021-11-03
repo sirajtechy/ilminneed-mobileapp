@@ -6,7 +6,7 @@ class LessonBottomWidget extends StatelessWidget {
   final String value;
   final IconData icon;
 
-  const LessonBottomWidget({Key key, @required this.value, @required this.icon})
+  const LessonBottomWidget({Key? key, required this.value, required this.icon})
       : super(key: key);
 
   @override
